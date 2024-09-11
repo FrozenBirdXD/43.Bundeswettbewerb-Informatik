@@ -1,0 +1,1 @@
+Here are my solutions for the 43. National Computer Science competition.
