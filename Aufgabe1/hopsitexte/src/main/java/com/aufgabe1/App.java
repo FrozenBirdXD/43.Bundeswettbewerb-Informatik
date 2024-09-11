@@ -9,6 +9,9 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
@@ -26,6 +29,7 @@ public class App extends Application {
         // Setup
         stage.setTitle("Hopsitext Ersteller");
         textArea.setWrapText(true);
+        output.setFont(Font.font("System", FontWeight.BOLD, FontPosture.REGULAR, 18));
 
         // ChangeListener for the textArea textProperty
         textArea.textProperty()
@@ -78,11 +82,15 @@ public class App extends Application {
             Text mergedText = new Text(text1.getText());
 
             Color finalColor = determineColor(color1, color2);
+            if (finalColor.equals(Color.PURPLE)) {
+                output.setText("Dieser Text ist leider noch kein Hopsitext :(");
+            } else {
+                output.setText("Dieser Text ist ein Hopsitext!");
+            }
             mergedText.setFill(finalColor);
 
             result.getChildren().add(mergedText);
         }
-
         return result;
     }
 
@@ -121,7 +129,6 @@ public class App extends Application {
             if (getAlphabetPosition(currentChar) != -1) {
                 textNode.setFill(color);
                 tf.getChildren().add(textNode);
-                // Find its position in the alphabet
                 int alphabetPosition = getAlphabetPosition(currentChar);
                 int count = 0;
 
