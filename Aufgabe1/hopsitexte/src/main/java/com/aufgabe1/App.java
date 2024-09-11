@@ -31,7 +31,7 @@ public class App extends Application {
         textArea.textProperty()
                 .addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                     // Called every time the text is changed
-                    processTextNew(newValue);
+                    processText(newValue);
                 });
 
         // Create SplitPane
@@ -51,177 +51,106 @@ public class App extends Application {
         stage.show();
     }
 
-    private void processTextNew(String input) {
-        textFlow.getChildren().clear(); // Clear previous content
+    private void processText(String input) {
+        textFlow.getChildren().clear();
 
-        /*
-         * if (input.isEmpty()) {
-         * output.setText("Ist dein Text ein Hopsitext? Tippe in das Textfeld :)");
-         * } else if (input.length() == 1) {
-         * output.setText("Zu kurz für ein Hopsitext");
-         * } else {
-         */
-        int nextIndex1 = 0;
-        int nextIndex2 = 0;
+        if (input.isEmpty()) {
+            output.setText("Ist dein Text ein Hopsitext? Tippe in das Textfeld :)");
+        }
+        if (input.length() == 1) {
+            textFlow.getChildren().add(new Text(input));
+            output.setText("Zu kurz um ein Hopsitext zu sein!");
+        }
+        textFlow.getChildren()
+                .addAll(mergeTextFlows(jump(input, 0, Color.RED), jump(input, 1, Color.BLUE)).getChildren());
+    }
 
-        // Find the position of alphabetic characters and calculate based on them
-        char currentChar = input.charAt(0);
-        Text textNode = new Text(String.valueOf(currentChar));
-        textNode.setFill(Color.PINK); // Change color to red for specific indices
+    private TextFlow mergeTextFlows(TextFlow tf1, TextFlow tf2) {
+        TextFlow result = new TextFlow();
 
-        // Check if the current character is an alphabetic letter
-        while (nextIndex1 < input.length()) {
-            currentChar = input.charAt(nextIndex1);
+        for (int i = 0; i < tf1.getChildren().size(); i++) {
+            Text text1 = (Text) tf1.getChildren().get(i);
+            Text text2 = (Text) tf2.getChildren().get(i);
+
+            Color color1 = (Color) text1.getFill();
+            Color color2 = (Color) text2.getFill();
+
+            Text mergedText = new Text(text1.getText());
+
+            Color finalColor = determineColor(color1, color2);
+            mergedText.setFill(finalColor);
+
+            result.getChildren().add(mergedText);
+        }
+
+        return result;
+    }
+
+    private Color determineColor(Color color1, Color color2) {
+        if (color1.equals(Color.BLACK) && color2.equals(Color.BLACK)) {
+            return Color.BLACK;
+        } else if (color1.equals(Color.RED) && color2.equals(Color.BLACK)) {
+            return Color.RED;
+        } else if (color1.equals(Color.BLACK) && color2.equals(Color.BLUE)) {
+            return Color.BLUE;
+        } else if (color1.equals(Color.RED) && color2.equals(Color.BLUE)) {
+            return Color.PURPLE;
+        } else if (color1.equals(Color.RED)) {
+            return Color.RED;
+        } else if (color2.equals(Color.BLUE)) {
+            return Color.BLUE;
+        }
+        return Color.BLACK;
+    }
+
+    private TextFlow jump(String input, int startIndex, Color color) {
+        TextFlow tf = new TextFlow();
+        int nextIndex = startIndex;
+        char currentChar = ' ';
+        Text textNode = new Text();
+
+        if (nextIndex == 1 && !input.isEmpty()) {
+            textNode = new Text(String.valueOf(input.charAt(0)));
+            tf.getChildren().add(textNode);
+        }
+
+        while (nextIndex < input.length()) {
+            currentChar = input.charAt(nextIndex);
             textNode = new Text(String.valueOf(currentChar));
 
             if (getAlphabetPosition(currentChar) != -1) {
-                textNode.setFill(Color.RED);
-                textFlow.getChildren().add(textNode);
+                textNode.setFill(color);
+                tf.getChildren().add(textNode);
                 // Find its position in the alphabet
                 int alphabetPosition = getAlphabetPosition(currentChar);
-                System.out.println("Character: " + currentChar + ", Position in alphabet: " + alphabetPosition);
-
-                // Calculate the next index based on the alphabet position
                 int count = 0;
 
                 // Skip non-alphabetic characters and move forward by the alphabet position
                 while (count < alphabetPosition) {
-                    nextIndex1++;
-                    if (nextIndex1 >= input.length()) {
-                        System.out.println("Index " + nextIndex1 + " is out of bounds for the input length.");
+                    nextIndex++;
+                    if (nextIndex >= input.length()) {
+                        System.out.println("Index " + nextIndex + " is out of bounds for the input length.");
                         break;
                     }
-                    if (getAlphabetPosition(input.charAt(nextIndex1)) != -1) {
+                    if (getAlphabetPosition(input.charAt(nextIndex)) != -1) {
                         count++;
-                        if (count == alphabetPosition) {
-                        } else {
-                            textNode = new Text(String.valueOf(input.charAt(nextIndex1)));
-                            textFlow.getChildren().add(textNode);
+                        if (count != alphabetPosition) {
+                            textNode = new Text(String.valueOf(input.charAt(nextIndex)));
+                            tf.getChildren().add(textNode);
                         }
                     } else {
-                        textNode = new Text(String.valueOf(input.charAt(nextIndex1)));
-                        textNode.setFill(Color.GREEN); // Change color to red for specific indices
-                        textFlow.getChildren().add(textNode);
+                        textNode = new Text(String.valueOf(input.charAt(nextIndex)));
+                        tf.getChildren().add(textNode);
                     }
                 }
-                // Check if we found a valid next character
-                /*
-                 * if (nextIndex1 < input.length() &&
-                 * getAlphabetPosition(input.charAt(nextIndex1)) != -1) {
-                 * System.out.println("Character at position " + nextIndex1 + " is: " +
-                 * input.charAt(nextIndex1));
-                 * textNode = new Text(String.valueOf(input.charAt(nextIndex1)));
-                 * textNode.setFill(Color.RED); // Change color to red for specific indices
-                 * textFlow.getChildren().add(textNode);
-                 * nextIndex1++;
-                 * }
-                 */
-                /*
-                 * } else {
-                 * textFlow.getChildren().add(textNode);
-                 * }
-                 */
-
-                /*
-                 * // Find the position of alphabetic characters and calculate based on them
-                 * for (int i = 1; i < input.length(); i++) {
-                 * char currentChar = input.charAt(i);
-                 * 
-                 * // Check if the current character is an alphabetic letter
-                 * if (getAlphabetPosition(currentChar) != -1) {
-                 * // Find its position in the alphabet
-                 * int alphabetPosition = getAlphabetPosition(currentChar);
-                 * System.out.println("Character: " + currentChar + ", Position in alphabet: " +
-                 * alphabetPosition);
-                 * 
-                 * // Calculate the next index based on the alphabet position
-                 * int count = 0;
-                 * nextIndex2 = i;
-                 * 
-                 * // Skip non-alphabetic characters and move forward by the alphabet position
-                 * while (count < alphabetPosition) {
-                 * nextIndex2++;
-                 * if (nextIndex2 >= input.length()) {
-                 * System.out.println("Index " + nextIndex2 +
-                 * " is out of bounds for the input length.");
-                 * break;
-                 * }
-                 * if (getAlphabetPosition(input.charAt(nextIndex2)) != -1) {
-                 * count++;
-                 * }
-                 * }
-                 * 
-                 * // Check if we found a valid next character
-                 * if (nextIndex2 < input.length() &&
-                 * Character.isLetter(input.charAt(nextIndex2))) {
-                 * System.out.println("Character at position " + nextIndex2 + " is: " +
-                 * input.charAt(nextIndex2));
-                 * 
-                 * }
-                 * }
-                 * }
-                 */
-                if (nextIndex1 == nextIndex2) {
-                    output.setText("Der Text ist kein Hopsitext :(");
-                } else {
-                    output.setText("Der Text ist ein Hopsitext :)");
-                }
             } else {
-                textNode = new Text(String.valueOf(input.charAt(nextIndex1)));
-                textNode.setFill(Color.ORANGE); // Change color to red for specific indices
-                textFlow.getChildren().add(textNode);
-                nextIndex1++;
+                textNode = new Text(String.valueOf(input.charAt(nextIndex)));
+                textNode.setFill(color);
+                tf.getChildren().add(textNode);
+                nextIndex++;
             }
         }
-    }
-
-    private String filterText(String input) {
-        StringBuilder result = new StringBuilder();
-        for (char c : input.toCharArray()) {
-            if (getAlphabetPosition(c) != -1) {
-                result.append(c);
-            }
-        }
-
-        return result.toString();
-    }
-
-    private void processText(String input) {
-        if (input.isEmpty()) {
-            output.setText("Ist dein Text ein Hopsitext? Tippe in das Textfeld :)");
-        } else if (input.length() == 1) {
-            output.setText("Zu kurz für ein Hopsitext");
-        } else {
-            char char1 = input.charAt(0);
-            char char2 = input.charAt(1);
-            int alphabetPosition1 = getAlphabetPosition(char1);
-            int alphabetPosition2 = getAlphabetPosition(char2);
-
-            int nextIndex1 = alphabetPosition1;
-            int nextIndex2 = alphabetPosition2;
-
-            while (nextIndex1 < input.length()) {
-                // TODO I want to change the color of the character in the text at position
-                // nextIndex1
-                char1 = input.charAt(nextIndex1);
-
-                alphabetPosition1 = getAlphabetPosition(char1);
-                nextIndex1 += alphabetPosition1;
-            }
-            while (nextIndex2 < input.length()) {
-                char2 = input.charAt(nextIndex2);
-                // TODO I want to change the color of the character in the text at position
-                // nextIndex2
-
-                alphabetPosition2 = getAlphabetPosition(char2);
-                nextIndex2 += alphabetPosition2;
-            }
-            if (nextIndex1 == nextIndex2) {
-                output.setText("Der Text ist kein Hopsitext :(");
-            } else {
-                output.setText("Der Text ist ein Hopsitext :)");
-            }
-        }
+        return tf;
     }
 
     private int getAlphabetPosition(char c) {
@@ -246,7 +175,7 @@ public class App extends Application {
         } else if (Character.isLowerCase(c)) {
             return c - 'a' + 1; // a=1, b=2, ..., z=26
         } else {
-            return -1; // Not a letter
+            return -1;
         }
     }
 
