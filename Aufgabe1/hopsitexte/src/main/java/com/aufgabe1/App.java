@@ -71,6 +71,7 @@ public class App extends Application {
 
     private TextFlow mergeTextFlows(TextFlow tf1, TextFlow tf2) {
         TextFlow result = new TextFlow();
+        int count = 0;
 
         for (int i = 0; i < tf1.getChildren().size(); i++) {
             Text text1 = (Text) tf1.getChildren().get(i);
@@ -84,8 +85,13 @@ public class App extends Application {
             Color finalColor = determineColor(color1, color2);
             if (finalColor.equals(Color.PURPLE)) {
                 output.setText("Dieser Text ist leider noch kein Hopsitext :(");
+                count = 1;
             } else {
-                output.setText("Dieser Text ist ein Hopsitext!");
+                if (count == 1) {
+                    output.setText("Dieser Text ist leider noch kein Hopsitext :(");
+                } else {
+                    output.setText("Dieser Text ist ein Hopsitext!");
+                }
             }
             mergedText.setFill(finalColor);
 
@@ -136,7 +142,6 @@ public class App extends Application {
                 while (count < alphabetPosition) {
                     nextIndex++;
                     if (nextIndex >= input.length()) {
-                        System.out.println("Index " + nextIndex + " is out of bounds for the input length.");
                         break;
                     }
                     if (getAlphabetPosition(input.charAt(nextIndex)) != -1) {
