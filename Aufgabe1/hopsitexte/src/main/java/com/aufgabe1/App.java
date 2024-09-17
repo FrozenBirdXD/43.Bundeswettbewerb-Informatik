@@ -119,11 +119,24 @@ public class App extends Application {
 
     private TextFlow jump(String input, int startIndex, Color color) {
         TextFlow tf = new TextFlow();
-        int nextIndex = startIndex;
+        int nextIndex = 0;
         char currentChar = ' ';
         Text textNode = new Text();
 
-        if (nextIndex == 1 && !input.isEmpty()) {
+        // Skip over first non-alaphabetic characters
+        int i = 0;
+        for (; i < input.length(); i++) {
+            if (getAlphabetPosition(input.charAt(nextIndex)) == -1) {
+                textNode = new Text(String.valueOf(input.charAt(nextIndex)));
+                tf.getChildren().add(textNode);
+                nextIndex++;
+            } else {
+                break;
+            }
+        }
+        nextIndex += startIndex;
+
+        if (nextIndex == (1 + i) && !input.isEmpty()) {
             textNode = new Text(String.valueOf(input.charAt(0)));
             tf.getChildren().add(textNode);
         }
@@ -132,6 +145,7 @@ public class App extends Application {
             currentChar = input.charAt(nextIndex);
             textNode = new Text(String.valueOf(currentChar));
 
+            // If german character
             if (getAlphabetPosition(currentChar) != -1) {
                 textNode.setFill(color);
                 tf.getChildren().add(textNode);
@@ -157,7 +171,8 @@ public class App extends Application {
                 }
             } else {
                 textNode = new Text(String.valueOf(input.charAt(nextIndex)));
-                textNode.setFill(color);
+                //textNode.setFill(color);
+                System.out.println("fskujdhfsdf");
                 tf.getChildren().add(textNode);
                 nextIndex++;
             }
