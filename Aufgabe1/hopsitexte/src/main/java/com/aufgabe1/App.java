@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
@@ -40,8 +41,9 @@ public class App extends Application {
 
         // Create SplitPane
         SplitPane splitPane = new SplitPane();
+        ScrollPane scrollPane = new ScrollPane(textFlow);
         splitPane.getItems().addAll(
-                textArea, textFlow);
+                textArea, scrollPane);
 
         textFlow.setPrefWidth(600);
         // Set up the layout
