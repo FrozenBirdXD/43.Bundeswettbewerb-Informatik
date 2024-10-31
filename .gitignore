@@ -1,3 +1,11 @@
+# Ignore latex files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc
+
 Bundeswettbewerb/
 43.1.zip
 Aufgabe1/hopsitexte/target/
