@@ -78,19 +78,65 @@
 
 Bei dieser Aufgabe ist es das Ziel, eine "gute" Anordnung der gegebenen Aufgaben zu finden. Diese Anordnung basiert auf den eingelesenen
 Klausuren und dessen Schwierigkeitabstufungen. Mein Ansatz dieses Problem zu lösen, ist die Untergliederung in folgende Teilaufgaben:
+
+\subsection{Annahme: Keine Konflikte in Klausuren}
+
 \begin{itemize}
-    \item[1.] Texteingabe lesen und Inhalt strukturieren
-    \newline
-    \text{fsdf}
-    \item[2.] Schwierigkeitsanordnung analysieren und Einordnung in passende Datenstruktur
-    \item[3.] Sortierung dieser Datenstruktur
-    \item[4.] Sortierte Ausgabe der gewünschten Aufgaben
+  \item[1.] \textbf{Texteingabe lesen und Inhalt strukturieren}
+  \newline
+  Mithilfe von einem BufferedReader Zeilen der Inputdatei lesen und in entsprechende Members der Klasse speichern.
+  \item[2.] \textbf{Schwierigkeitsanordnung analysieren und Einordnung in passende Datenstruktur}
+  \newline
+  Da die Aufgaben der Klausuren nur nach Schwierigkeit geordnet sind, gibt es nur eine "leichter als" Beziehung in den Aufgaben. In kurz: Eins kommt immer vor einem Anderem.
+  Diese Eigenschaft kann man mithilfe von ungewichteten gerichteten Graphen darstellen, wobei eine Kante von A nach B zeigt, dass Aufgabe A leichter als B ist. Die Aufgaben der Klausuren könnte man auch in einem 
+  Baum darstellen, aber da ein Baum prinzipiell einfach ein ungewichteter gerichteter Graph ist, habe ich mich entschieden, dieses Teilproblem mit der Erstellung eines Graphen zu lösen.
+  \item[3.] \textbf{Sortierung dieser Datenstruktur}
+  \newline
+  Der erstellte Graph mit den Aufgaben als Knoten und den Beziehungen als Kanten, kann mit einer topologischen Sortierung sortiert werden. Dies funktioniert nur, wenn der Graph gerichtet und keine Zyklen enthält,
+  was unter der Annahme, dass es keine Konflikte in den Klausuren gibt, stimmt. Die topologische Sortierung ist eine Anordnung der Knoten, so dass alle Nachfolger eines Knotens, nach diesem Knoten vorkommen. Also könnte
+  den Graphen so darstellen, dass die gerichteten Kanten nur nach rechts zeigen. Wenn der Graph topologisch sortiert ist, bedeutet das für unsere Aufgabe, dass die gewünschten Aufgaben, einfach von links nach rechts
+  aus dem Graph ausgelesen werden muss, um eine "gute" Anordnung dieser Aufgaben zu erhalten.
+  \item[4.] \textbf{Sortierte Ausgabe der gewünschten Aufgaben}
 \end{itemize}
 
+\subsection{Annahme: Konflikte in Klausuren}
+
 \section{Umsetzung}
+\subsection{Annahme: Keine Konflikte in Klausuren}
+Um diesen Ansatz umzusetzen, löse ich die von oben beschriebenen Teilprobleme:
+\begin{itemize}
+  \item[1.] \textbf{Texteingabe lesen und Inhalt strukturieren}
+  \newline
+  Mithilfe eines BufferedReader aus der java.io package, kann jede Zeile ausgelesen werden und als String verwendet werden. Für die ersten Zeile des Inputtextes
+  teile ich diesen String an den Leerzeichen und speichere die resultierenden Strings als Array. Aus diesem Array lese ich die Strings aus und speichere sie als Integer in
+  den entsprechenden Members der Klasse. Eine Aufgabe wird als String repräsentiert.
+  \newline
+  Die folgenden Zeilen, die jeweils eine Klausur darstellen sollen, bearbeite ich gleichermaßen, allerings nur mit dem Unterschied, dass ich die Zeile an den kleiner Zeichen (<) teile.
+  Die einzelnen Strings, die jeweils eine Aufgabe darstellen, speichere ich als Liste in ein "Klausur" Objekt. Diese Klausur Objekte sichere ich nun wieder als Liste, welche ein Member der Hauptklasse ist.
+  \newline
+  Die letze Zeile speichere ich, separat von den anderen Klausuren, wieder als Klausur Objekt.
+  \item[2.] \textbf{Schwierigkeitsanordnung analysieren und Einordnung in passende Datenstruktur}
+  \newline
+  Um den gerichteten azyklischen Graph darzustellen, verwende ich eine Adjazenzliste, welche ich mit einer Hashmap realisiere. In der Hashmap ist jeder Knoten bzw. Aufgabe ein Schlüssel der Map.
+  Folglich ist der zugehörige Wert in der Map eine Liste aus Aufgaben, welche die Nachfolger der Knoten in dem Graph darstellen.
+  \item[3.] \textbf{Sortierung der Datenstruktur}
+  \newline
+  d
+
+\end{itemize}
+\subsection{Annahme: Konflikte in Klausuren}
 
 \section{Beispiele}
-Genügend Beispiele einbinden! Die Beispiele von der BwInf-Webseite sollten hier diskutiert werden, aber auch eigene Beispiele sind sehr gut – besonders wenn sie Spezialfälle abdecken. Aber bitte nicht 30 Seiten Programmausgabe hier einfügen!
+\subsection{Beispiele der BwInf-Webseite}
+\begin{itemize}
+  \item [0.] 
+  \item [1.] 
+  \item [2.]
+  \item [3.]
+  \item [4.]
+  \item [5.]
+\end{itemize}
+\subsection{Eigene Beispiele}
 
 \section{Quellcode}
 Unwichtige Teile des Programms sollen hier nicht abgedruckt werden. Dieser Teil sollte nicht mehr als 2–3 Seiten umfassen, maximal 10.
