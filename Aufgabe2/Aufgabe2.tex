@@ -95,8 +95,9 @@ Klausuren und dessen Schwierigkeitabstufungen. Mein Ansatz dieses Problem zu lö
   Der erstellte Graph mit den Aufgaben als Knoten und den Beziehungen als Kanten, kann mit einer topologischen Sortierung sortiert werden. Dies funktioniert nur, wenn der Graph gerichtet und keine Zyklen enthält,
   was unter der Annahme, dass es keine Konflikte in den Klausuren gibt, stimmt. Die topologische Sortierung ist eine Anordnung der Knoten, so dass alle Nachfolger eines Knotens, nach diesem Knoten vorkommen. Also könnte
   den Graphen so darstellen, dass die gerichteten Kanten nur nach rechts zeigen. Wenn der Graph topologisch sortiert ist, bedeutet das für unsere Aufgabe, dass die gewünschten Aufgaben, einfach von links nach rechts
-  aus dem Graph ausgelesen werden muss, um eine "gute" Anordnung dieser Aufgaben zu erhalten.
+  aus dem Graph ausgelesen werden muss, um eine "gute" Anordnung dieser Aufgaben zu erhalten. Diese sortierte Folge an Aufgaben zu erhalten ist somit das Ziel dieses Teilproblems. 
   \item[4.] \textbf{Sortierte Ausgabe der gewünschten Aufgaben}
+  Da ich durch das vorgehende Teilproblem eine topologisch sortiere Liste mit den Aufgabe bekomme, müssen für das Ergebnis nur noch die gewünschten Aufgaben aus der Liste von links nach rechts ausgelesen werden.
 \end{itemize}
 
 \subsection{Annahme: Konflikte in Klausuren}
@@ -121,7 +122,22 @@ Um diesen Ansatz umzusetzen, löse ich die von oben beschriebenen Teilprobleme:
   Folglich ist der zugehörige Wert in der Map eine Liste aus Aufgaben, welche die Nachfolger der Knoten in dem Graph darstellen.
   \item[3.] \textbf{Sortierung der Datenstruktur}
   \newline
-  d
+  Da es sich um einen azyklischen Graph handelt, ist es möglich, jeden Knoten zu erreichen, basierend auf die Anzahl an Eingangsknoten (Eingangsgrad des Knotens). Das geht indem man bei den Knoten mit
+  Eingangsgrad 0 beginnt, und von dessen Nachbarn den Eingangsgrad um eins verkleinert. Dies führt führt man durch bis es keinen Knoten mit Eingangsgrad 0 mehr gibt. Dies geht nur, weil es keine Zyklen gibt.
+  Auf diesem Prinzip basiert meine Implementierung des Sortieralgorithmus.
+  \newline
+  Zu Beginn erstelle ich eine Hashmap in der jedem Knoten sein Eingangsgrad zugeordnet wird. Das geht indem man über die ganzen Knoten in dem Graph iteriert und für jedem Nachbar eines Knotens, den Eingangsgrad um eins inkremeniert.
+  Dann können alle Knoten mit einem Eingangsgrad von 0 in eine Linked-List (wird als FIFO Queue verwendet) hinzugefügt werden, über die man iteriert, bis sie leer ist. Denn dann wurde der ganze Graph durchlaufen. 
+  Dies kann man mit einer while-Schleife machen und entnimmt der Linked-List jeweils den ersten Knoten und fügt diesen in eine Liste, die zum Schluss den geordneten Graphen darstellen soll. Von dem Knoten wird der 
+  Eingangsgrad in der Hashmap um 1 verringert. Anschließend wird der Eingangsgrad von jedem Nachbar von diesem Knoten ebenfalls um eins verringert und der Nachbarknoten wird in die FIFO Queue hinzugefügt, falls dessen Eingangsgrad
+  durch die Dekrementierung 0 geworden ist. 
+  \newline
+  Wenn die while-Schleife zuende gelaufen ist, hat man die topologisch sortiere Knoten des Graphen in der Resultatsliste. Optional kann man folgern, dass der sortierte Graph Zyklen enthalten hat, falls die Endresultatsliste eine andere
+  Anzahl an Elemente hat, wie Knoten im Graph. Dann könnte man dementsprechend handeln. Allerdings ist der Fall eines Zyklus mit der Annahme, dass der Graph keinen hat, abgedeckt.
+  \item[4.] \textbf{Sortierte Ausgabe der gewünschten Aufgaben}
+  Da wir eine sortierte Folge der Knoten aus der vorherigen Teilaufgabe bekommen, muss nur noch über diese Liste von vorne iteriert werden und in eine Ergebnisliste hinten hinzugefügt werden, falls dieses Element mit einer der ursprünglich gewollten Klausurufgaben übereinstimmt.
+  Danach muss nur noch die Ergebnis dem Nutzer gegeben werden, zum Beispiel mit einer Ausgabe auf die Konsole.
+
 
 \end{itemize}
 \subsection{Annahme: Konflikte in Klausuren}

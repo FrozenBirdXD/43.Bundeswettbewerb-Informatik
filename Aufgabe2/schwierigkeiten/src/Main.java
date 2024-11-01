@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.Queue;
 
 public class Main {
     private int nNumKlausuren;
@@ -25,7 +25,7 @@ public class Main {
     public static void main(String[] args) {
         Main main = new Main();
         try {
-            main.readKlausurInput("schwierigkeiten/beispielaufgaben/schwierigkeiten1.txt");
+            main.readKlausurInput("schwierigkeiten/beispielaufgaben/test.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,7 +62,7 @@ public class Main {
         }
     }
 
-    // Create Graph 
+    // Create Graph
     public Map<String, List<String>> createDirectedGraphNoConflics() {
         // Adjazentliste
         Map<String, List<String>> graph = new HashMap<>();
@@ -77,39 +77,51 @@ public class Main {
         return graph;
     }
 
-    // TODO: This wont work, because still have to account for num of input connections -> https://www.youtube.com/watch?v=4hAqEjj7IdE
-    // Sort graph topologically using depth for search
+    // Sort graph topologically -> https://www.youtube.com/watch?v=4hAqEjj7IdE
     public List<String> sortGraphTopologicallyNoConflics(Map<String, List<String>> graph) {
-        Stack<String> stack = new Stack<>();
-        List<String> visited = new ArrayList<>();
-
-        // For every unvisited vertex call depthForSearch
-        for (String vertex : graph.keySet()) {
-            if (!visited.contains(vertex)) {
-                depthForSearch(visited, vertex, graph, stack);
+        Map<String, Integer> inDegree = new HashMap<>();
+        // Fill in degree map
+        for (String node : graph.keySet()) {
+            inDegree.putIfAbsent(node, 0);
+            for (String neighbors : graph.get(node)) {
+                inDegree.put(neighbors, inDegree.getOrDefault(neighbors, 0) + 1);
             }
         }
 
-        // Reverse ordering from the stack
-        List<String> result = new ArrayList<>();
-        for (String s : stack) {
-            result.add(s);
+        // Put every nodes with in degree of 0 into list
+        List<String> currentNodes = new LinkedList<>();
+        for (String node : inDegree.keySet()) {
+            if (inDegree.get(node) == 0) {
+                currentNodes.add(node);
+            }
         }
+
+        List<String> result = new ArrayList<>();
+
+        // Interate over all current Nodes with in degree of 0
+        while (!currentNodes.isEmpty()) {
+            String node = currentNodes.removeFirst();
+            result.add(node);
+
+            // Go over every neighbor of node
+            for (String neighbor : graph.get(node)) {
+                // Reduce in degree of neighbor by 1
+                inDegree.put(neighbor, inDegree.get(neighbor) - 1);
+                // Add to current nodes if in degree is 0
+                if (inDegree.get(neighbor) == 0) {
+                    currentNodes.add(neighbor);
+                }
+            }
+        }
+
+        if (result.size() != graph.size()) {
+            System.out.println("Error - Zyklus im Graph");
+        }
+
         return result;
     }
 
-    // Recursive implementation of DFS
-    private void depthForSearch(List<String> visited, String vertex, Map<String, List<String>> graph, Stack<String> stack) {
-        if (!visited.contains(vertex)) {
-            visited.add(vertex);
-            for (String neighbors : graph.get(vertex)) {
-                depthForSearch(visited, neighbors, graph, stack);
-            }
-            stack.push(vertex);
-        }
-    }
-
-    // Result 
+    // Result
     public void getResultForKlausur(List<String> sortedGraph) {
         List<String> wanted = resultKlausur.getTasks();
         List<String> result = new ArrayList<>();
@@ -118,7 +130,8 @@ public class Main {
                 result.add(s);
             }
         }
-        resultKlausur.setTasks(result);;
+        resultKlausur.setTasks(result);
+        ;
     }
 
     public Klausur getResultKlausur() {
