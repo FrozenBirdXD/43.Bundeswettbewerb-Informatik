@@ -77,7 +77,10 @@
 \section{Lösungsidee / Ansatz}
 
 Bei dieser Aufgabe ist es das Ziel, eine "gute" Anordnung der gegebenen Aufgaben zu finden. Diese Anordnung basiert auf den eingelesenen
-Klausuren und dessen Schwierigkeitabstufungen. Mein Ansatz dieses Problem zu lösen, ist die Untergliederung in folgende Teilaufgaben:
+Klausuren und dessen Schwierigkeitabstufungen. Die Aufgabenerstellung erfordert das Bearbeiten der Aufgabe einmal unter der Annahme, dass
+sich die Schwierigkeiten in den gegebenen Klausuren nicht wiedersprechen und einmal, dass die Klausuren solche Konflikte enthalten können. Daher habe ich dieses Kapitel in 
+zwei Teile untergliedert, um jeweils unter einen von den Annahmen zu arbeiten.
+Mein Ansatz dieses Problem zu lösen, ist die Untergliederung in folgende Teilaufgaben:
 
 \subsection{Annahme: Keine Konflikte in Klausuren}
 
@@ -102,6 +105,22 @@ Klausuren und dessen Schwierigkeitabstufungen. Mein Ansatz dieses Problem zu lö
 
 \subsection{Annahme: Konflikte in Klausuren}
 
+Es gibt mehrere Wege, wie man mit diesen wiedersprüchlichen Aufgaben umgehen kann. Ich habe mir dabei folgende Ansätze überlegt:
+\begin{itemize}
+  \item[1.] Man könnte die Konflikte ignorieren und die betroffenen Aufgaben in beliebiger Reihenfolge ausgeben, da man wenn eine Aufgabe a einmal schwerer ist als eine Aufgabe b (\textit{b < a}) und in einer anderen Klausur diese
+  Schwierigkeit umgedreht ist (\textit{a < b}), dann könnte man annehmen, dass beide in etwa gleich schwer sind. 
+  \item[2.] Ein weitere Möglichkeit wäre, die betroffenen Aufgaben bei der Resultatsausgabe zu markieren, damit der Nutzer (Dua), manuell die Aufgaben vergleichen kann. 
+\end{itemize}
+Allerdings finde ich diese Ansätze nicht sinnvoll und habe mich letztendlich für diesen Ansatz entschieden:
+\begin{itemize}
+  \item[3.] Um mit Konflikten umzugehen, verwende ich eine Art "Mehrheitsregel" für Beziehungen. Wenn man eine Beziehung \textit{a < b} hat und in einer anderen Klausur \textit{b < a}, könnte man zählen, wie oft jede dieser
+  Beziehungen in den Klausuren vorkommt. Die Beziehung, die insgesamt öfters auftritt, wird dann hergenommen. Somit erhält man als Ergebnis eine Reihenfolge, die den meisten Klasuren entspricht.
+  \newline
+  Die Schritte zur Bearbeitung der Aufgaben unter diesem Ansatz, sind dieselben wie beim ersten Ansatz. Nur muss die Datenstruktur, in der die Aufgaben gespeichert werden, intern etwas angepasst werden, um die Häufigkeit einer
+  bestimmten Beziehung auch aufzufassen.
+\end{itemize}
+
+
 \section{Umsetzung}
 \subsection{Annahme: Keine Konflikte in Klausuren}
 Um diesen Ansatz umzusetzen, löse ich die von oben beschriebenen Teilprobleme:
@@ -112,7 +131,7 @@ Um diesen Ansatz umzusetzen, löse ich die von oben beschriebenen Teilprobleme:
   teile ich diesen String an den Leerzeichen und speichere die resultierenden Strings als Array. Aus diesem Array lese ich die Strings aus und speichere sie als Integer in
   den entsprechenden Members der Klasse. Eine Aufgabe wird als String repräsentiert.
   \newline
-  Die folgenden Zeilen, die jeweils eine Klausur darstellen sollen, bearbeite ich gleichermaßen, allerings nur mit dem Unterschied, dass ich die Zeile an den kleiner Zeichen (<) teile.
+  Die folgenden Zeilen, die jeweils eine Klausur darstellen sollen, bearbeite ich gleichermaßen, allerings nur mit dem Unterschied, dass ich die Zeile an den kleiner-als Zeichen (<) teile.
   Die einzelnen Strings, die jeweils eine Aufgabe darstellen, speichere ich als Liste in ein "Klausur" Objekt. Diese Klausur Objekte sichere ich nun wieder als Liste, welche ein Member der Hauptklasse ist.
   \newline
   Die letze Zeile speichere ich, separat von den anderen Klausuren, wieder als Klausur Objekt.
