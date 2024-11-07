@@ -56,7 +56,7 @@ public class Main {
         String input = null;
         try {
             // Read input from file
-            input = Files.readString(Path.of("beispielaufgaben/wandern6.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/wandern1.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,7 +135,6 @@ public class Main {
         AtomicReference<List<Integer>> bestDistances = new AtomicReference<>(null);
         AtomicReference<List<Set<Integer>>> bestParticipantDistribution = new AtomicReference<>(null);
 
-        // 4.
         // Parallelize outer i loop with Integer Stream
         IntStream.range(0, possibleDistances.size() - 2).parallel().forEach(i -> {
             BitSet iWish = participantsPerDistance.get(possibleDistances.get(i));
@@ -168,6 +167,7 @@ public class Main {
                                     Arrays.asList(possibleDistances.get(i), possibleDistances.get(j),
                                             possibleDistances.get(k)));
 
+                            // 4.
                             // Convert BitSet to Set<Integer>
                             List<Set<Integer>> currentDistribution = Arrays.asList(
                                     convertBitSetToSet(iWish),
