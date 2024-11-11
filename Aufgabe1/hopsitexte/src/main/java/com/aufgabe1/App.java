@@ -62,13 +62,13 @@ public class App extends Application {
 
         if (input.isEmpty()) {
             output.setText("Ist dein Text ein Hopsitext? Tippe in das Textfeld :)");
-        }
-        if (input.length() == 1) {
+        } else if (input.length() == 1) {
             textFlow.getChildren().add(new Text(input));
             output.setText("Zu kurz um ein Hopsitext zu sein!");
+        } else {
+            textFlow.getChildren()
+                    .addAll(mergeTextFlows(jump(input, 0, Color.RED), jump(input, 1, Color.BLUE)).getChildren());
         }
-        textFlow.getChildren()
-                .addAll(mergeTextFlows(jump(input, 0, Color.RED), jump(input, 1, Color.BLUE)).getChildren());
     }
 
     private TextFlow mergeTextFlows(TextFlow tf1, TextFlow tf2) {
@@ -173,7 +173,7 @@ public class App extends Application {
                 }
             } else {
                 textNode = new Text(String.valueOf(input.charAt(nextIndex)));
-                //textNode.setFill(color);
+                // textNode.setFill(color);
                 System.out.println("fskujdhfsdf");
                 tf.getChildren().add(textNode);
                 nextIndex++;
