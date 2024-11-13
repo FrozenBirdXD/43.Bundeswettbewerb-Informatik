@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 segments_read = []
 
-with open('krocket/beispielaufgaben/krocket3.txt', 'r') as file:
+with open('krocket/beispielaufgaben/krocket1.txt', 'r') as file:
     next(file)
     for line in file:
         segment = list(map(int, line.split()))
