@@ -7,6 +7,11 @@ public class Point {
         this.y = y;
     }
 
+    public void moveBy(double dx, double dy) {
+        this.x += dx;
+        this.y += dy;
+    }
+
     @Override
     public String toString() {
         return "(" + x + "|" + y + ")";

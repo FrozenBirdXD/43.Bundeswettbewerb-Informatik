@@ -13,24 +13,32 @@ public class Gerade {
         // Berechne den Richtungsvektor von start zu directionPoint
         this.directionX = directionPoint.getX() - start.getX();
         this.directionY = directionPoint.getY() - start.getY();
-
-        // Normalisiere den Richtungsvektor (optional, für Einheitlänge)
-        // double length = Math.sqrt(directionX * directionX + directionY * directionY);
-        // this.directionX /= length;
-        // this.directionY /= length;
     }
 
     // Methode, um einen Punkt auf der Gerade zu berechnen (für beliebiges t)
-    public Point getPointAt(double t) {
-        double x = start.getX() + t * directionX;
-        double y = start.getY() + t * directionY;
-        return new Point(x, y);
+    public Point getPointAt(double x) {
+        double t = start.getY() - directionY / directionX * start.getX();
+        return new Point(x, directionY / directionX * x + t);
+    }
+
+    public double getSlope() {
+        return directionY / directionX;
+    }
+
+    public String getDirectionVec() {
+        // Berechnung der Länge des Richtungsvektors
+        double length = Math.sqrt(directionX * directionX + directionY * directionY);
+        double normedX = directionX / length;
+        double normedY = directionY / length;
+
+        return "Normierter Richtungsvektor: (" + normedX + ", " + normedY + ")";
     }
 
     // Optional: Methode, um die Gerade als String darzustellen
     @Override
     public String toString() {
-        return "Line Start: (" + start + "), Direction: (" + directionX + ", " + directionY + ")";
+        return "Line Start: (" + start + "), Direction: (" + directionX + ", " + directionY + "), Direction Point: "
+                + directionPoint;
     }
 
     public double getDirX() {
