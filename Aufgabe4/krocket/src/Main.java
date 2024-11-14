@@ -5,13 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
+    private double ballRadius;
+
     public static void main(String[] args) {
         Main main = new Main();
 
         String input = null;
         try {
             // Read input from file
-            input = Files.readString(Path.of("krocket/beispielaufgaben/krocket1.txt"));
+            input = Files.readString(Path.of("krocket/beispielaufgaben/krocket4.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -19,18 +21,16 @@ public class Main {
         List<Gate> gates = main.parseFile(input);
 
         double stepPercent = 10;
+        // First try smaller steps
         for (int i = 0; i < 4; i++) {
             stepPercent /= 10;
-            Gerade gerade = main.findRayIntersectAllGates(gates, stepPercent);
+            Line line = main.findRayIntersectAllGates(gates, stepPercent, main.getBallRadius());
 
-            if (gerade != null) {
-
-                double x = gerade.getStart().getX() - 1;
-                Point start = new Point(x, gerade.getPointAt(x).getY());
-
+            if (line != null) {
                 System.out.println("Es ist möglich mit einem Schlag alle Tore zu durchqueren.");
-                System.out.println("Der Schlag kann als Halbgerade mit dem Startpunkt: " + start + ", die durch den Punkt " + gerade.getDirectionPoint() + " verläuft, beschrieben werden.");
-                System.out.println(gerade.getDirectionVec() + ", bzw. Steigung der Halbgeraden: " + gerade.getSlope());
+                System.out.println("Der Schlag kann als Halbgerade mit dem Startpunkt: " + line.getStart()
+                        + ", die durch den Punkt " + line.getDirectionPoint() + " verläuft, beschrieben werden.");
+                System.out.println(line.getDirectionVec() + ", bzw. Steigung der Halbgeraden: " + line.getSlope());
 
                 return;
             }
@@ -39,65 +39,109 @@ public class Main {
                 "Es ist nicht möglich, alle Tore in der richtigen Reihenfolge mit nur einem Schlag zu durchqueren.");
     }
 
-    public Point calculateLineIntersectSegment(Gerade line, Gate segment) {
-        double x0 = line.getStart().getX();
-        double y0 = line.getStart().getY();
-        double dx = line.getDirX();
-        double dy = line.getDirY();
-        double x1 = segment.getStart().getX();
-        double y1 = segment.getStart().getY();
-        double x2 = segment.getEnd().getX();
-        double y2 = segment.getEnd().getY();
+    /**
+     * Calculates point of intersection of a line and a segment (krocket gate)
+     * 
+     * @param line - line to describe possible path of krocket ball
+     * @param gate - Krocketgate (segment)
+     * @return Point - Point of intersection; null if no intersection exists
+     */
+    public Point calculateLineIntersectSegment(Line line, Gate gate, double ballRadius) {
+        double lineStartX = line.getStart().getX();
+        double lineStartY = line.getStart().getY();
+        double dx = line.getDeltaX();
+        double dy = line.getDeltaY();
+        double gateStartX = gate.getStart().getX();
+        double gateStartY = gate.getStart().getY();
+        double gateEndX = gate.getEnd().getX();
+        double gateEndY = gate.getEnd().getY();
 
-        // Berechne den Determinanten
-        double denominator = dx * (y2 - y1) - dy * (x2 - x1);
+        // More info in the documentation of this task
 
-        // Wenn der Determinant null ist, sind die Gerade und das Segment parallel
+        // To calculate the intersection the equation of the line and gate have to be
+        // equated
+        // A system of linear equation can be set up for that
+        // Then solve for unknown (u & t)
+        // Which can be interpreted as a 2x2 matrix
+
+        // Calculate determinant of equation system
+        double denominator = dx * (gateEndY - gateStartY) - dy * (gateEndX - gateStartX);
+
+        // If determinant is (almost) zero, the line and gate (segment) are parallel or
+        // colinear
+        // Therefore they cant have an intersection
         if (Math.abs(denominator) < 1e-10) {
             return null;
         }
 
-        // Berechne t und u
-        double t = ((x1 - x0) * (y2 - y1) - (y1 - y0) * (x2 - x1)) / denominator;
-        double u = ((x1 - x0) * dy - (y1 - y0) * dx) / denominator;
+        // Solve the system of equations
+        // (I used gauss algorithm)
+        double t = ((gateStartX - lineStartX) * (gateEndY - gateStartY)
+                - (gateStartY - lineStartY) * (gateEndX - gateStartX)) / denominator;
+        double u = ((gateStartX - lineStartX) * dy - (gateStartY - lineStartY) * dx) / denominator;
 
-        // Überprüfe, ob der Schnittpunkt auf dem Segment liegt (0 <= u <= 1)
-        if (u >= 0 && u <= 1) {
-            return line.getPointAt(t);
+        // Check if the intersection point is within the gate segment (0 <= u <= 1)
+        if (u < 0 || u > 1) {
+            return null;
         }
-        return null;
+
+        // Calculate the intersection point on the line
+        Point intersectionPoint = line.getPointAt(t);
+
+        // Check if the line intersects circle (collision boundary of start and endpoint
+        // of gate)
+        if (lineIntersectsCircle(line, gate.getStart(), ballRadius) ||
+                lineIntersectsCircle(line, gate.getEnd(), ballRadius)) {
+            return null; // Intersection invalid due to collision with gate endpoints
+        }
+
+        // Valid intersection point with enough space to gate endpoints
+        return intersectionPoint;
     }
 
-    public Gerade findRayIntersectAllGates(List<Gate> gates, double stepPercent) {
-        // Wähle das Randsegment und das kürzeste Segment
-        Gate edgeSegment = null;
-        Gate shortestSegment = null;
+    /**
+     * Calculates a line that intersects all given gates
+     * The line intersects the starting point (placed on the first gate)
+     * Endpoint (direction of the line) for calculation of the line is on the second
+     * gate
+     * 
+     * @param gates    - List of gates the line has to intersect
+     * @param stepSize - Step size (0 to 1) percentage of the first gate's
+     *                 length, specifies how finely the starting points
+     *                 are iterated along the first gate
+     * @return Line - line that intersects all gates, null if no intersection
+     */
+    public Line findRayIntersectAllGates(List<Gate> gates, double stepSize, double ballRadius) {
+        Gate firstGate = gates.get(0);
+        System.out.println("first: " + firstGate);
+        Gate secondGate = gates.get(1);
 
-        edgeSegment = gates.get(0);
-        shortestSegment = gates.get(1);
-
-        // Iteriere in kleinen Schritten entlang des Startsegments
-        for (double stepStart = 0; stepStart <= 1; stepStart += stepPercent) {
-            // Erstelle den Startpunkt auf dem Randsegment in `t`-Prozent der Länge
+        // Iterate over positions on first gate in increments defined by step size
+        // For every startpoint on the first gate, the loop is executed
+        for (double stepStart = 0; stepStart <= 1; stepStart += stepSize) {
+            // Create start point for the line on the first gate
             Point startPoint = new Point(
-                    edgeSegment.getStart().getX()
-                            + stepStart * (edgeSegment.getEnd().getX() - edgeSegment.getStart().getX()),
-                    edgeSegment.getStart().getY()
-                            + stepStart * (edgeSegment.getEnd().getY() - edgeSegment.getStart().getY()));
+                    firstGate.getStart().getX()
+                            + stepStart * (firstGate.getEnd().getX() - firstGate.getStart().getX()),
+                    firstGate.getStart().getY()
+                            + stepStart * (firstGate.getEnd().getY() - firstGate.getStart().getY()));
 
-            // Castet Halbgeraden in Richtung jedes
-            for (double stepDir = 0; stepDir <= 1; stepDir += stepPercent) {
+            // Iterate over positions on second gate in increments defined by step size
+            for (double stepDir = 0; stepDir <= 1; stepDir += stepSize) {
                 Point directionPoint = new Point(
-                        shortestSegment.getStart().getX()
-                                + stepDir * (shortestSegment.getEnd().getX() - shortestSegment.getStart().getX()),
-                        shortestSegment.getStart().getY()
-                                + stepDir * (shortestSegment.getEnd().getY() - shortestSegment.getStart().getY()));
-                Gerade gerade = new Gerade(startPoint, directionPoint);
+                        secondGate.getStart().getX()
+                                + stepDir * (secondGate.getEnd().getX() - secondGate.getStart().getX()),
+                        secondGate.getStart().getY()
+                                + stepDir * (secondGate.getEnd().getY() - secondGate.getStart().getY()));
+                // Create line, that intersects startpoint and directionpoint
+                Line gerade = new Line(startPoint, directionPoint);
 
                 boolean intersectsAll = true;
+                // Checks if line intersects all gates
                 for (Gate gate : gates) {
                     // Intersection between Segment and line
-                    Point intersectionSegmentGerade = calculateLineIntersectSegment(gerade, gate);
+                    Point intersectionSegmentGerade = calculateLineIntersectSegment(gerade, gate, ballRadius);
+                    // Does not intersect
                     if (intersectionSegmentGerade == null) {
                         intersectsAll = false;
                         break;
@@ -111,13 +155,18 @@ public class Main {
         return null;
     }
 
+    /**
+     * @param input - Contents of file to read as a String
+     * @return List<Gate> - List of Krocketgates, compensated under consideration of
+     *         ball radius
+     */
     public List<Gate> parseFile(String input) {
         List<Gate> gates = new ArrayList<>();
         // Save every line in Array of Strings
         String[] lines = input.split("\n");
         String[] firstLine = lines[0].trim().split(" ");
         double totalCountGates = Integer.parseInt(firstLine[0].trim());
-        double ballRadius = Integer.parseInt(firstLine[1].trim());
+        this.ballRadius = Integer.parseInt(firstLine[1].trim());
         System.out.println("Ball Radius: " + ballRadius);
 
         // For every line split at space and save
@@ -128,10 +177,58 @@ public class Main {
 
             Gate gate = new Gate(one, two);
             // Compensate for radius of ball
-            gate.shrink(ballRadius);
+            // gate.shrink(ballRadius);
 
             gates.add(gate);
         }
         return gates;
+    }
+
+    public double getBallRadius() {
+        return this.ballRadius;
+    }
+
+    /**
+     * Check if a line intersects a circle
+     * 
+     * @param line         - line
+     * @param circleCenter - center of the circle as a Point
+     * @param radius       - radius of circle as double
+     * @return true if the line intersects the circle, else false
+     */
+    private boolean lineIntersectsCircle(Line line, Point circleCenter, double radius) {
+        double cx = circleCenter.getX();
+        double cy = circleCenter.getY();
+        double x1 = line.getStart().getX();
+        double y1 = line.getStart().getY();
+        double dx = line.getDeltaX();
+        double dy = line.getDeltaY();
+
+        // More info in the docs of this task
+        // circle equation: (x − cx)² + (y − cy)²=r²
+        // line equation: x = x1 + t * dx
+        // &&
+        // line equation: y = y1 + t * dy
+        // Short: plug line equation into circle equation and solve for t
+        double a = dx * dx + dy * dy;
+        double b = 2 * (dx * (x1 - cx) + dy * (y1 - cy));
+        double c = (x1 - cx) * (x1 - cx) + (y1 - cy) * (y1 - cy) - radius * radius;
+
+        // Solve quadratic equation a*t^2 + b*t + c = 0 and just check discriminant
+        // If discriminant < 0: no intersection
+        // = 0: one intersection = line is a tangent
+        // > 0: two intersections
+        double discriminant = b * b - 4 * a * c;
+
+        if (discriminant < 0) {
+            return false; // No real number
+        }
+
+        // Use the rest of quadratic formula to get points of intersection
+        double t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+        double t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+
+        // Check if either intersection point lies within the valid range of the line
+        return (t1 >= 0 || t2 >= 0);
     }
 }
