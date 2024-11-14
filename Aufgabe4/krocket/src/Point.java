@@ -1,3 +1,4 @@
+// Represents a 2d point with x and y coordinate
 public class Point {
     private double x;
     private double y;
