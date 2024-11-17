@@ -13,7 +13,7 @@ public class Main {
         String input = null;
         try {
             // Read input from file
-            input = Files.readString(Path.of("krocket/beispielaufgaben/krocket4.txt"));
+            input = Files.readString(Path.of("krocket/beispielaufgaben/krocket5.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -22,7 +22,7 @@ public class Main {
 
         double stepPercent = 10;
         // First try smaller steps
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             stepPercent /= 10;
             Line line = main.findRayIntersectAllGates(gates, stepPercent, main.getBallRadius());
 
@@ -80,7 +80,7 @@ public class Main {
                 - (gateStartY - lineStartY) * (gateEndX - gateStartX)) / denominator;
         double u = ((gateStartX - lineStartX) * dy - (gateStartY - lineStartY) * dx) / denominator;
 
-        // Check if the intersection point is within the gate segment (0 <= u <= 1)
+        // Check if the intersection point is outside of the gate segment 
         if (u < 0 || u > 1) {
             return null;
         }
@@ -113,7 +113,6 @@ public class Main {
      */
     public Line findRayIntersectAllGates(List<Gate> gates, double stepSize, double ballRadius) {
         Gate firstGate = gates.get(0);
-        System.out.println("first: " + firstGate);
         Gate secondGate = gates.get(1);
 
         // Iterate over positions on first gate in increments defined by step size
@@ -167,7 +166,6 @@ public class Main {
         String[] firstLine = lines[0].trim().split(" ");
         double totalCountGates = Integer.parseInt(firstLine[0].trim());
         this.ballRadius = Integer.parseInt(firstLine[1].trim());
-        System.out.println("Ball Radius: " + ballRadius);
 
         // For every line split at space and save
         for (int i = 1; i <= totalCountGates; i++) {
@@ -205,7 +203,7 @@ public class Main {
         double dy = line.getDeltaY();
 
         // More info in the docs of this task
-        // circle equation: (x − cx)² + (y − cy)²=r²
+        // circle equation: (x - cx)^2 + (y - cy)^2=r^2
         // line equation: x = x1 + t * dx
         // &&
         // line equation: y = y1 + t * dy
@@ -220,15 +218,10 @@ public class Main {
         // > 0: two intersections
         double discriminant = b * b - 4 * a * c;
 
-        if (discriminant < 0) {
+        if (discriminant <= 0) {
             return false; // No real number
+        } else {
+            return true;
         }
-
-        // Use the rest of quadratic formula to get points of intersection
-        double t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-        double t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-
-        // Check if either intersection point lies within the valid range of the line
-        return (t1 >= 0 || t2 >= 0);
     }
 }
