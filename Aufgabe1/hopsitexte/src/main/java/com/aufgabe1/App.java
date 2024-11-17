@@ -1,6 +1,9 @@
 package com.aufgabe1;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
@@ -18,6 +21,12 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
 public class App extends Application {
+    private Set<Character> lowerCase = new HashSet<>(
+            Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'));
+    private Set<Character> upperCase = new HashSet<>(
+            Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'));
 
     private static Scene scene;
     private final TextArea textArea = new TextArea();
@@ -57,6 +66,12 @@ public class App extends Application {
         stage.show();
     }
 
+    /**
+     * Receives Text input from the use and displays the processed version with
+     * correct colors for the jumps
+     * 
+     * @param input - Text from the input field
+     */
     private void processText(String input) {
         textFlow.getChildren().clear();
 
@@ -71,10 +86,19 @@ public class App extends Application {
         }
     }
 
+    /**
+     * Merges two TextFlows into one with merged colors of two players. Jump
+     * collisions are colored purple
+     * 
+     * @param tf1 - first player jumps
+     * @param tf2 - second player jumps
+     * @return TextFlow
+     */
     private TextFlow mergeTextFlows(TextFlow tf1, TextFlow tf2) {
         TextFlow result = new TextFlow();
         int count = 0;
 
+        // Loops over every character
         for (int i = 0; i < tf1.getChildren().size(); i++) {
             Text text1 = (Text) tf1.getChildren().get(i);
             Text text2 = (Text) tf2.getChildren().get(i);
@@ -84,6 +108,7 @@ public class App extends Application {
 
             Text mergedText = new Text(text1.getText());
 
+            // Result Color of current character
             Color finalColor = determineColor(color1, color2);
             if (finalColor.equals(Color.PURPLE)) {
                 output.setText("Dieser Text ist leider noch kein Hopsitext :(");
@@ -97,11 +122,19 @@ public class App extends Application {
             }
             mergedText.setFill(finalColor);
 
+            // Display result to user
             result.getChildren().add(mergedText);
         }
         return result;
     }
 
+    /**
+     * Determines the result color based on two input colors
+     * 
+     * @param color1
+     * @param color2
+     * @return Color
+     */
     private Color determineColor(Color color1, Color color2) {
         if (color1.equals(Color.BLACK) && color2.equals(Color.BLACK)) {
             return Color.BLACK;
@@ -119,13 +152,24 @@ public class App extends Application {
         return Color.BLACK;
     }
 
+    /**
+     * Simulates Hopsitext-jumps
+     * 
+     * @param input      - Inputtext as String
+     * @param startIndex - Starting Position of Player
+     * @param color      - Color of Player
+     * @return TextFlow
+     */
     private TextFlow jump(String input, int startIndex, Color color) {
+        // Textflow is a collection of textnodes
         TextFlow tf = new TextFlow();
         int nextIndex = 0;
         char currentChar = ' ';
+        // Textnode is a single character, because characters need to be colored
+        // individually
         Text textNode = new Text();
 
-        // Skip over first non-alaphabetic characters
+        // Skip over first non-alphabetic characters
         int i = 0;
         for (; i < input.length(); i++) {
             if (getAlphabetPosition(input.charAt(nextIndex)) == -1) {
@@ -143,14 +187,17 @@ public class App extends Application {
             tf.getChildren().add(textNode);
         }
 
+        // Main loop
         while (nextIndex < input.length()) {
             currentChar = input.charAt(nextIndex);
             textNode = new Text(String.valueOf(currentChar));
 
-            // If german character
+            // Character that needs to be colored, beause jump starts on this char
             if (getAlphabetPosition(currentChar) != -1) {
+                // Display character in specified color
                 textNode.setFill(color);
                 tf.getChildren().add(textNode);
+
                 int alphabetPosition = getAlphabetPosition(currentChar);
                 int count = 0;
 
@@ -160,13 +207,17 @@ public class App extends Application {
                     if (nextIndex >= input.length()) {
                         break;
                     }
+                    // If Character is an alphabetic character
                     if (getAlphabetPosition(input.charAt(nextIndex)) != -1) {
                         count++;
+                        // Add uncolored character
                         if (count != alphabetPosition) {
                             textNode = new Text(String.valueOf(input.charAt(nextIndex)));
                             tf.getChildren().add(textNode);
                         }
+                        // If Character is non alphabetic -> skip it and don't increment loop counter
                     } else {
+                        // Add uncolored character
                         textNode = new Text(String.valueOf(input.charAt(nextIndex)));
                         tf.getChildren().add(textNode);
                     }
@@ -174,7 +225,7 @@ public class App extends Application {
             } else {
                 textNode = new Text(String.valueOf(input.charAt(nextIndex)));
                 // textNode.setFill(color);
-                System.out.println("fskujdhfsdf");
+                System.out.println("If this gets executed, then there is something wrong");
                 tf.getChildren().add(textNode);
                 nextIndex++;
             }
@@ -182,6 +233,14 @@ public class App extends Application {
         return tf;
     }
 
+    /**
+     * Return the position in the alphabet of the character. Upper and lowercase
+     * characters are treated the same. German "Umlaute" also return a valid
+     * position. Everything else returns -1
+     * 
+     * @param c - Character to check
+     * @return int - Position in the alphabet
+     */
     private int getAlphabetPosition(char c) {
         switch (c) {
             case 'ä':
@@ -199,9 +258,9 @@ public class App extends Application {
                 break;
         }
 
-        if (Character.isUpperCase(c)) {
+        if (Character.isUpperCase(c) && upperCase.contains(c)) {
             return c - 'A' + 1; // A=1, B=2, ..., Z=26
-        } else if (Character.isLowerCase(c)) {
+        } else if (Character.isLowerCase(c) && lowerCase.contains(c)) {
             return c - 'a' + 1; // a=1, b=2, ..., z=26
         } else {
             return -1;
