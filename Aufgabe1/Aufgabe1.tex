@@ -108,45 +108,49 @@
 \section{Lösungsidee / Ansatz}
 \subsection{Anforderungen an das Programm}
 In dieser Aufgabe geht es darum, ein Programm zu erstellen, das Zara hilft, deutsche Hopsitexte zu erstellen. 
-Um ein Programm zu gestalten, damit Zara besonders gut damit arbeiten kann, müssen meiner Meinung nach folgende Kriterien für das Programm erfühlt sein: 
+Um ein Programm zu gestalten, damit Zara besonders gut damit arbeiten kann, müssen meiner Meinung nach, folgende Kriterien für das Programm erfüllt sein: 
 \begin{itemize}
-    \item[1.]Das Programm muss ein graphisches Nutzerinterface mit einem Textfeld haben, in der Zara ihren Text tippen kann.
+    \item[1.]Das Programm muss ein graphisches Nutzerinterface mit einem Textfeld haben, in dem Zara ihren Text tippen kann.
     \item[2.]Die Stellen, an denen die Sprünge stattgefunden haben, müssen wie in den Beispieltexten, rot für den ersten Spieler und blau für den zweiten Spieler, gefärbt sein.
     \item[3.]Da es ein deutscher Text sein soll, müssen Umlaute wie "ä, ö, ü" und "ß" auch unterstützt werden.
-    \item[4.]Wenn der Text kein Hopsitext ist, muss die Stelle, an dem sich die Spieler treffen, farblich markiert sein, damit Zara merkt, dass sie Änderungen vornehmen muss.
+    \item[4.]Wenn der Text kein Hopsitext ist, muss die Stelle, an dem sich die Spieler treffen, farblich markiert sein, damit Zara weiß, dass sie Änderungen vornehmen muss.
     \item[5.]Es muss anzeigen, ob der eingegebene Text ein "Hopsitext" ist oder nicht.
-    \item[6.]Die Ausgabe des Programmes und die farbliche Markierungen des Eingabetextes muss dynamisch und automatisch mit dem Tippen von Zara geschehen und Zara kann an beliebigen Stellen im Eingabetext Änderungen vornehmen (Quality of life).
+    \item[6.]Die Ausgabe des Programmes und die farbliche Markierungen des Eingabetextes müssen dynamisch und automatisch mit dem Tippen von Zara geschehen und Zara kann an beliebigen Stellen im Eingabetext Änderungen vornehmen (Quality of life).
 \end{itemize}
-Auf der linken Seite des Programmes soll Zara ihren Text tippen können und auf der rechten Seite soll dieser Text, an den Sprüngen der Spieler farblich markiert - wie im Beispieltext, angezeigt werden.
+\textbf{Grobe Struktur}
+\newline
+
+Auf der linken Seite des Programmes soll Zara ihren Text tippen können und auf der rechten Seite soll dieser Text an den Sprüngen der Spieler farblich markiert, - wie im Beispieltext, angezeigt werden.
 So sieht Zara beim tippen, ob ihre aktuelle Eingabe ein Hopsitext ist oder nicht. Zusätzlich soll oberhalb des Textfeldes deutlich angezeigt werden, ob es sich um einen Hopsitext handelt.
-Wenn diese Kriterien erfüllt sind, hat Zara ein Programm, in der sie einen Text schreiben kann, das ihr beim tippen anzeigt, ob ihre aktuelle Eingabe ein Hopsitext ist oder nicht. Falls es kein Hopsitext ist, sieht Zara das sofort und kann ihren Text bzw. einfach die letzen Worte mit dem Sprung, ändern.
+Wenn diese Kriterien erfüllt sind, hat Zara ein Programm, in der sie einen Text schreiben kann, das ihr beim tippen anzeigt, ob ihre aktuelle Eingabe ein Hopsitext ist oder nicht. Falls es kein Hopsitext ist, sieht Zara das sofort und kann ihren Text bzw. einfach die letzen Worte mit dem Sprung ändern.
 
 \section{Umsetzung}
-Um dieses Programm zu erstellen, habe ich JavaFX als GUI Library verwenden, welches mir grundlegende Bausteine für das Interface zur Verfügung stellt. Zur Implementierung werden die in \text{1.1} angesprochenen Anforderungen einzeln umgesetzt:
+Um dieses Programm zu erstellen, habe ich JavaFX als GUI Library verwenden, welches mir grundlegende Bausteine für das Interface zur Verfügung stellt. Zur Implementierung werden die in \text{(1.1)} angesprochenen Anforderungen einzeln umgesetzt:
 
 \begin{itemize}
-  \item [1.] Zu Begin erstelle ich mit Modulen ein Textfeld ("TextArea") auf der linken Seite des Programms, eine formatierte Textanzeige ("Textflow") auf der rechten Seite, in der die Hopsisprünge markiert werden und einen Statustext ("Text") mit dem Ergebnis ganz oben.
+  \item [1.] Zu Beginn erstelle ich mit JavaFX Modulen ein Textfeld ("TextArea") auf der linken Seite des Programms, eine formatierte Textanzeige ("Textflow") auf der rechten Seite, in der die Hopsisprünge markiert werden und einen Statustext ("Text") mit dem Ergebnis ganz oben.
   Das Textfeld bekommt einen Listener, der jedes mal gerufen wird, wenn sich der Text im Textfeld ändert. So wird jedes mal das Ergebnis und der formatierte Text auf der rechten Seite geupdated, sobald sich die Texteingabe ändert.
-  \item [2.] Eine Methode die die Texthops-Regeln beginnend an einer Startposition simuliert, muss erstellt werden. Diese Methode wird zweimal aufgerufen, jeweils einmal für die Roten und die Blauen Sprünge. Die Methode funktioniert wie folgt:
+  \item [2.] Eine Methode wird erstellt, die die Texthops-Sprünge ab einer Startposition simuliert. Diese Methode wird zweimal aufgerufen, jeweils einmal für die Roten und die Blauen Sprünge. Die Methode funktioniert wie folgt:
   \begin{itemize}
-    \item [1.] Der Eingabetext wird als String und die Farbe, mit der gesprungen werden soll, wird übergeben.
-    \item [2.] Die ersten nicht Zeichen, die keine Buchstaben sind werden bei der Simulation der Texthops-regeln übersprungen und bei dem ersten Zeichen, das ein Buchstabe ist, wird begonnen.
+    \item [1.] Der Eingabetext als String und die Farbe, mit der gesprungen werden soll, wird übergeben.
+    \item [2.] Die ersten Zeichen, die keine Buchstaben sind, werden bei der Simulation der Texthops-Sprünge übersprungen und bei dem ersten Zeichen, das ein Buchstabe ist, wird begonnen.
     \item [3.] Dieses Zeichen wird mit der übergebenen Farbe gefärbt und zu einer Collection aus Zeichen (TextFlow) hinzugefügt. Die Position des Buchstabens im Alphabet wird sich gemerkt; z.B. als $n$.
     \item [4.] Dann werden die nächsten $n$ Buchstaben übersprungen. Alle Zeichen, die keine Buchstaben sind, werden ignoriert. Alle Zeichen, inklusive der Nicht-Buchstaben werden ungefärbt zu dem TextFlow hinzugefügt.
     \item [5.] Anschließend wird der Buchstabe bei dem wir nach den Sprüngen angekommen sind, mit der übergeben Farbe gefärbt und zum Textflow hinzugefügt. Diese Schleife (3. - 5.) wird wiederholt, bis der Inputtext vollständig geparst wurde.
     \item [6.] Das resultierende TextFlow enthält nun den gesamten Inputtext, wobei die Hopsisprünge farblich markiert sind. Dieses Textflow wird zurückgegeben.
   \end{itemize}
-  \item [3.] Um die Sprungweite eines Buchstabens gleich weit wie ihre Position im Alphabet zu machen und Umlaute auch zu beachten, muss eine Methode erstellt werden, die die zugehörige Sprungweite von einem übergebenen Zeichen zurückgibt:
-  Wenn das übergebene Zeichen ein deutsches Sonderzeichen ist, wird eine festgelegt Position zurückgegeben. Wenn es sich um einen normalen kleinen Buchstaben handelt, kann man um die Position im Alphabet zu bekommen, den ASCII-Wert dem Zeichen mit dem ASCII-Wert von "A" subtrahieren und 1 addieren. So ist A=1, B=2, etc.
+  \item [3.] Um die Sprungweite eines Buchstabens gleich weit wie ihre Position im Alphabet zu machen und Umlaute auch zu beachten, muss eine Methode erstellt werden, die die zugehörige Sprungweite von einem übergebenen Zeichen zurück gibt:
+  \newline
+  Wenn das Zeichen ein deutsches Sonderzeichen ist, wird eine festgelegte Position zurückgegeben. Wenn es sich um einen normalen großen Buchstaben handelt, kann man um die Position im Alphabet zu bekommen, den ASCII-Wert von dem Zeichen mit dem ASCII-Wert von "A" subtrahieren und 1 addieren. Somit ist A=1, B=2, etc.
   Kleinbuchstaben funktionieren analog, nur wird hier der ASCII-Wert von "a" abgezogen. Alle anderen Zeichen geben -1 zurück.
-  \item[4.] Um die Stelle, bei der sich beide Spieler treffen, farblich zu markieren (z.B. \textbf{lila}), muss die Methode von (2.) verwendet werden. Diese wird verwendet, um die Sprünge von beiden Spielern zu berechnen und in einem TextFlow farblich zu markieren.
-  Nun müssen diese beiden TextFlows verglichen werden, und wenn an einer Stelle des Texts, der Buchstabe in beiden TextFlows farblich markiert sind, treffen sich die beiden Spieler hier. Daher muss für dieses Teilproblem eine Methode erstellt werden, die diese beiden TextFlows mit den einzelnen Sprüngen vereinigt und 
+  \item[4.] Um die Stelle zu markieren, an der sich beide Spieler treffen (z.B. in \textbf{lila}), wird die Methode aus (2.) verwendet. Sie wird aufgerufen, um die Sprünge von beiden Spielern zu berechnen und in einem resultierendem TextFlow farblich zu markieren.
+  Nun müssen diese beiden TextFlows verglichen werden. Wenn an einer bestimmten Stelle beide Buchstaben in beiden TextFlows farblich markiert sind, bedeutet das, dass sich die Spieler an dieser Stelle treffen. Daher muss für dieses Teilproblem eine Methode erstellt werden, die diese beiden TextFlows vereinigt und 
   wenn sich die Spieler treffen, farblich markiert (lila), und dies als Ergebnis dem Nutzer anzeigt.
+  \newline Dies geht indem man über Zeichen in den beiden TextFlows iteriert und überprüft, ob ein Buchstabe in beiden TextFlows farblich markiert ist. Wenn ja, ist an diesem Buchstaben eine Kollision von den Sprüngen, und wird im Ergebnistextflow \textbf{lila} markiert.
+  Wenn keine Kollision an einem Buchstaben vorherrscht, wird der farblich markierte Buchstaben aus einem der beiden TextFlows übernommen. Wenn an einer Stelle kein Buchstabe farblich markiert ist, wird das Zeichen ungefärbt zum Resultattextflow hinzugefügt. 
   \item[5.] Wenn die Methode aus (4.) an beliebiger Stelle lila anzeigt, ist der übergebenen Text kein Hopsitext mehr. Dies wir über dem Nutzereingabefeld bekenntlich gemacht.
   \item[6.] Das von oben genannte wird jedes mal ausführt, wenn sich das Eingabefeld ändert.
 \end{itemize}
-
-\newpage
 
 \section{Beispiele}
 \subsection{Beispiele BwInf-Aufgabenangaben}
@@ -175,7 +179,6 @@ Hier ist das Progamm mit den Angabetexten der Junioraufgabe 2 und der Aufgabe 1 
 \newline
 \includegraphics[scale=0.55]{kurz3.png}
 
-\newpage
 \textbf{Random Input}
 \newline
 \newline
