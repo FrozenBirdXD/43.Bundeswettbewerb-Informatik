@@ -42,7 +42,7 @@ public class Main {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("Maximale Teilnehmerzahl: " + maxParticipants + "\n");
-            sb.append("Beste Streckenlängen: " + distances + "\n");
+            sb.append("Beste Streckenlängen in m: " + distances + "\n");
             for (int i = 0; i < distances.size(); i++) {
                 sb.append("Strecke " + distances.get(i) + " m: Teilnehmer " + participants.get(i) + "\n");
             }
@@ -56,7 +56,7 @@ public class Main {
         String input = null;
         try {
             // Read input from file
-            input = Files.readString(Path.of("beispielaufgaben/wandern1.txt"));
+            input = Files.readString(Path.of("./wandertag/beispielaufgaben/wandern5.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
