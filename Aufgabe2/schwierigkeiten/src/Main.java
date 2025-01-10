@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 public class Main {
     private int nNumKlausuren;
@@ -25,7 +28,7 @@ public class Main {
         System.out.println("Sorted Tasks no conflics - Result: ");
         Main main = new Main();
         try {
-            main.readKlausurInput("schwierigkeiten/beispielaufgaben/schwierigkeiten0.txt");
+            main.readKlausurInput("schwierigkeiten/beispielaufgaben/test.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,7 +42,7 @@ public class Main {
         System.out.println("Sorted Tasks with conflics - Result: ");
         Main main = new Main();
         try {
-            main.readKlausurInput("schwierigkeiten/beispielaufgaben/schwierigkeiten0.txt");
+            main.readKlausurInput("schwierigkeiten/beispielaufgaben/test.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,7 +52,22 @@ public class Main {
         System.out.println(main.getResultKlausur());
     }
 
+    public void test() {
+        try {
+            readKlausurInput("schwierigkeiten/beispielaufgaben/test.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, Map<String, Integer>> graph = baueGraphMitMehrheit(klausuren);
+        List<String> sortierung = berechneReihenfolgeMitMehrheit(graph);
+
+        System.out.println("Sortierte Anordnung der gewünschten Aufgaben: " + sortierung);
+    }
+
     public static void main(String[] args) {
+        Main main = new Main();
+        main.test();
         testNoConflicts();
         testWithConflicts();
     }
@@ -110,21 +128,23 @@ public class Main {
                 graph.putIfAbsent(easier, new HashMap<>());
                 graph.putIfAbsent(harder, new HashMap<>());
 
-                // Update count realtion - in other words: update weight of Edge
+                // Update count relation - in other words: update weight of Edge
                 graph.get(easier).put(harder, graph.get(easier).getOrDefault(harder, 0) + 1);
                 graph.get(harder).put(easier, graph.get(harder).getOrDefault(easier, 0) - 1);
             }
         }
-        
+
         // print map
-        /* for (Map.Entry<String,Map<String,Integer>> entry : graph.entrySet()) {
-            System.out.println("Key: " + entry.getKey());
-            System.out.println("Values: ");
-            for (Map.Entry<String,Integer> e : entry.getValue().entrySet()) {
-                System.out.println("\tKey: " + e.getKey());
-                System.out.println("\tValues: " + e.getValue());
-            }
-        } */
+        /*
+         * for (Map.Entry<String,Map<String,Integer>> entry : graph.entrySet()) {
+         * System.out.println("Key: " + entry.getKey());
+         * System.out.println("Values: ");
+         * for (Map.Entry<String,Integer> e : entry.getValue().entrySet()) {
+         * System.out.println("\tKey: " + e.getKey());
+         * System.out.println("\tValues: " + e.getValue());
+         * }
+         * }
+         */
         return graph;
     }
 
@@ -173,7 +193,7 @@ public class Main {
     }
 
     // TODO: FIX
-    
+
     public List<String> sortGraphTopologicallyWithConflicts(Map<String, Map<String, Integer>> graph) {
         Map<String, Integer> inDegree = new HashMap<>();
         List<String> result = new ArrayList<>();

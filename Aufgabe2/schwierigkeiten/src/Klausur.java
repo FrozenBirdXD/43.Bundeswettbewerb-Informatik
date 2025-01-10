@@ -20,6 +20,14 @@ public class Klausur {
         this.tasks = tasks;
     }
 
+    public int size() {
+        return tasks.size();
+    }
+
+    public String get(int i) {
+        return tasks.get(i);
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
