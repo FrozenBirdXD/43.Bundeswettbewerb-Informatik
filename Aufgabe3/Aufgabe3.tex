@@ -95,11 +95,11 @@
 \vspace{0.5cm}
 
 \section{Lösungsidee / Ansatz}
-In dieser Aufgabe haben wir n Personen, die jeweils eine minimale und maximale Strecke angegeben haben, in der sie einen Lauf mitrennen würden. Diese Werte müssen erst aus einer Datei gelesen werden und in einen passenden Datentyp gespeichert werden.
-Um drei Strecken zu erhalten, bei denen die meisten Personen mitrennen, zu erhalten, muss man zuerst eine Liste aus Strecken erstellen, die infrage kommen. Hierfür kann man alle minimale und maximale Streckenwünsche verwenden,
-da diese als Intervallgrenzen gesehen werden können, und so dieses Intervall alle möglichen Werte zwischen diesen Grenzen, abdeckt. Anschließend müssen für jede infragekommende Strecke die Teilnehmer ermittelt werden, die bereit wären mitzurennen.  
+In dieser Aufgabe haben wir $n$ Personen, die jeweils eine minimale und maximale Strecke angegeben haben, in der sie einen Lauf mitrennen würden. Diese Werte müssen erst aus einer Datei gelesen werden und in einen passenden Datentyp gespeichert werden.
+Um drei Strecken zu erhalten, bei denen die meisten Personen mitrennen, muss man zuerst eine Liste aus Strecken erstellen, die infrage kommen. Hierfür kann man alle minimale und maximale Streckenwünsche verwenden,
+da diese als Intervallgrenzen gesehen werden können, und so dieses Intervall alle möglichen Werte zwischen diesen Grenzen, abdeckt. Anschließend müssen für jede Strecke die Teilnehmer ermittelt werden, die bereit wären mitzurennen.  
 Dies kann man mit einer Hashmap implementieren, bei dem die Schlüssel die Streckenlängen sind und die Werte von einem Datentyp sind, in dem alle Teilnehmer enthalten sind, die bei der Strecke (Schlüsselwert) mitlaufen würden. 
-Nun werden alle möglichen dreier Kombinationen an Streckenlängen erstellt und verglichen, um drei Streckenlängen zu finden, bei dem es die meisten Mitläufer gäbe. Dies kann mit drei verschachtelten for-Schleifen, die über jede Strecke iterieren, umgesetzt werden. 
+Nun werden alle möglichen dreier Kombinationen an Streckenlängen erstellt und verglichen, um drei Streckenlängen zu finden bei denen es die meisten Mitläufer gäbe. Dies kann mit drei verschachtelten for-Schleifen, die über jede Strecke iterieren, umgesetzt werden. 
 Abschließend wird die Gesamtzahl an Teilnehmer bei den drei Strecken ausgegeben, sowie die Strecken und die Mitrennenden selbst.
 \newline
 Da so eine Implementierung mit drei for-Schleifen eine asymptotische Laufzeit von O(n³) hat, müssen einige Optimierungen vorgenommen werden, damit die Ausführung des Programms auch bei einer Eingabe von n $\geq$ 800 (Beispielaufgabe 7) in einer realistischen Zeit ausgeführt werden kann.
@@ -108,7 +108,7 @@ $\rightarrow$ Siehe Umsetzung
 
 \section{Umsetzung}
 \subsection{Einlesung der Daten}
-Um die Daten aus einer Datei zu lesen, wird die Datei als ein String gespeichert, an den newline Zeichen ("\textbackslash n") gespalten und jede Zeile als ein Element im Array gespeichert. Jedes Element wird an den Leerzeichen gespalten, um an die Zahlenwerte zu kommen, die als Attribute in einem 
+Um die Daten aus einer Datei zu lesen, wird der Inhalt der Datei als ein String gespeichert, an den newline Zeichen ("\textbackslash n") gespalten und jede Zeile als ein Element in einem String Array gespeichert. Jedes Element wird an den Leerzeichen gespalten, um an die Zahlenwerte zu kommen, die als Attribute in einem 
 Objekt gespeichert werden. Jedes dieser "Streckenobjekte" entspricht somit einer Zeile aus der Eingabedatei. Diese Objekt werden in einer Liste gespeichert.
 
 \subsection{Berechnung der drei besten Streckenlängen}
@@ -120,33 +120,33 @@ Um die drei am besten passende Streckenlängen aus den eingelesenen Streckenwün
   in eine Liste hinzugefügt werden.
   \item [2.] \textbf{Zuordnung der Strecken auf Mitrenner der Strecken}
   \newline
-  Um die infragekommende Strecken auf die Teilnehmer, die bei dieser Streckenlänge mitlaufen würden, zuzuordnen, bietet sich eine Hashmap an. Hierbei entsprechen die Schlüssel die Streckenlängen (Ganzzahl) und die Werte der Hashmap die mitlaufenden Teilnehmer (BitSet). Hierfür bieten sich BitSets an, da nur
-  gespeichert werden muss, ob ein Teilnehmer mitläuft. Diese BitSets sind von der Länge n (Anzahl an Personen mit Streckenwünschen), bei dem eine 1 (true) an der Stelle x bedeutet, das der Teilnehmer x bei dieser Streckenlänge mitmachen würde.
-  Analog zu dem, bedeutet eine 0 (false) an der Stelle y, dass der Teilnehmer y bei dieser Streckenlänge nicht mitmacht. Diese Wahl an Datenstruktur wird begründet durch die platzeffiziente Speicherung der Teilnehmer und die daduch ermöglichten schnellen
-  Mengenoperationen (Vereinigung, Schnittmenge etc.) durch bitweise Operatoren. So kann z.B. mit der Schnittmenge - logical or Operator - schnell überprüft werden, wieviele Teilnehmer insgesamt bei unterschiedlichen Strecken teilnehmen würden. 
-  Nun kann für dieses Teilproblem eine Schleife über die möglichen Strecken und eine innere Schleife, die über die Streckenwünsche iteriert, ein BitSet für jede Strecke angelegt werden.
+  Um die infragekommende Strecken auf die Teilnehmer, die bei dieser Streckenlänge mitlaufen würden, zuzuordnen, bietet sich eine Hashmap an. Hierbei entsprechen die Schlüssel die Streckenlängen (Ganzzahl) und die Werte der Hashmap die mitlaufenden Teilnehmer (BitSet). Für die Teilnehmer bieten sich BitSets an, da nur
+  gespeichert werden muss, ob ein Teilnehmer mitläuft. Diese BitSets sind von der Länge $n$ (Anzahl an Personen mit Streckenwünschen), bei dem eine 1 (true) an der Stelle $x$ bedeutet, das der $x$-te Teilnehmer bei dieser Streckenlänge mitmachen würde.
+  Analog zu dem, bedeutet eine 0 (false) an der Stelle $x$, dass der $x$-te Teilnehmer bei dieser Streckenlänge nicht mitmacht. Diese Wahl an Datenstruktur wird begründet durch die platzeffiziente Speicherung der Teilnehmer und die daduch ermöglichten schnellen
+  Mengenoperationen (Vereinigung, Schnittmenge etc.) durch bitweise Operatoren. So kann z.B. mit der Schnittmenge - logical OR Operator - schnell überprüft werden, wieviele Teilnehmer insgesamt bei unterschiedlichen Strecken teilnehmen würden. 
+  Nun kann für dieses Teilproblem eine Schleife, die über die möglichen Strecken iteriert und die ein BitSet für jede Streckenlänge anlegt, erstellt werden. Eine innere Schleife, die über die Streckenwünsche der Teilnehmer iteriert, setzt dann die Bits im BitSet zu 1, wenn der Teilnehmer mitmacht.
   \item [3.] \textbf{Parallisierte Ausführung zur Suche der besten dreier Streckenkombination}
   \newline
   Um für alle möglichen Kombinationen von drei Streckenlängen zu berechnen, wie viele Teilnehmer sie abdecken kann, müssen drei verschachtelte for-Schleifen verwendet werden. Diese Verschachtelung hat folgende Struktur:
   \begin{itemize}
-    \item [1.] Äußere Schleife (i): Wählt die erste Strecke in einer Dreierkombination.
-    \item [2.] Mittlere Schleife (j): Wählt die zweite Strecke, nach i.
-    \item [3.] Innere Schleife (k): Wählt die dritte Strecke, nach j.
+    \item [1.] Äußere Schleife ($i$): Wählt die erste Strecke in einer Dreierkombination.
+    \item [2.] Mittlere Schleife ($j$): Wählt die zweite Strecke; eins nach $i$.
+    \item [3.] Innere Schleife ($k$): Wählt die dritte Strecke; eins nach $j$.
   \end{itemize}
-  Zusammen prüfen die Schleifen jede mögliche Kombination von drei Streckenlängen, um die beste Teilnehmeranzahl zu berechnen. Um die insgesamte Teilnehmeranzahl von drei verschiedenen Strecken zu berechnen, können auf die BitSets, die die Teilnehmender bei einer Strecke darstellen, logische or Operationen ausgeführt werden,
+  Zusammen prüfen die Schleifen jede mögliche Kombination von drei Streckenlängen, um die beste Teilnehmeranzahl zu berechnen. Um die insgesamte Teilnehmeranzahl von drei verschiedenen Strecken zu berechnen, können auf die BitSets, die die Teilnehmender bei einer Strecke darstellen, logische OR Operationen ausgeführt werden,
   um die Vereinigung der ganzen Teilnehmer zu bekommen. Nun müssen nur alle 1-er Bits gezählt werden, um die Gesamtzahl zu erhalten. 
   \newline
-  Dennoch hat diese Schleifenstruktur eine asymptotische Laufzeit von O(n³) als Folge. Asymptotisch gesehen, kann dies nicht mit dieser Implementierung nicht verhindert werden. Allerdings können mehrere Threads zur Ausführung verwendet werden, um die reale Laufzeit des Programmes, je nach Anzahl der Threads, drastisch zu verringern.
-  Man kann die Klasse IntegerStream aus Java verwenden, um parallele Streams zu erhalten, um die äußere Schleife (i) zu parallelisieren. Die Schleife wird auf alle Kerne des Prozessors verteilt, was bedeutet, dass die Berechnungen in den Iterationen parallel ablaufen. Somit könnte die Laufzeit $O(\frac{n^3}{T})$, wobei T die Anzahl
+  Dennoch hat diese Schleifenstruktur eine asymptotische Laufzeit von O(n³) als Folge. Asymptotisch gesehen, kann dies mit dieser Implementierung nicht verhindert werden. Allerdings können mehrere Threads zur Ausführung verwendet werden, um die reale Laufzeit des Programmes, je nach Anzahl der Threads, drastisch zu verringern.
+  Man kann die Klasse IntegerStream aus Java verwenden, um parallele Streams zu erhalten, um die äußere Schleife ($i$) zu parallelisieren. Die Schleife wird auf alle Kerne des Prozessors verteilt, was bedeutet, dass die Berechnungen in den Iterationen parallel ablaufen. Somit könnte die Laufzeit $O(\frac{n^3}{T})$, wobei T die Anzahl
   der Theads ist, annähern. Asymptotisch gesehen macht die parallelisierte Implementierung keinen Unterschied, praktisch ist allerdings oft ein großer Unterschied zu spüren.
   \newline
-  Für diese parallelisierte Implementierung ist es wichtig, außerhalb von den einzelnen Threads das beste Ergebnis von Streckenkombinationen zu speichern. In Java können hierfür Atomic Variablen verwendet werden, um unteilbare und threadsichere Operationen zu garantieren. 
-  Daher deklariert man vor den Schleifen, Atomic Variablen, die die maximale Anzahl an Teilnehmer speichern, sowie die zugehörigen Streckenlängen und Teilnehmer. In der innersten Schleife, müssen die Zugriffe auf diese Variablen in einem "synchronized" Block stehen, damit nur
-  ein Thread an einem Zeitpunkt auf diese Variablen zugreift.
+  Für diese parallelisierte Implementierung ist es wichtig, außerhalb von den einzelnen Threads, das beste Ergebnis von Streckenkombinationen zu speichern. In Java können hierfür Atomic Variablen verwendet werden, um unteilbare und threadsichere Operationen zu garantieren. 
+  Daher deklariert man vor den Schleifen, Atomic Variablen, die die maximale Anzahl an Teilnehmer speichern, sowie die zugehörigen Streckenlängen und Teilnehmer. In der innersten Schleife ($k$), müssen die Zugriffe auf diese Variablen in einem "synchronized" Block stehen, damit nur
+  ein Thread an einem Zeitpunkt auf diese Variablen zugreifen kann.
   \item[4.] \textbf{Umwandlung der Bitsets in lesbare Formen und Ausgabe}
   \newline
-  Nun werden die BitSets in eine Liste von Teilnehmernummer konvertiert, indem die Indizes des 1-er Bits in dem BitSet in eine Liste hinzugefügt werden. Die Indizes entsprechen den Teilnehmernummer, beginnend mit 0.
-  Zuletzt werden die berechneten Streckenlängen, Teilnehmender und die gesamte Teilnehmeranzahl auf die Konsole in einem lesbaren Format ausgegeben.
+  Nun werden die BitSets in eine Liste von Teilnehmernummern konvertiert, indem die Indizes des 1-er Bits in dem BitSet in eine Liste hinzugefügt werden. Die $Indizes entsprechen den Teilnehmernummern$, beginnend mit 0.
+  Zuletzt werden die berechneten Streckenlängen, Teilnehmender und die gesamte Teilnehmeranzahl auf der Konsole in einem lesbaren Format ausgegeben.
 \end{itemize}
 
 \section{Beispiele}
@@ -156,7 +156,7 @@ Zusätzlich wird die Ausführungzeit in Sekunden (intel i3-12100f) ausgegeben.
   \item [1.] \textbf{wandern1.txt}
   \begin{verbatim}
 Maximale Teilnehmerzahl: 6
-Beste Streckenlängen: [22, 51, 64]
+Beste Streckenlängen in m: [22, 51, 64]
 Strecke 22 m: Teilnehmer [0, 1]
 Strecke 51 m: Teilnehmer [3, 4]
 Strecke 64 m: Teilnehmer [5, 6]
@@ -166,7 +166,7 @@ Ausführungszeit in Sekunden: 0.022
   \item [2.] \textbf{wandern2.txt}
   \begin{verbatim}
 Maximale Teilnehmerzahl: 6
-Beste Streckenlängen: [10, 60, 90]
+Beste Streckenlängen in m: [10, 60, 90]
 Strecke 10 m: Teilnehmer [4, 5]
 Strecke 60 m: Teilnehmer [0, 2, 3]
 Strecke 90 m: Teilnehmer [1]
@@ -176,7 +176,7 @@ Ausführungszeit in Sekunden: 0.021
   \item [3.] \textbf{wandern3.txt}
   \begin{verbatim}
 Maximale Teilnehmerzahl: 10
-Beste Streckenlängen: [22, 66, 92]
+Beste Streckenlängen in m: [22, 66, 92]
 Strecke 22 m: Teilnehmer [6, 8, 9]
 Strecke 66 m: Teilnehmer [0, 1, 2, 5]
 Strecke 92 m: Teilnehmer [3, 4, 7]
@@ -186,7 +186,7 @@ Ausführungszeit in Sekunden: 0.022
   \item [4.] \textbf{wandern4.txt}
   \begin{verbatim}
 Maximale Teilnehmerzahl: 79
-Beste Streckenlängen: [524, 811, 922]
+Beste Streckenlängen in m: [524, 811, 922]
 Strecke 524 m: Teilnehmer [64, 65, 3, 67, 6, 7, 71, 9, 10, 11, 12, 78, 80, 81, 
                           82, 19, 83, 20, 23, 24, 25, 90, 91, 97, 34, 98, 99, 
                           37, 38, 39, 40, 42, 47, 54, 56, 57, 58, 60]
@@ -201,7 +201,7 @@ Ausführungszeit in Sekunden: 0.138
   \item [5.] \textbf{wandern5.txt}
   \begin{verbatim}
 Maximale Teilnehmerzahl: 153
-Beste Streckenlängen: [36696, 60828, 88584]
+Beste Streckenlängen in m: [36696, 60828, 88584]
 Strecke 36696 m: Teilnehmer [128, 1, 2, 5, 133, 7, 135, 136, 11, 14, 144, 17, 145, 
                             20, 21, 151, 26, 27, 29, 32, 161, 163, 37, 38, 39, 40,
                             168, 42, 170, 44, 45, 174, 47, 175, 176, 177, 178, 180, 
@@ -223,10 +223,13 @@ Strecke 88584 m: Teilnehmer [130, 3, 131, 5, 6, 8, 9, 10, 139, 140, 13, 142, 15,
                             59, 187, 191, 76, 77, 80, 84, 90, 94, 100, 105, 114, 
                             116, 119, 120]
   \end{verbatim}
+Ausführungszeit in Sekunden: 1.045
+\newline
+
   \item [6.] \textbf{wandern6.txt}
   \begin{verbatim}
 Maximale Teilnehmerzahl: 330
-Beste Streckenlängen: [42834, 74810, 92920]
+Beste Streckenlängen in m: [42834, 74810, 92920]
 Strecke 42834 m: Teilnehmer [0, 257, 260, 261, 262, 9, 266, 18, 276, 277, 278, 279, 
                             280, 25, 283, 284, 30, 32, 288, 33, 290, 293, 40, 41, 
                             297, 43, 299, 44, 300, 45, 301, 46, 50, 306, 51, 307, 
@@ -271,7 +274,7 @@ Ausführungszeit in Sekunden: 12.843
   \item [7.] \textbf{wandern7.txt}
   \begin{verbatim}
 Maximale Teilnehmerzahl: 551
-Beste Streckenlängen: [39520, 76088, 91584]
+Beste Streckenlängen in m: [39520, 76088, 91584]
 Strecke 39520 m: Teilnehmer [512, 3, 4, 5, 517, 519, 8, 520, 9, 10, 11, 523, 524, 15, 
                             527, 16, 528, 529, 530, 531, 532, 21, 533, 26, 27, 539, 28, 
                             29, 541, 30, 545, 547, 37, 550, 40, 41, 42, 44, 45, 558, 
