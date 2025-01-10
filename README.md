@@ -1,1 +1,1 @@
-Here are my solutions for the 43. National Computer Science competition.
+This repository contains my solutions and my endresults for tasks from the Bundeswettbewerb Informatik (BWINF), a national computer science competition in Germany.

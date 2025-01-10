@@ -1,0 +1,179 @@
+\documentclass[a4paper,10pt,ngerman]{scrartcl}
+\usepackage{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[a4paper,margin=2.5cm,footskip=0.5cm]{geometry}
+\usepackage{listings}
+
+\newcommand{\Aufgabe}{Aufgabe 2: Schwierigkeiten}
+\newcommand{\TeamId}{00178}
+\newcommand{\TeamName}{Team-Name}
+\newcommand{\Namen}{Matthew Greiner}
+ 
+% Kopf- und Fußzeilen
+\usepackage{scrlayer-scrpage, lastpage}
+\setkomafont{pageheadfoot}{\large\textrm}
+\lohead{\Aufgabe}
+\rohead{Team-ID: \TeamId}
+\cfoot*{\thepage{}/\pageref{LastPage}}
+
+% Position des Titels
+\usepackage{titling}
+\setlength{\droptitle}{-1.0cm}
+
+% Für mathematische Befehle und Symbole
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Für Bilder
+\usepackage{graphicx}
+
+% Für Algorithmen
+\usepackage{algpseudocode}
+
+% Für Quelltext
+\usepackage{listings}
+\usepackage{color}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{
+  keywordstyle=\color{blue},commentstyle=\color{mygreen},
+  stringstyle=\color{mymauve},rulecolor=\color{black},
+  basicstyle=\footnotesize\ttfamily,numberstyle=\tiny\color{mygray},
+  captionpos=b, % sets the caption-position to bottom
+  keepspaces=true, % keeps spaces in text
+  numbers=left, numbersep=5pt, showspaces=false,showstringspaces=true,
+  showtabs=false, stepnumber=2, tabsize=2, title=\lstname
+}
+\lstdefinelanguage{JavaScript}{ % JavaScript ist als einzige Sprache noch nicht vordefiniert
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=true
+}
+
+% Diese beiden Pakete müssen zuletzt geladen werden
+%\usepackage{hyperref} % Anklickbare Links im Dokument
+\usepackage{cleveref}
+
+% Daten für die Titelseite
+\title{\textbf{\Huge\Aufgabe}}
+\author{\LARGE Team-ID: \LARGE \TeamId \\\\
+	    \LARGE Team-Name: \LARGE \TeamName \\\\
+	    \LARGE Bearbeiter/-innen dieser Aufgabe: \\ 
+	    \LARGE \Namen\\\\}
+\date{\LARGE\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{0.5cm}
+
+\section{Lösungsidee / Ansatz}
+
+Bei dieser Aufgabe ist es das Ziel, eine "gute" Anordnung der gegebenen Aufgaben zu finden. Diese Anordnung basiert auf den eingelesenen
+Klausuren und dessen Schwierigkeitabstufungen. Die Aufgabenerstellung erfordert das Bearbeiten der Aufgabe einmal unter der Annahme, dass
+sich die Schwierigkeiten in den gegebenen Klausuren nicht wiedersprechen und einmal, dass die Klausuren solche Konflikte enthalten können. Daher habe ich dieses Kapitel in 
+zwei Teile untergliedert, um jeweils unter einen von den Annahmen zu arbeiten.
+Mein Ansatz dieses Problem zu lösen, ist die Untergliederung in folgende Teilaufgaben:
+
+\subsection{Annahme: Keine Konflikte in Klausuren}
+
+\begin{itemize}
+  \item[1.] \textbf{Texteingabe lesen und Inhalt strukturieren}
+  \newline
+  Mithilfe von einem BufferedReader Zeilen der Inputdatei lesen und in entsprechende Members der Klasse speichern.
+  \item[2.] \textbf{Schwierigkeitsanordnung analysieren und Einordnung in passende Datenstruktur}
+  \newline
+  Da die Aufgaben der Klausuren nur nach Schwierigkeit geordnet sind, gibt es nur eine "leichter als" Beziehung in den Aufgaben. In kurz: Eins kommt immer vor einem Anderem.
+  Diese Eigenschaft kann man mithilfe von ungewichteten gerichteten Graphen darstellen, wobei eine Kante von A nach B zeigt, dass Aufgabe A leichter als B ist. Die Aufgaben der Klausuren könnte man auch in einem 
+  Baum darstellen, aber da ein Baum prinzipiell einfach ein ungewichteter gerichteter Graph ist, habe ich mich entschieden, dieses Teilproblem mit der Erstellung eines Graphen zu lösen.
+  \item[3.] \textbf{Sortierung dieser Datenstruktur}
+  \newline
+  Der erstellte Graph mit den Aufgaben als Knoten und den Beziehungen als Kanten, kann mit einer topologischen Sortierung sortiert werden. Dies funktioniert nur, wenn der Graph gerichtet und keine Zyklen enthält,
+  was unter der Annahme, dass es keine Konflikte in den Klausuren gibt, stimmt. Die topologische Sortierung ist eine Anordnung der Knoten, so dass alle Nachfolger eines Knotens, nach diesem Knoten vorkommen. Also könnte
+  den Graphen so darstellen, dass die gerichteten Kanten nur nach rechts zeigen. Wenn der Graph topologisch sortiert ist, bedeutet das für unsere Aufgabe, dass die gewünschten Aufgaben, einfach von links nach rechts
+  aus dem Graph ausgelesen werden muss, um eine "gute" Anordnung dieser Aufgaben zu erhalten. Diese sortierte Folge an Aufgaben zu erhalten ist somit das Ziel dieses Teilproblems. 
+  \item[4.] \textbf{Sortierte Ausgabe der gewünschten Aufgaben}
+  Da ich durch das vorgehende Teilproblem eine topologisch sortiere Liste mit den Aufgabe bekomme, müssen für das Ergebnis nur noch die gewünschten Aufgaben aus der Liste von links nach rechts ausgelesen werden.
+\end{itemize}
+
+\subsection{Annahme: Konflikte in Klausuren}
+
+Es gibt mehrere Wege, wie man mit diesen wiedersprüchlichen Aufgaben umgehen kann. Ich habe mir dabei folgende Ansätze überlegt:
+\begin{itemize}
+  \item[1.] Man könnte die Konflikte ignorieren und die betroffenen Aufgaben in beliebiger Reihenfolge ausgeben, da man wenn eine Aufgabe a einmal schwerer ist als eine Aufgabe b (\textit{b < a}) und in einer anderen Klausur diese
+  Schwierigkeit umgedreht ist (\textit{a < b}), dann könnte man annehmen, dass beide in etwa gleich schwer sind. 
+  \item[2.] Ein weitere Möglichkeit wäre, die betroffenen Aufgaben bei der Resultatsausgabe zu markieren, damit der Nutzer (Dua), manuell die Aufgaben vergleichen kann. 
+\end{itemize}
+Allerdings finde ich diese Ansätze nicht sinnvoll und habe mich letztendlich für diesen Ansatz entschieden:
+\begin{itemize}
+  \item[3.] Um mit Konflikten umzugehen, verwende ich eine Art "Mehrheitsregel" für Beziehungen. Wenn man eine Beziehung \textit{a < b} hat und in einer anderen Klausur \textit{b < a}, könnte man zählen, wie oft jede dieser
+  Beziehungen in den Klausuren vorkommt. Die Beziehung, die insgesamt öfters auftritt, wird dann hergenommen. Somit erhält man als Ergebnis eine Reihenfolge, die den meisten Klasuren entspricht.
+  \newline
+  Die Schritte zur Bearbeitung der Aufgaben unter diesem Ansatz, sind dieselben wie beim ersten Ansatz. Nur muss die Datenstruktur, in der die Aufgaben gespeichert werden, intern etwas angepasst werden, um die Häufigkeit einer
+  bestimmten Beziehung auch aufzufassen.
+\end{itemize}
+
+
+\section{Umsetzung}
+\subsection{Annahme: Keine Konflikte in Klausuren}
+Um diesen Ansatz umzusetzen, löse ich die von oben beschriebenen Teilprobleme:
+\begin{itemize}
+  \item[1.] \textbf{Texteingabe lesen und Inhalt strukturieren}
+  \newline
+  Mithilfe eines BufferedReader aus der java.io package, kann jede Zeile ausgelesen werden und als String verwendet werden. Für die ersten Zeile des Inputtextes
+  teile ich diesen String an den Leerzeichen und speichere die resultierenden Strings als Array. Aus diesem Array lese ich die Strings aus und speichere sie als Integer in
+  den entsprechenden Members der Klasse. Eine Aufgabe wird als String repräsentiert.
+  \newline
+  Die folgenden Zeilen, die jeweils eine Klausur darstellen sollen, bearbeite ich gleichermaßen, allerings nur mit dem Unterschied, dass ich die Zeile an den kleiner-als Zeichen (<) teile.
+  Die einzelnen Strings, die jeweils eine Aufgabe darstellen, speichere ich als Liste in ein "Klausur" Objekt. Diese Klausur Objekte sichere ich nun wieder als Liste, welche ein Member der Hauptklasse ist.
+  \newline
+  Die letze Zeile speichere ich, separat von den anderen Klausuren, wieder als Klausur Objekt.
+  \item[2.] \textbf{Schwierigkeitsanordnung analysieren und Einordnung in passende Datenstruktur}
+  \newline
+  Um den gerichteten azyklischen Graph darzustellen, verwende ich eine Adjazenzliste, welche ich mit einer Hashmap realisiere. In der Hashmap ist jeder Knoten bzw. Aufgabe ein Schlüssel der Map.
+  Folglich ist der zugehörige Wert in der Map eine Liste aus Aufgaben, welche die Nachfolger der Knoten in dem Graph darstellen.
+  \item[3.] \textbf{Sortierung der Datenstruktur}
+  \newline
+  Da es sich um einen azyklischen Graph handelt, ist es möglich, jeden Knoten zu erreichen, basierend auf die Anzahl an Eingangsknoten (Eingangsgrad des Knotens). Das geht indem man bei den Knoten mit
+  Eingangsgrad 0 beginnt, und von dessen Nachbarn den Eingangsgrad um eins verkleinert. Dies führt führt man durch bis es keinen Knoten mit Eingangsgrad 0 mehr gibt. Dies geht nur, weil es keine Zyklen gibt.
+  Auf diesem Prinzip basiert meine Implementierung des Sortieralgorithmus.
+  \newline
+  Zu Beginn erstelle ich eine Hashmap in der jedem Knoten sein Eingangsgrad zugeordnet wird. Das geht indem man über die ganzen Knoten in dem Graph iteriert und für jedem Nachbar eines Knotens, den Eingangsgrad um eins inkremeniert.
+  Dann können alle Knoten mit einem Eingangsgrad von 0 in eine Linked-List (wird als FIFO Queue verwendet) hinzugefügt werden, über die man iteriert, bis sie leer ist. Denn dann wurde der ganze Graph durchlaufen. 
+  Dies kann man mit einer while-Schleife machen und entnimmt der Linked-List jeweils den ersten Knoten und fügt diesen in eine Liste, die zum Schluss den geordneten Graphen darstellen soll. Von dem Knoten wird der 
+  Eingangsgrad in der Hashmap um 1 verringert. Anschließend wird der Eingangsgrad von jedem Nachbar von diesem Knoten ebenfalls um eins verringert und der Nachbarknoten wird in die FIFO Queue hinzugefügt, falls dessen Eingangsgrad
+  durch die Dekrementierung 0 geworden ist. 
+  \newline
+  Wenn die while-Schleife zuende gelaufen ist, hat man die topologisch sortiere Knoten des Graphen in der Resultatsliste. Optional kann man folgern, dass der sortierte Graph Zyklen enthalten hat, falls die Endresultatsliste eine andere
+  Anzahl an Elemente hat, wie Knoten im Graph. Dann könnte man dementsprechend handeln. Allerdings ist der Fall eines Zyklus mit der Annahme, dass der Graph keinen hat, abgedeckt.
+  \item[4.] \textbf{Sortierte Ausgabe der gewünschten Aufgaben}
+  Da wir eine sortierte Folge der Knoten aus der vorherigen Teilaufgabe bekommen, muss nur noch über diese Liste von vorne iteriert werden und in eine Ergebnisliste hinten hinzugefügt werden, falls dieses Element mit einer der ursprünglich gewollten Klausurufgaben übereinstimmt.
+  Danach muss nur noch die Ergebnis dem Nutzer gegeben werden, zum Beispiel mit einer Ausgabe auf die Konsole.
+
+
+\end{itemize}
+\subsection{Annahme: Konflikte in Klausuren}
+
+\section{Beispiele}
+\subsection{Beispiele der BwInf-Webseite}
+\begin{itemize}
+  \item [0.] 
+  \item [1.] 
+  \item [2.]
+  \item [3.]
+  \item [4.]
+  \item [5.]
+\end{itemize}
+\subsection{Eigene Beispiele}
+
+\section{Quellcode}
+Unwichtige Teile des Programms sollen hier nicht abgedruckt werden. Dieser Teil sollte nicht mehr als 2–3 Seiten umfassen, maximal 10.
+
+\end{document}
