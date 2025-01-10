@@ -99,17 +99,17 @@
 \section{Lösungsidee / Ansatz}
 \subsection{Annahme: Radius = 0}
 Um diese Aufgabe zu lösen, kann der Garten als zweidimensionales Koordinatensystem interpretiert werden. Die Krockettore sind dabei Strecken, die mit einem Start- und Endpunkt mit x- und y-Koordinaten dargestellt werden.
-Um herauszufinden, ob es möglich ist mit nur einem Schlag alle Tore in der Richtigen Reihenfolge zu durchqueren, muss man schauen, ob es eine Gerade gibt, die alle gegebenen Tore bzw. Strecken schneidet.
+Um herauszufinden, ob es möglich ist mit nur einem Schlag alle Tore in der richtigen Reihenfolge zu durchqueren, muss man schauen, ob es eine Gerade gibt, die alle gegebenen Tore bzw. Strecken schneidet.
 Wenn eine solche Gerade existert, dann entspricht diese der Bahn, die der Ball rollen müste, um alle Tore zu durchqueren. Der Startpunkt des Balls muss also auf dieser Gerade liegen (z.B. der Schnittpunkt von der Gerade mit dem ersten Tor), und die Schlagrichtung entspricht 
 der Steigung der Gerade. 
 \newline
-Um zu schauen, ob so eine Gerade existert, reicht es, nur Geraden anzuschauen, die durch einen Punkt des ersten Tors und einen Punkt des zweiten Tors verlaufen. Wenn keine dieser Geraden alle Tore in schneidet, ist es unmöglich, die Aufgabe mit einem einzigen Schlag zu lösen.
+Um zu schauen, ob so eine Gerade existert, reicht es, nur Geraden anzuschauen, die durch einen Punkt auf dem ersten Tors und einen Punkt auf zweiten Tors verlaufen. Wenn keine dieser Geraden alle Tore in schneidet, ist es unmöglich, die Aufgabe mit einem einzigen Schlag zu lösen.
 Jede Gerade kann eindeutig durch zwei Punkte definiert werden: einen Punkt auf dem ersten Tor und einen Punkt auf dem zweiten Tor. Deswegen werden die Geraden gebildet, indem alle möglichen Punktkombinationen zwischen diesen beiden Toren geprüft werden.
 \newline
 Dann wird für jede dieser Geraden überprüft, ob sie alle Tore schneidet, wenn nein, wird die nächste Gerade überprüft, und wenn es keine Gerade gibt, gibt es keine Lösung für diese Aufgabe. Wenn eine Gerade gefunden wird, die alle Tore schneidet,
-ist diese Gerade der Weg des Balls und Startpunkt und Schlagrichtung können direkt abgeleitet werden.
+ist diese Gerade der Weg des Balls, und Startpunkt und Schlagrichtung können direkt abgeleitet werden.
 \subsection{Annahme: Radius $\neq$ 0}
-Wenn der Radius $\neq$ 0 ist, dann ist der Ansatz mit den Geraden aufstellen gleich. Nur muss hier die Überprüfung, ob eine Gerade ein Tor schneidet, verändert werden. Denn wenn der Ball einen Radius hat, würde der Ball bei einigen Stellen nicht durch das Tor passen, auch wenn die 
+Wenn der Radius $\neq$ 0 ist, dann bleibt der Ansatz von (1.1) mit den Geraden gleich. Nur muss hier die Überprüfung, ob eine Gerade ein Tor schneidet, verändert werden. Denn wenn der Ball einen Radius hat, würde der Ball bei einigen Stellen nicht durch das Tor passen, auch wenn die 
 aufgestellte Gerade das Tor schneidet. Um dieses Problem zu lösen, können Kreisgleichungen aufgestellt werden, die ihren Mittelpunkt bei dem Start und Endpunkt eines Tores, und den Radius von dem Ball haben. Wenn die zu überprüfende Gerade das Tor schneidet, und die beiden Kreise 
 um die Pfosten des Tores nicht schneidet, dann passt der Ball durch das Tor. Wenn aber die Gerade das Tor schneidet, und auch mindestens einen der Kreise schneidet und/oder berührt, dann prallt der Ball an einem Posten ab und durchquert das Tor nicht. Somit kann diese Gerade als Lösung 
 ausgeschlossen werden.
@@ -121,10 +121,10 @@ Ein simples Python Skript mit Matplotlib kann verwendet werden, um die Tore und 
 
 \subsection{Einlesung der Daten}
 Um die Daten aus einer Datei zu lesen, wird der Inhalt der Datei als ein String gespeichert, an den newline Zeichen ("\textbackslash n") gespalten und jede Zeile als ein Element in einem String Array gespeichert. Jedes Element wird an den Leerzeichen gespalten, um an die Zahlenwerte zu kommen, die als Attribute in einem 
-Gate Objekt gespeichert werden. Ein Gate Objekt hat jeweils einen Start und Endpunkt als Attribute. Punkte sind Objekte mit einer x und y-Koordinate. 
+Gate Objekt gespeichert werden. Ein Gate Objekt hat jeweils einen Start und Endpunkt als Attribute. Punkte sind Objekte mit einer x- und y-Koordinate. 
 
 \subsection{Finden einer Gerade}
-Um nun eine Gerade zu finden, die alle eingelesenen Tore schneidet, kann man iterativ arbeiten und über alle möglichen Geraden iteriert wird und geprüft wird, ob sie eine Lösung des Problems ist. Dies kann man mit drei verschachelten for-Schleifen gemacht werden.
+Um eine Gerade zu finden, die alle eingelesenen Tore schneidet, kann man iterativ arbeiten, indem man über alle möglichen Geraden iteriert und prüft, ob sie eine Lösung des Problems ist. Dies kann man mit drei verschachelten for-Schleifen machen.
 Ich gehe wie folgt vor:
 \begin{itemize}
   \item [1.] Schrittweise über alle möglichen Startpunkte entlang des ersten Tors iterierieren (erste for-Schleife). Die Positionen auf dem ersten Tor sind in bestimmten Abständen (als Bruchteile der Länge des Tors) plaziert.
@@ -134,7 +134,7 @@ Ich gehe wie folgt vor:
   \newline
   \subsubsection{Schnittpunktüberprüfung - Gerade mit einer Strecke}
 
-  Um zu Überprüfen, ob eine Strecke und eine Gerade sich schneidet, kann so vorgegangen werden: Wenn die Gerade und Strecke parallel ist, dann gibt es keinen Schnittpunkt. Wenn sie nicht parallel sind, und die Strecke als Gerade angesehen wird, existert ein Schnittpunkt.
+  Um zu überprüfen, ob eine Strecke und eine Gerade sich schneiden, kann so vorgegangen werden: Wenn die Gerade und Strecke parallel ist, dann gibt es keinen Schnittpunkt. Wenn sie nicht parallel sind, und die Strecke als Gerade angesehen wird, existert ein Schnittpunkt.
   Daher muss nur überprüft werden, ob dieser Schnittpunkt innerhalb den Begrenzungen der Strecke (Pfosten des Tors) liegt.
   \newline 
 
@@ -150,14 +150,14 @@ Ich gehe wie folgt vor:
     y&=y_{3} + u \cdot (y_{4} - y_{3}) \quad; 0 \leq u \leq 1
   \end{align}
 
-  Um nun die Schnittpunkte der Strecke und Gerade zu bekommen, werden die Gleichungen gleichgesetzt, wodurch sich ein Lineares Gleichungssystem bildet:
+  Um nun die Schnittpunkte der Strecke und Gerade zu bekommen, werden die Gleichungen (1 und 3; 2 und 4) gleichgesetzt, wodurch sich ein Lineares Gleichungssystem bildet:
 
   \begin{align*}
     x_{1}+t\cdot dx&=x_{3}+u \cdot (x_{4} - x_{3}) \\
     y_{1}+t \cdot dy&=y_{3}+u\cdot (y_{4} - y_{3}) \\
   \end{align*}
 
-  Durch umstellen, dass $t$ und $u$ auf der linken Seite sind und umformen in eine Matrixform ergibt sich die Matrix $M$:
+  Durch umstellen, dass $t$ und $u$ auf der linken Seite sind und umformen in eine Matrixform, ergibt sich die Matrix $M$:
   \begin{align}
     M = 
     \begin{pmatrix}
@@ -183,7 +183,7 @@ Ich gehe wie folgt vor:
 
   Wenn $det(M) = 0$, dann ist die Gerade und die Strecke parallel  oder kollinear zueinander (da die Richtungsvektoren linear abhängig sind). Somit kann es \textbf{keinen Schnittpunkt} geben.
   \newline
-  Andernfalls, müssen $t$ (wo auf der Gerade der Schnittpunkt ist) und $u$ (zeigt ob der Schnittpunkt auf der Strecke liegt; liegt auf der Strecke falls: $0 \leq u \leq 1$) berechnet werden.
+  Andernfalls, müssen $t$ (wo auf der Gerade der Schnittpunkt ist) und $u$ (zeigt ob der Schnittpunkt auf der Strecke liegt) berechnet werden.
   \newline
   Um die Parameter zu berechnen kann man mit dem Gauß-Verfahren vorgehen oder (wie ich jetzt) mit der Cramerschen Regel für 2x2 Matrixen:
   \newline
@@ -214,7 +214,7 @@ Ich gehe wie folgt vor:
   \textbf{Unter der Annahme, dass der Ballradius null ist,} genügt es an dieser Stelle zu sagen, dass das Tor von dem Ball durchquert wird und es kann mit dem nächsten Tor weitergemacht werden.
   \newline
   \newline 
-  \textbf{Wenn der Ballradius aber ungleich null ist,} muss überprüft werden, ob die Gerade die Kreise $(r_{Kreis} = r_{Ball})$ um die Posten schneidet (Siehe \textbf{1.2}).
+  \textbf{Wenn der Ballradius aber ungleich null ist,} muss überprüft werden, ob die Gerade die Kreise  mit $r_{Kreis} = r_{Ball}$ um die Posten schneidet (Siehe \textbf{1.2}).
 
   \subsubsection{Schnittpunktüberprüfung - Gerade mit einem Kreis}
 
@@ -259,13 +259,13 @@ Ich gehe wie folgt vor:
 
 
   \item [4.] Wenn eine Gerade gefunden wurde, die alle Tore schneidet, wird sie als Resultat zurückgegeben. Der Startpunkt des Schlags von Laura ist der Schnittpunkt der Geraden mit dem ersten Tor und die Richtung des Schlags entspricht der Steigung der Gerade. Da aber eine Gerade, die parallel zur y-Achse ist, nicht existert und somit die Steigung davon nicht definiert wird,
-  wird als Richtung des Schlags der normierte Richtungsvektor der Gerade ausgegeben.
+  wird als Richtung des Schlags zusätzlich der normierte Richtungsvektor der Gerade ausgegeben.
 \end{itemize}
 
 \section{Beispiele}
 \subsection{Beispiele der BwInf-Webseite}
-Hier die Ausgaben des Programmes zu den Beispielen auf der BwInf-Webseite: Zusätzlich wird das Ergebnis mit dem beigelegem python-skript und matplotlib visuell dargestellt. (Falls es ein Ergebnis gibt) Hierbei ist die
-Rote Linie die Strecke des Balls von Laura, die alle Tore durchquert.
+Hier die Ausgaben des Programmes zu den Beispielen auf der BwInf-Webseite: Zusätzlich wird das Ergebnis mit dem beigelegem python-skript und matplotlib visuell dargestellt. Hierbei ist die
+Rote Linie die Strecke des Balls von Laura, die alle Tore durchquert. (Falls es ein Ergebnis gibt).
 \begin{itemize}
   \item [1.] \textbf{krocket1.txt}
     \newline
