@@ -10,7 +10,8 @@
 
 \usepackage{scrlayer-scrpage, lastpage}
 \setkomafont{pageheadfoot}{\large\textrm}
-\lohead{\Aufgabe}
+\lohead{\Name}
+\chead{\Aufgabe}
 \rohead{Teilnahme-ID: \TeilnahmeId}
 \cfoot*{\thepage{}/\pageref{LastPage}}
 
@@ -62,6 +63,19 @@
 
 \vspace{0.5cm}
 
+\section{Research}
+The problem of Multi-Agent Pathfinding (MAPF) is an instance of multi-agent planning and consists in the computation of collision-free paths for a group of agents from their location to an assigned target. It is an optimization problem, since the aim is to find those paths that optimize a given objective function, usually defined as the number of time steps until all agents reach their goal cells. MAPF is the multi-agent generalization of the pathfinding problem, and it is closely related to the shortest path problem in the context of graph theory. 
+\newline
+https://en.wikipedia.org/wiki/Multi-agent_pathfinding
+\newline
+\subsection{ansätze}
+- 1. bfs, labi als graph ansehen, pathfinding problem in der graph theorie -> optimierungsproblem um kürzesten Weg zu finden
+- 2. a* als optimierung
+- 3. Greedy BFS nicht optimal aber schnell
+- 4. als multi agent path finding problem ansehen, -> existierende ansätze verwenden
+- 5. contraint programmierung -> in SAT oder MIP solver geben
+- 6. einfach eine lösung finden -> jeder labi einzeln und nacheinander ausführen
+
 \textbf{Anleitung:} Trage oben in den Zeilen 8 bis 10 die Aufgabennummer, die Teilnahme-ID und die/den Bearbeiterin/Bearbeiter dieser Aufgabe mit Vor- und Nachnamen ein.
 Vergiss nicht, auch den Aufgabennamen anzupassen (statt "`\LaTeX-Dokument"')!
 
@@ -71,6 +85,7 @@ Die Texte, die hier bereits stehen, geben ein paar Hinweise zur
 Einsendung. Du solltest sie aber in deiner Einsendung wieder entfernen!
 
 \section{Lösungsidee}
+Erste Ansätze / Gedanken: 1. Labyrinthe passend modellieren: 2d array von char
 Die Idee der LÃ¶sung sollte hieraus vollkommen ersichtlich werden, ohne dass auf die eigentliche Implementierung Bezug genommen wird.
 
 \section{Umsetzung}
