@@ -11,7 +11,7 @@ public class Maze {
      * 8 = Agent
      */
 
-    public class Agent {
+    private class Agent {
         private int x, y;
 
         public Agent() {
@@ -20,44 +20,71 @@ public class Maze {
             set(x * 2 + 1, y * 2 + 1, 8);
         }
 
-        public void moveRight() {
+        public boolean moveRight() {
             if (x == width) {
                 System.out.println("Bounds");
-                return;
+                return false;
+            }
+            if (get(x * 2 + 2, y * 2 + 1) == 1) {
+                System.out.println("Wall");
+                return false;
             }
             set(x * 2 + 1, y * 2 + 1, 0);
             x++;
             set(x * 2 + 1, y * 2 + 1, 8);
+            return true;
         }
 
-        public void moveLeft() {
+        public boolean moveLeft() {
             if (x == 0) {
                 System.out.println("Bounds");
-                return;
+                return false;
+            }
+            if (get(x * 2, y * 2 + 1) == 1) {
+                System.out.println("Wall");
+                return false;
             }
             set(x * 2 + 1, y * 2 + 1, 0);
             x--;
             set(x * 2 + 1, y * 2 + 1, 8);
+            return true;
         }
 
-        public void moveDown() {
+        public boolean moveDown() {
             if (y == height) {
                 System.out.println("Bounds");
-                return;
+                return false;
+            }
+            if (get(x * 2 + 1, y * 2 + 2) == 1) {
+                System.out.println("Wall");
+                return false;
             }
             set(x * 2 + 1, y * 2 + 1, 0);
             y++;
             set(x * 2 + 1, y * 2 + 1, 8);
+            return true;
         }
 
-        public void moveUp() {
+        public boolean moveUp() {
             if (y == 0) {
                 System.out.println("Bounds");
-                return;
+                return false;
+            }
+            if (get(x * 2 + 1, y * 2) == 1) {
+                System.out.println("Wall");
+                return false;
             }
             set(x * 2 + 1, y * 2 + 1, 0);
             y--;
             set(x * 2 + 1, y * 2 + 1, 8);
+            return true;
+        }
+
+        public boolean reachedGoal() {
+            if (x == width * 2 - 1 && y == height * 2 - 1) {
+                return true;
+            }
+            return false;
         }
 
         public int getX() {
@@ -98,6 +125,48 @@ public class Maze {
         }
     }
 
+    public boolean isValidMove(int x, int y, int newX, int newY) {
+        // Right
+        if (x < newX) {
+            if (x == width || get(x * 2 + 2, y * 2 + 1) == 1) {
+                return false;
+            }
+            // Left
+        } else if (x > newX) {
+            if (x == 0 || get(x * 2, y * 2 + 1) == 1) {
+                return false;
+            }
+        }
+        // Down
+        if (y < newY) {
+            if (y == height || get(x * 2 + 1, y * 2 + 2) == 1) {
+                return false;
+            }
+            // Up
+        } else if (y > newY) {
+            if (y == 0 || get(x * 2 + 1, y * 2) == 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void moveDown() {
+        agent.moveDown();
+    }
+
+    public void moveUp() {
+        agent.moveUp();
+    }
+
+    public void moveLeft() {
+        agent.moveLeft();
+    }
+
+    public void moveRight() {
+        agent.moveRight();
+    }
+
     public void setHole(int x, int y) {
         this.set(x * 2 + 1, y * 2 + 1, 2);
     }
@@ -128,6 +197,14 @@ public class Maze {
 
     public int getArrayWidth() {
         return this.width * 2 + 1;
+    }
+
+    public int getGoalX() {
+        return width - 1;
+    }
+
+    public int getGoalY() {
+        return height - 1;
     }
 
     public int getNumHoles() {
