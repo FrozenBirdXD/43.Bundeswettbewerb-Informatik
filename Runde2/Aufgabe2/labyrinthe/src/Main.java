@@ -1,8 +1,12 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -14,7 +18,7 @@ public class Main {
     public record StateMazes(Maze maze1, Maze maze2) {
     }
 
-    public record State(int x1, int y1, int x2, int y2, int steps, String path) {
+    public record State(int x1, int y1, int x2, int y2, int steps, String path, int cost) {
     }
 
     public static void main(String[] args) {
@@ -28,42 +32,127 @@ public class Main {
             // Input file path here: //
             //
             //
-            input = Files.readString(Path.of("beispielaufgaben/labyrinthe7.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/labyrinthe4.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         StateMazes mazes = parseInput(input);
-        System.out.println(mazes.maze1);
-        System.out.println(mazes.maze2);
-        State result = breadthFirstSearch(mazes.maze1, mazes.maze2);
+        // System.out.println(mazes.maze1);
+        // System.out.println(mazes.maze2);
+        State result = null;
+        result = breadthFirstSearch(mazes.maze1, mazes.maze2);
+        System.out
+                .println("Ausführungszeit in Sekunden für BFS: "
+                        + (double) (System.currentTimeMillis() - start) / (long) 1000);
         if (result == null) {
             System.out.println("No solution");
         } else {
             System.out.println("Anweisungsfolge der Länge " + result.steps + ": " + result.path + "");
         }
 
+        start = System.currentTimeMillis();
+        State result2 = null;
+        result2 = aStarManhatten(mazes.maze1, mazes.maze2);
         System.out
-                .println("Ausführungszeit in Sekunden: "
+                .println("Ausführungszeit in Sekunden für A*: "
                         + (double) (System.currentTimeMillis() - start) / (long) 1000);
+
+        if (result2 == null) {
+            System.out.println("No solution");
+        } else {
+            System.out.println(
+                    "Anweisungsfolge der Länge " + result2.steps + ": " + result2.path + "\nCost: " + result2.cost);
+        }
+
+    }
+
+    public static State aStarManhatten(Maze maze1, Maze maze2) {
+        // Prioritizes the paths with the lowest cost: f(x) = g(x)(cost so far) +
+        // h(x)(heuristic)
+        int count = 0;
+        PriorityQueue<State> queue = new PriorityQueue<>(Comparator.comparingInt(s -> s.cost));
+        Map<String, Integer> visited = new HashMap<>();
+
+        int h = heuristicManhattenDistance(0, 0, maze1.getGoalX(), maze1.getGoalY(), 0, 0, maze2.getGoalX(),
+                maze2.getGoalY());
+        State startState = new State(0, 0, 0, 0, 0, "", 0);
+        queue.add(startState);
+        visited.put(encode(startState), h);
+
+        while (!queue.isEmpty()) {
+            count++;
+            State currentState = queue.poll();
+
+            if (currentState.x1 == maze1.getGoalX() && currentState.x2 == maze2.getGoalX()
+                    && currentState.y1 == maze1.getGoalY() && currentState.y2 == maze2.getGoalY()) {
+                // Return shortest Path
+                System.out.println("States visited: " + count);
+                return currentState;
+            }
+
+            for (int i = 0; i < 4; i++) {
+                int nx1 = currentState.x1 + dx[i];
+                int ny1 = currentState.y1 + dy[i];
+                int nx2 = currentState.x2 + dx[i];
+                int ny2 = currentState.y2 + dy[i];
+
+                // Check boundaries
+                if (!maze1.isValidMove(currentState.x1, currentState.y1, nx1, ny1)) {
+                    nx1 = currentState.x1;
+                    ny1 = currentState.y1;
+                }
+                if (!maze2.isValidMove(currentState.x2, currentState.y2, nx2, ny2)) {
+                    nx2 = currentState.x2;
+                    ny2 = currentState.y2;
+                }
+
+                int newCost = currentState.steps + 1
+                        + heuristicManhattenDistance(nx1, ny1, maze1.getGoalX(), maze1.getGoalY(), nx2, ny2,
+                                maze2.getGoalX(), maze2.getGoalY());
+                String stateKey = encode(nx1, ny1, nx2, ny2);
+
+                if (!visited.containsKey(stateKey) || newCost < visited.get(stateKey)) {
+                    visited.put(stateKey, newCost);
+                    queue.add(new State(nx1, ny1, nx2, ny2, currentState.steps + 1, currentState.path + moves[i],
+                            newCost));
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static int heuristicManhattenDistance(int x1, int y1, int goalx1, int goaly1, int x2, int y2, int goalx2,
+            int goaly2) {
+        return Math.max(Math.abs(x1 - goalx1) + Math.abs(y1 - goaly1), Math.abs(x2 -
+                goalx2) + Math.abs(y2 - goaly2));
+        // return 2 * (Math.abs(x1 - goalx1) + Math.abs(y1 - goaly1) + Math.abs(x2 -
+        // goalx2) + Math.abs(y2 - goaly2));
     }
 
     public static State breadthFirstSearch(Maze maze1, Maze maze2) {
+        int count = 0;
         int width = maze1.getMovableWidth();
         int height = maze1.getMovableHeight();
 
         Queue<State> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
 
-        State startState = new State(0, 0, 0, 0, 0, "");
+        State startState = new State(0, 0, 0, 0, 0, "", 0);
         queue.add(startState);
         visited.add(encode(startState));
 
         while (!queue.isEmpty()) {
+            if (count % 10000 == 0) {
+                System.out.println("States visited: " + count);
+            }
             State currentState = queue.poll();
+            count++;
             if (currentState.x1 == maze1.getGoalX() && currentState.x2 == maze2.getGoalX()
                     && currentState.y1 == maze1.getGoalY() && currentState.y2 == maze2.getGoalY()) {
                 // Return shortest Path
+                System.out.println("States visited: " + count);
                 return currentState;
             }
 
@@ -103,7 +192,7 @@ public class Main {
                     // System.out.println(maze1);
                     // System.out.println(maze2);
                     visited.add(stateKey);
-                    queue.add(new State(nx1, ny1, nx2, ny2, currentState.steps + 1, currentState.path + moves[i]));
+                    queue.add(new State(nx1, ny1, nx2, ny2, currentState.steps + 1, currentState.path + moves[i], 0));
                 }
             }
         }
