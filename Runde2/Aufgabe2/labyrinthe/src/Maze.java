@@ -151,6 +151,12 @@ public class Maze {
         return true;
     }
 
+    // TODO: cleanup
+
+    public boolean isHole(int x, int y) {
+        return get(x * 2 + 1, y * 2 + 1) == 2;
+    }
+
     public void moveDown() {
         agent.moveDown();
     }
