@@ -12,6 +12,10 @@ public class Main2 {
     static int width = 0;
     static int height = 0;
 
+    static final int BITSET_SIZE = Integer.MAX_VALUE; // Max bits per BitSet
+    static BitSet[] visited;
+    static int numBitSets;
+
     public record StateMazes(Maze maze1, Maze maze2) {
     }
 
@@ -28,7 +32,7 @@ public class Main2 {
             // Input file path here: //
             //
             //
-            input = Files.readString(Path.of("beispielaufgaben/labyrinthe3.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/labyrinthe5.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,14 +61,13 @@ public class Main2 {
         int count = 0;
 
         Queue<State> queue = new ArrayDeque<>();
-        BitSet visited = new BitSet(height * height * width * width);
-
+        initializeBitSets();
         State startState = new State(0, 0, 0, 0, 0, null, ' ');
         queue.add(startState);
-        visited.set(encodeState(0, 0, 0, 0));
+        setVisited(0, 0, 0, 0);
 
         while (!queue.isEmpty()) {
-            if (count % 100000 == 0) {
+            if (count % 1000000 == 0) {
                 System.out.println("States visited: " + count);
             }
             State currentState = queue.poll();
@@ -104,15 +107,25 @@ public class Main2 {
                     ny2 = 0;
                 }
 
-                int index = encodeState(nx1, ny1, nx2, ny2);
-                if (!visited.get(index)) {
-                    visited.set(index);
+                if (!isVisited(nx1, ny1, nx2, ny2)) {
+                    setVisited(nx1, ny1, nx2, ny2);
                     queue.add(new State(nx1, ny1, nx2, ny2, currentState.steps + 1, currentState,
                             moves[i].charAt(0)));
                 }
             }
         }
         return null;
+    }
+
+    private static void initializeBitSets() {
+        // Ensure no overflow
+        long totalStates = (long) width * height * width * height;
+        numBitSets = (int) ((totalStates / BITSET_SIZE) + 1);
+        visited = new BitSet[numBitSets];
+
+        for (int i = 0; i < numBitSets; i++) {
+            visited[i] = new BitSet(BITSET_SIZE);
+        }
     }
 
     public static String reconstructPath(State finalState) {
@@ -125,8 +138,24 @@ public class Main2 {
         return path.toString();
     }
 
-    private static int encodeState(int x1, int y1, int x2, int y2) {
-        return (((x1 * height + y1) * width + x2) * height + y2);
+    private static long encodeState(int x1, int y1, int x2, int y2) {
+        return ((long) x1 * height + y1) * width * height + ((long) x2 * height + y2);
+    }
+
+    private static void setVisited(int x1, int y1, int x2, int y2) {
+        long index = encodeState(x1, y1, x2, y2);
+        int bitsetIndex = (int) (index / BITSET_SIZE);
+        int bitIndex = (int) (index % BITSET_SIZE);
+
+        visited[bitsetIndex].set(bitIndex);
+    }
+
+    private static boolean isVisited(int x1, int y1, int x2, int y2) {
+        long index = encodeState(x1, y1, x2, y2);
+        int bitsetIndex = (int) (index / BITSET_SIZE);
+        int bitIndex = (int) (index % BITSET_SIZE);
+
+        return visited[bitsetIndex].get(bitIndex);
     }
 
     public static StateMazes parseInput(String input) {
