@@ -5,7 +5,7 @@ import java.util.ArrayDeque;
 import java.util.BitSet;
 import java.util.Queue;
 
-public class Main2 {
+public class BFS {
     static final int[] dx = { -1, 1, 0, 0 }; // Left, Right, Up, Down
     static final int[] dy = { 0, 0, -1, 1 };
     static final String[] moves = { "←", "→", "↑", "↓" };
@@ -32,7 +32,7 @@ public class Main2 {
             // Input file path here: //
             //
             //
-            input = Files.readString(Path.of("beispielaufgaben/labyrinthe5.txt"));
+            input = Files.readString(Path.of("labyrinthe/beispielaufgaben/labyrinthe3.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,7 +67,7 @@ public class Main2 {
         setVisited(0, 0, 0, 0);
 
         while (!queue.isEmpty()) {
-            if (count % 1000000 == 0) {
+            if (count % 1000000 == 0 && count != 0) {
                 System.out.println("States visited: " + count);
             }
             State currentState = queue.poll();
