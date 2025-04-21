@@ -5,6 +5,7 @@
 *.log
 *.synctex.gz
 *.toc
+*.out
 
 *.vscode
 *bin
