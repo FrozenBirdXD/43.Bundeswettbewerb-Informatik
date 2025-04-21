@@ -46,8 +46,8 @@ public class TeilaufgabeA {
     public static void main(String[] args) {
         String input;
         try {
-            // Read input from file
-            input = Files.readString(Path.of("beispielaufgaben/a/schmuck01.txt"));
+            // 1. Read input from file
+            input = Files.readString(Path.of("beispielaufgaben/a/schmuck0.txt"));
         } catch (IOException e) {
             System.out.println("Error: InputFile not found");
             return;
@@ -63,7 +63,7 @@ public class TeilaufgabeA {
             return;
         }
 
-        // 1. Calculate character frequency
+        // 2. Calculate character frequency
         Map<Character, Long> frequencyMap = buildFrequencyMap(text);
 
         // Edgecase with text containing only one unique character
@@ -72,36 +72,42 @@ public class TeilaufgabeA {
             // Assign single digit code: here '0'
             codeTable.put(frequencyMap.keySet().iterator().next(), "0");
 
-            System.out.println("\nOptimierte Codetabelle:");
+            System.out.println("\nCodetabelle:");
             printCodeTable(codeTable, frequencyMap);
             System.out.println("\nGesamtlänge der Botschaft (Anzahl Perlen): " + text.length());
 
         } else {
-            // 2. Build n-ary Huffman tree
+            // 3. Build n-ary Huffman tree
             Node root = buildHuffmanTree(frequencyMap, numColors);
 
-            // 3. Generate Huffman codes
+            // 4. Generate Huffman codes
             Map<Character, String> codeTable = new HashMap<>();
             generateCodes(root, "", codeTable, numColors);
 
-            // 4. Calculate total length of encoded message
-            long totalLength = calculateTotalLength(text, codeTable);
+            // 5. Calculate total length of encoded message
+            long totalLength = calculateTotalLength(codeTable, frequencyMap, inputWrapper.diameters.get(0));
 
-            // 5. Output result
+            // 6. Output result
             System.out.println(
-                    "\nOptimierte Codetabelle: (Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)");
+                    "\nCodetabelle:\n(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)");
             printCodeTable(codeTable, frequencyMap);
-            System.out.println("\nGesamtlänge der Botschaft (Anzahl Perlen): " + totalLength);
+            System.out.println("\nGesamtlänge der Botschaft " + totalLength + " (Anzahl in Perlen) bzw. "
+                    + (double) totalLength / 10 + "cm");
         }
     }
 
+    // 1. Read input
     private static InputWrapper parseInput(String input) {
         // Save every line in array of Strings
         String[] lines = input.split("\n");
-        return new InputWrapper(Integer.parseInt(lines[0].trim()), lines[2]);
+        List<Integer> list = new ArrayList<>();
+        for (String s : lines[1].split(" ")) {
+            list.add(Integer.valueOf(s));
+        }
+        return new InputWrapper(Integer.parseInt(lines[0].trim()), lines[2], list);
     }
 
-    // Calculate character frequency from input text
+    // 2. Calculate character frequency from input text
     private static Map<Character, Long> buildFrequencyMap(String text) {
         Map<Character, Long> frequencyMap = new HashMap<>();
         for (char character : text.toCharArray()) {
@@ -110,8 +116,7 @@ public class TeilaufgabeA {
         return frequencyMap;
     }
 
-    // Build n-ary Huffman tree (allows not just 2 children per node, but n
-    // children)
+    // 3. Build n-ary Huffman tree and returns root Node
     private static Node buildHuffmanTree(Map<Character, Long> frequencyMap, int n) {
         // PriorityQueue for nodes (sorted by frequency, lower frequency first)
         PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
@@ -124,16 +129,13 @@ public class TeilaufgabeA {
         int numSymbols = priorityQueue.size(); // Number of unique symbols (leaf nodes)
 
         // Determine how many nodes should be merged in the first step
-        // Need to build a tree so that the total number of nodes
-        // N satisfies: (N - 1) % (n - 1) == 0
-        // (https://compression.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf)
         int r;
         if (numSymbols <= 1) { // Handle edge case: if 0 or 1 symbol, no merging needed
             r = numSymbols;
         } else {
             // Formula: find smallest valid r so that:
-            // After merging r nodes → remaining nodes + 1 new node
-            // → total node count allows full n-ary merges
+            // After merging r nodes -> remaining nodes + 1 new node
+            // -> total node count allows full n-ary merges
             int remainder = (numSymbols - 2) % (n - 1);
             r = remainder + 2; // Ensures 2 <= r <= n
         }
@@ -145,7 +147,7 @@ public class TeilaufgabeA {
 
             if (nodesToMerge < 2) {
                 // Should not happen if n > 1
-                System.out.println("Hää, irgendwas ist broken");
+                System.out.println("irgendwas ist broken");
                 break;
             }
 
@@ -170,7 +172,7 @@ public class TeilaufgabeA {
         return priorityQueue.poll();
     }
 
-    // Generate Huffman codes by traversing tree with recursion
+    // 4. Generate Huffman codes by traversing tree with recursion and DFS
     private static void generateCodes(Node node, String currentCode, Map<Character, String> codeTable, int numColors) {
         // Base case
         if (node == null) {
@@ -182,7 +184,7 @@ public class TeilaufgabeA {
             if (node.character != null) {
                 codeTable.put(node.character, currentCode);
             }
-            // Leaf is reached, no need for more recursion
+            // Leaf is reached, stop recursion
             return;
         }
 
@@ -192,17 +194,15 @@ public class TeilaufgabeA {
         }
     }
 
-    // Calculate total length of encoded message
-    private static long calculateTotalLength(String text, Map<Character, String> codeTable) {
+    // 5. Calculate total length of encoded message
+    private static long calculateTotalLength(Map<Character, String> codeTable, Map<Character, Long> frequencyMap,
+            int diameter) {
         long totalLength = 0;
-        // Interate over every character in text to encode
-        for (char character : text.toCharArray()) {
-            String code = codeTable.get(character);
-            if (code != null) {
-                totalLength += code.length();
-            }
+        // Iterate over each Character
+        for (Map.Entry<Character, Long> entry : frequencyMap.entrySet()) {
+            totalLength += entry.getValue() * codeTable.get(entry.getKey()).length();
         }
-        return totalLength;
+        return totalLength * diameter;
     }
 
     // Print code table in a readable format
@@ -212,6 +212,7 @@ public class TeilaufgabeA {
             return;
         }
         List<Character> sortedKeys = new ArrayList<>(codeTable.keySet());
+        // Sorting is optional
         // Sort by length of code
         sortedKeys.sort((a, b) -> Integer.compare(codeTable.get(a).length(), codeTable.get(b).length()));
         // Sort by frequency
