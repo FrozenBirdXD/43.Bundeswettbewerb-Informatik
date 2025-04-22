@@ -36,7 +36,7 @@ public class TeilaufgabeB1Strategie {
         String input;
         try {
             // 1. Read input from file
-            input = Files.readString(Path.of("beispielaufgaben/b/schmuck9.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/b/schmuck4.txt"));
         } catch (IOException e) {
             System.out.println("Error: InputFile not found");
             return;
@@ -165,44 +165,38 @@ public class TeilaufgabeB1Strategie {
     // 4. Generate Huffman codes with cost-aware digit assignment
     private static void generateCodesCostAware(Node node, String currentCode, Map<Character, String> codeTable,
             List<Integer> costs) {
+        // Base case
         if (node == null) {
             return;
         }
 
+        // If it is a leaf, it represents a character, then assign a code
         if (node.isLeaf()) {
-            // Only assign codes to original symbols (character != null)
-            // Handles potential dummy nodes added during tree construction
             if (node.character != null) {
                 codeTable.put(node.character, currentCode.isEmpty() ? "0" : currentCode);
             }
+            // Leaf is reached, stop recursion
             return;
         }
 
-        // Cost-Aware Assignment 
-        // 1. Get children
         List<Node> children = node.children;
-        if (children.isEmpty())
-            return; // Should not happen for internal node
 
-        // 2. Sort children by frequency - Descending
-        // Make a copy to avoid modifying the original node's children list if needed
-        // elsewhere
+        // 1. Sort children by frequency - Descending (made copy to not modify the main
+        // list, not sure if needed)
         List<Node> sortedChildren = new ArrayList<>(children);
         sortedChildren.sort(Comparator.comparingLong(Node::getFrequency).reversed());
 
-        // 3. Prepare digits sorted by cost - Ascending
+        // 2. Prepare digits sorted by cost - Ascending
+        // DigitCost is a wrapper to map each digit with its corresponding cost
         List<DigitCost> digitCosts = new ArrayList<>();
-
-        if (costs.size() < sortedChildren.size()) {
-            System.out.println("ERROR");
-        }
 
         for (int i = 0; i < costs.size(); i++) {
             digitCosts.add(new DigitCost(i, costs.get(i)));
-        }
-        Collections.sort(digitCosts); // Sort by cost ascending
+        } 
+        // Sort by cost ascending, for this input not needed as digits are already sorted
+        Collections.sort(digitCosts);
 
-        // 4. Assign cheapest digits to most frequent children
+        // 3. Assign cheapest digits to most frequent children
         for (int i = 0; i < sortedChildren.size(); i++) {
             Node child = sortedChildren.get(i);
             int assignedDigit = digitCosts.get(i).digit; // i-th cheapest digit
