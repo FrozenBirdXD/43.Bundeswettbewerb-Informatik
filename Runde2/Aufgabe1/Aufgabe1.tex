@@ -135,6 +135,7 @@ Um diesen Algorithmus umzusetzen und somit die Aufgabe zu lösen, wird wie folgt
   Um zu zählen, wie häufig die Zeichen in dem Text vorkommen, wird über alle Zeichen des Texts iteriert. Die Werte werden in einer HashMap gespeichert, wobei das Zeichen den Schlüssel und die Anzahl seines Vorkommens im Text den zugehörigen Wert darstellt. 
   \item \textbf{Erstellung einen n-nären Huffman-Baums basierend auf den Häufigkeiten} \\
   Um den Baum zu erstellen, wird eine Klasse Node definiert, die einen Knoten im Huffman-Baum repräsentiert. Diese Klasse speichert das Zeichen, seine Häufigkeit, eine Liste seiner Kindknoten und einen Marker, ob der Knoten ein Blatt im Baum ist. Die einzelnen Knoten werden in einer PriorityQueue verwaltet, welche in Java als Min-Heap implementiert ist. Dadurch stehen die Knoten mit der geringsten Häufigkeit immer oben in der Warteschlange und diese Datenstruktur eignet sich daher gut, da für die Erstellung des Baums jeweils die $n$ Knoten mit den \textbf{geringsten} Häufigkeiten kombiniert werden.\\
+  Dies ist was den Huffman Algorithmus zu einem \textit{greedy} Algorithmus macht. Er trifft in jedem Schritt eine lokal optimale Entscheidung (kombiniere die $n$ unwahrscheinlichsten Knoten), die nachweislich zur globalen optimalen Lösung führt.\\
   \newline
   \textbf{Ablauf}
   \newline
@@ -165,7 +166,7 @@ Um diesen Algorithmus umzusetzen und somit die Aufgabe zu lösen, wird wie folgt
   Zur Speicherung der Codetabelle wird eine Hashmap verwendet, in der die Zeichen als Schlüssel hat und ihre zugehörige n-äre Huffman-Kodierung als Werte abgelegt sind. Die Werte werden dann schrittweise bei der Traversierung des Baums schrittweise aufgebaut. \\
   Um die Kodierung für jedes Zeichen zu finden, wird der Baum mit einer rekursiven Tiefensuche (DFS) durchlaufen. Dabei wird bei jedem rekursiven Aufruf der bisher zurückgelegte Pfad vom Wurzelknoten bis zum Aktuellen Knoten als String übergeben.  \\
   \newline
-  Weil es sich um eine n-äre Huffman-Kodierung handelt, werden die Kanten des Baums durch die Ziffern $0$ bis $n-1$ beschrieben. Bei jedem Abstieg zu einem Kindknoten wird an die aktuelle Zeichenkette die Position des jeweiligen Kindes im Elternknoten angehängt. Wenn ein Blattknoten erreicht wird, also ein Knoten, der tatsächlich ein Zeichen repräsentiert und keine weiteren Nachfolger besitzt, wird der aktuell aufgebaute Pfad als Kodierung für dieses Zeichen in der Codetabelle gespeichert. 
+  Weil es sich um eine n-äre Huffman-Kodierung handelt, werden die Kanten des Baums durch die Ziffern $0$ bis $n-1$ beschrieben. Die Ziffern entsprechen allgemein formuliert, den Kodierungsbuchstaben, die in diesem Fall die jeweilige Perlenart bzw. Perlenfarbe darstellt. Bei jedem Abstieg zu einem Kindknoten wird an die aktuelle Zeichenkette die Position des jeweiligen Kindes im Elternknoten angehängt. Wenn ein Blattknoten erreicht wird, also ein Knoten, der tatsächlich ein Zeichen repräsentiert und keine weiteren Nachfolger besitzt, wird der aktuell aufgebaute Pfad als Kodierung für dieses Zeichen in der Codetabelle gespeichert. 
 
   \item \textbf{Berechnung der Gesamtlänge der kodierten Nachricht} \\
   Für die Berechnung der Gesamtlänge der kodierten Nachricht wird die Häufigkeit jedes Zeichens (bereits in Schritt 2 bestimmt) mit der Länge seines entsprechenden Huffman-Codes multipliziert. Die Gesamtlänge ergibt sich aus der Summe dieser Produkte multipliziert mit dem Durchmesser einer Perle.
@@ -214,7 +215,9 @@ Ausgabe Codetabelle (mit Sortierung) & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)
   
   \item \textbf{Baumkonstruktion:} Wegen der Prioritätswarteschlange (Min-Heap) mit $k$ Blattknoten entstehen $\frac{k - 1}{n - 1}$ Merges. Jede Insert- und Delete Operation im Heap braucht $\mathcal{O}(\log k)$, was insgesamt zu $\mathcal{O}(k \log k)$ führt.
   
-  \item \textbf{Codetabelle und Gesamtlänge:} Beide Schritte durchlaufen jeden Knoten genau einmal und sind daher in $\mathcal{O}(k)$.
+  \item \textbf{Codetabelle:} Dieser Schritt ist durchläuft jeden Knoten ($k$ Knoten) genau einmal mit DFS (Tiefensuche). Pro Knoten wird eine Schleife über alle $n$ Kinder ausgeführt. Bei der n-nären Kodierung hat der Baum im schlimmsten Fall $\mathcal{O}(k)$ Knoten. Da $n$ eine kleine Konstante ist, beträgt die Laufzeit für diesen Schritt $\mathcal{O}(k)$.
+
+  \item \textbf{Gesamtlänge:} Dieser Schritt iteriert über alle verschiedenen Symbole, die einen Code bekommen und ist daher in $\mathcal{O}(k)$.
   
   \item \textbf{Ausgabe:} Die Codetabelle wird nach Frequenz und Code-Länge sortiert, was im Worst Case ebenfalls $\mathcal{O}(k \log k)$ erfordert. (Ohne die optionale Sortierung wäre das das in $\mathcal{O}(k)$)
 \end{itemize}
@@ -222,7 +225,7 @@ Ausgabe Codetabelle (mit Sortierung) & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)
 \vspace{1em}
 Insgesamt ist die Laufzeit dominiert durch das Einlesen des Textes und die Sortiervorgänge beim Baumaufbau mit dem Min-Heap. Der Speicherbedarf ist moderat und wächst linear mit der Eingabegröße sowie der Anzahl unterschiedlicher Zeichen. 
 \newline
-Daher erweist sich dieser Algorithmus auch bei größeren Texten als leistungsfähig.
+Daher erweist sich dieser Algorithmus auch bei größeren Texten als leistungsfähig und garantiert eine optimale Kodierung.
 
 
 \subsection{Beispiele}
@@ -442,7 +445,7 @@ private static Node buildHuffmanTree(Map<Character, Long> frequencyMap, int n) {
 \textbf{4. Erzeugen der Codetabelle}
 \begin{lstlisting}
 // 4. Generate Huffman codes by traversing tree with recursion and DFS
-private static void generateCodes(Node node, String currentCode, Map<Character, String> codeTable, int numColors) {
+private static void generateCodes(Node node, String currentCode, Map<Character, String> codeTable) {
     // Base case
     if (node == null) {
         return;
@@ -459,7 +462,7 @@ private static void generateCodes(Node node, String currentCode, Map<Character, 
 
     // Assign codes 0 until k-1 to children
     for (int i = 0; i < node.children.size(); i++) {
-        generateCodes(node.children.get(i), currentCode + i, codeTable, numColors);
+        generateCodes(node.children.get(i), currentCode + i, codeTable);
     }
 }
 \end{lstlisting}
@@ -512,15 +515,272 @@ private static void printCodeTable(Map<Character, String> codeTable, Map<Charact
 
 \section{Teilaufgabe B}
 \subsection{Lösungsidee}
-\subsection{Umsetzung}
-\subsection{Komplexitätsanalyse}
-\subsection{Beispiele}
-\subsection{Quellcode}
+\textbf{Verständnis der Aufgabe}\\
+\newline
+Die Grundidee dieser Aufgabe bleibt gleich: Ein Unicode-Text soll mit Hilfe von Perlen kodiert werden. Allerdings haben die Perlen nun einen unterschiedlichen Durchmesser. Ziel ist es nun, die Gesamtlänge der resultierenden Perlenkette, also die kodierte Nachricht, zu minimieren.  \\
+Wenn dieses Problem weiterhin als Optimierungsproblem zu Erstellung einer optimalen, präfixfreien Kodierung (wie bereits im ersten Teil der Aufgabe) betrachtet wird, führt die Einführung variabler Perlendurchmesser zu einer Verallgemeinerung des ursprünglichen Problems. Denn in dieser Erweiterung entspricht der Durchmesser jeder Perle den Kosten des jeweiligen Symbols im Codealphabet. Im Folgenden wird einfachheitshalber, die Perle als Symbol bezeichnet, da diese verwendet werden, um den Text zu kodieren und der Durchmesser der Perle wird als Kosten des Symbols bezeichnet. \\
+\newline
+Diese Variante ist bekannt als das Problem der \textbf{präfixfreien Kodierung mit ungleichen Symbolkosten} (prefix-free coding with unequal letter cost). Im Gegensatz zur klassischen Huffman-Kodierung, die von gleichen Symbolkosten ausgeht, ist diese Verallgemeinerung deutlich komplexer. Es ist bis heute \textbf{nicht bekannt}, ob dieses Problem in \textbf{P} liegt oder \textbf{NP-schwer} ist.  
+\\\newline
+\textbf{Überlegungen zum Lösungsansatz}\\
+\newline
+Die aus Kapitel 1 implementierte n-näre Huffman-Kodierung scheitert bei dieser Problemstellung, da die Minimierung der Anzahl der Kodierungsbuchstaben nicht notwendigerweise zur Minimierung der Gesamtkosten führt (die Kosten werden nämlich nicht berücksichtigt).  
+\newline
+Im Folgenenden werden drei Strategien zur Lösung dieses Problems untersucht: 
+
+\subsection{Strategie 1: Heuristische n-näre Huffman Modifikation mit greedy Kostenzuweisung}
+\subsubsection{Kernidee}
+Dieser Ansatz ist vermutlich der Intuitivste und am wenigsten aufwendige und ist in zwei Schritte aufgeteilt: 
+\\\newline
+\begin{enumerate}
+  \item \textbf{Erstellung eines n-nären Huffman Baums} \\
+      Zunächst wird ein n-närer Huffman mit dem aus Kapitel 1 beschriebenen unveränderten Algorithmus erstellt, bei der der Baum nur basierend auf den Symbolhäufigkeiten gebaut wird. Dieser Schritt ignoriert also die Symbolkosten und bestimmt nur die Topologie des Baums. 
+  \item \textbf{Greedy Zuweisung der Kodierungsbuchstaben anhand der Kosten}\\
+  Bei der Traversierung des Baums zur Erstellung der Codewörter erfolgt die Beschriftung der Kanten (von inneren Knoten mit $n$ Kindern) standardmäßig mit den Ziffern bzw. Kodierungszeichen $0$ bis $n-1$.\\
+  Während bei der klassischen Methode aus Kapitel 1 diese Zuweisung oft der Reihenfolge der Kinder folgt (z.B. von links nach rechts), ändert sich dies in dieser Heuristik:\\
+  Denn nun erfolgt diese Zuweisung greedy nach folgendem Prinzip: \\
+  Die Kante, die zum Teilbaum mit der höchsten Häufigkeit führt, erhält jetzt den Kodierungsbuchstaben mit den geringsten Kosten. Die zweithäufigste Kante erhält das zweigünstigste Symbol usw. Dadurch wird angestrebt, dass teure Kodierungszeichen, also Perlen mit großem Durchmesser möglichst selben verwendet werden (in Pfaden mit seltenen Symbolen). So werden günstige Zeichen möglichst früh im Baum platziert, sodass sie häufiger vorkommen und damit mehr zur Gesamtkodierung beitragen können.\\
+\end{enumerate}
+Diese lokale Regel zur Zuordnung führt nicht zu einer global optimalen Lösung, aber sie verteilt die teuren Kosten möglichst kosteneffizient in dem bestehenden Baum. Diese Heuristik ist leicht implementierbar, da diese nur eine kleine Anpassung der n-nären Huffman-Kodierung benötigt. Aus diesen Gründen wurde diese Strategie als erster Ansatz für die Lösung dieses Teilproblems gewählt. Sie dient als Baseline, an der weiterführende Verfahren verglichen werden können, die diese Strategie idealerweise übertreffen. 
+\subsubsection{Umsetzung}
+Die Umsetzung dieser Strategie erfordert nur eine Anpassung der Teilschritte 4 und 5 des beschriebenen Algorithmus aus Kapitel 1. Die Schritte 1 bis 3 bleiben identisch (bis auf die Einlesung der Daten in Schritt 1 die minimal angepasst wird). Folgendes wird angepasst:
+
+\begin{enumerate}
+  \item [4.] \textbf{Traversierung mit greedy Kostenzuweisung}\\
+  Die eigentliche Traversierung des Baums mit der rekursiven Tiefensuche bleibt identisch. Für die Zuweisung der Kosten, werden zunächst die Kinder nach ihrer Häufigkeit absteigend sortiert. Die verfügbaren Kodierungssymbole (in diesem Fall die Ziffern $0$ bis $n-1$ ), werden auch gemäß ihren zugehörigen Kosten aufsteigend sortiert. Mit einer Schleife über alle Kinder, wird den Kanten zu den Teilbäumen nun jeweils das günstigste noch verfügbare Symbol zugewiesen, beginnend mit dem häufigsten Teilbaum. Für jedes Kind wird dieser Prozess rekursiv wiederholt, wobei der aktuelle Pfad (die bisher zugewiesenen Kodierungssymbole) jeweils an das entstehende Codewort angehängt wird. 
+  \item[5.] \textbf{Berechnung der Gesamtlänge der kodierten Nachricht}\\
+  In diesem Schritt wird die Gesamtlänge der kodierten Nachricht bestimmt. Im Unterschied zur klassischen Huffman-Kodierung, bei der die Länge eines Codeworts einfach durch die Anzahl der Symbole bestimmt wird, müssen hier die individuellen Kosten der verwendeten Kodierungssymbole mit einberechnet werden. Die Gesamtlänge ergibt sich also nicht nur aus der Anzahl der Symbole im Codewort, sondern aus der Summe der Kosten aller Symbole, die zur Kodierung eines Zeichens verwendet werden. 
+\end{enumerate}
+
+
+\subsubsection{Komplexitätsanalyse}
+Die Komplexität des Algorithmus has sich wie folgt, geändert:
+
+\vspace{0.2cm}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Schritt} & \textbf{Laufzeit} & \textbf{Speicherbedarf} \\
+\hline
+Einlesen der Datei & $\mathcal{O}(L)$ & $\mathcal{O}(L)$ \\
+Häufigkeitsanalyse & $\mathcal{O}(L)$ & $\mathcal{O}(k)$ \\
+Aufbau des Huffman-Baums & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)$ \\
+\textbf{Generieren der Codetabelle} & $\mathcal{O}(k \cdot n \log n)$ & $\mathcal{O}(k \cdot n)$ \\
+\textbf{Berechnung der Gesamtlänge} & $\mathcal{O}(k)$ & $\mathcal{O}(1)$ \\
+Ausgabe Codetabelle (mit Sortierung) & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)$ \\
+\hline
+\textbf{Gesamt} & $\boldsymbol{\mathcal{O}(L + k \log k)}$ & $\boldsymbol{\mathcal{O}(L + k)}$ \\
+\hline
+\end{tabular}
+\caption{Laufzeit- und Speicherkomplexität Teilaufgabe A}
+\end{table}
+
+\vspace{1em}
+
+\begin{itemize}
+  \item \textbf{Codetabelle:} Dieser Schritt ist durchläuft jeden Knoten (insgesamnt $k$ Knoten) genau einmal mit DFS (Tiefensuche). Pro Knoten werden die Kinder und Kodierungszeichen sortiert, was in $\mathcal{O}(n \log n)$ ist. Daher beträgt die Laufzeit für diesen Schritt $\mathcal{O}(k \cdot n \log n)$.
+
+  \item \textbf{Gesamtlänge:} Dieser Schritt iteriert über alle verschiedenen Symbole, die einen Code bekommen. Es wird über jedes Zeichen in Code iteriert und somit ist dieser Schritt in $\mathcal{O}(k \cdot L_{max})$. $L_{max}$ ist hier die maximale Code-Länge (konstant), daher $\mathcal{O}(k)$.
+\end{itemize}
+\subsubsection{Beispiele}
+Hier die Ausgaben des Programmes zu den Beispielen auf der BwInf-Webseite. Mit Ausnahme der Datei \textit{schmuck5.txt} (für die ein offizieller Vergleichswert vorliegt), wurde die Konsolenausgabe auf die Gesamtlänge der kodierten Nachricht reduziert. Dies wurde gemacht für eine klarere Vergleichbarkeit der Ergebnisse zwischen den noch folgenden Algorithmen. \\Die gesamte Ausgabe ist hier \textbf{AusgabenBStrategie1.txt} \\ \newline \textbf{EDIT} \\ \newline zufinden. 
+Die Ausgabe wird zu dem finalen (und besten) Programm ausführlicher gegeben. 
+
+\begin{enumerate}
+  \item \textbf{schmuck1.txt}
+\begin{verbatim}
+  ...
+Gesamtlänge der Botschaft 197 (Anzahl in Perlen) bzw. 19.7cm
+\end{verbatim}
+  \item \textbf{schmuck2.txt}
+\begin{verbatim}
+  ...
+Gesamtlänge der Botschaft 145 (Anzahl in Perlen) bzw. 14.5cm
+\end{verbatim}
+  \item \textbf{schmuck3.txt}
+\begin{verbatim}
+  ...
+Gesamtlänge der Botschaft 279 (Anzahl in Perlen) bzw. 27.9cm
+\end{verbatim}
+  \item \textbf{schmuck4.txt}
+\begin{verbatim}
+  ...
+Gesamtlänge der Botschaft 154 (Anzahl in Perlen) bzw. 15.4cm
+\end{verbatim}
+  \item \textbf{schmuck5.txt}
+\begin{verbatim}
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  '␣': 2 (Freq: 151, Länge: 2)
+  'e': 3 (Freq: 110, Länge: 3)
+  't': 4 (Freq: 71, Länge: 4)
+  'i': 5 (Freq: 67, Länge: 5)
+  'o': 00 (Freq: 64, Länge: 2)
+  's': 01 (Freq: 61, Länge: 2)
+  'a': 02 (Freq: 58, Länge: 3)
+  'n': 03 (Freq: 56, Länge: 4)
+  'r': 04 (Freq: 51, Länge: 5)
+  'c': 05 (Freq: 44, Länge: 6)
+  'd': 06 (Freq: 37, Länge: 7)
+  'l': 10 (Freq: 33, Länge: 2)
+  'm': 11 (Freq: 27, Länge: 2)
+  'h': 12 (Freq: 26, Länge: 3)
+  'u': 14 (Freq: 25, Länge: 5)
+  'f': 16 (Freq: 20, Länge: 7)
+  'p': 15 (Freq: 20, Länge: 6)
+  'b': 60 (Freq: 16, Länge: 7)
+  'y': 61 (Freq: 13, Länge: 7)
+  'g': 62 (Freq: 11, Länge: 8)
+  '.': 63 (Freq: 8, Länge: 9)
+  'q': 66 (Freq: 5, Länge: 12)
+  ',': 130 (Freq: 5, Länge: 5)
+  'v': 131 (Freq: 5, Länge: 5)
+  'x': 132 (Freq: 5, Länge: 6)
+  'w': 133 (Freq: 4, Länge: 7)
+  'F': 134 (Freq: 3, Länge: 8)
+  'T': 135 (Freq: 3, Länge: 9)
+  'A': 650 (Freq: 1, Länge: 12)
+  'G': 644 (Freq: 1, Länge: 14)
+  'H': 651 (Freq: 1, Länge: 12)
+  'S': 640 (Freq: 1, Länge: 11)
+   '’': 645 (Freq: 1, Länge: 15)
+  'j': 652 (Freq: 1, Länge: 13)
+  '-': 643 (Freq: 1, Länge: 13)
+  '1': 646 (Freq: 1, Länge: 16)
+  '2': 136 (Freq: 1, Länge: 10)
+  '5': 653 (Freq: 1, Länge: 14)
+  '9': 654 (Freq: 1, Länge: 15)
+  'z': 641 (Freq: 1, Länge: 11)
+  ';': 642 (Freq: 1, Länge: 12)
+}
+
+Gesamtlänge der Botschaft 4010 (Anzahl in Perlen) bzw. 401.0cm
+\end{verbatim}
+
+Dieses Ergebnis (4010) ist ca. $26.82\%$ schlechter als der Vergleichswert (3162) von der BwInf Webseite, daher ist hier noch viel Platz für Verbesserung.
+  \item \textbf{schmuck6.txt}
+\begin{verbatim}
+  ...
+Gesamtlänge der Botschaft 244 (Anzahl in Perlen) bzw. 24.4cm
+\end{verbatim}
+  \item \textbf{schmuck7.txt}
+\begin{verbatim}
+  ...
+Gesamtlänge der Botschaft 153144 (Anzahl in Perlen) bzw. 15314.4cm
+\end{verbatim}
+  \item \textbf{schmuck8.txt}
+\begin{verbatim}
+  ...
+Gesamtlänge der Botschaft 3615 (Anzahl in Perlen) bzw. 361.5cm
+\end{verbatim}
+  \item \textbf{schmuck9.txt}
+\begin{verbatim}
+  ...
+Gesamtlänge der Botschaft 41056 (Anzahl in Perlen) bzw. 4105.6cm
+\end{verbatim}
+Dieses Ergebnis (41056) ist ca. $12.18\%$ schlechter als der Vergleichswert (36597) von der BwInf Webseite, daher ist hier noch etwas Platz für Verbesserung.
+\end{enumerate}
+\subsubsection{Quellcode}
+\textbf{Wichtige Teile des Quellcodes:}\\
+
+\textbf{4. Erzeugen der Codetabelle mit greedy Heuristik}
+\begin{lstlisting}
+// 4. Generate Huffman codes with cost-aware digit assignment
+private static void generateCodesCostAware(Node node, String currentCode, Map<Character, String> codeTable,
+        List<Integer> costs) {
+    // Base case
+    if (node == null) {
+        return;
+    }
+
+    // If it is a leaf, it represents a character, then assign a code
+    if (node.isLeaf()) {
+        if (node.character != null) {
+            codeTable.put(node.character, currentCode.isEmpty() ? "0" : currentCode);
+        }
+        // Leaf is reached, stop recursion
+        return;
+    }
+
+    List<Node> children = node.children;
+
+    // 1. Sort children by frequency - Descending (made copy to not modify the main
+    // list, not sure if needed)
+    List<Node> sortedChildren = new ArrayList<>(children);
+    sortedChildren.sort(Comparator.comparingLong(Node::getFrequency).reversed());
+
+    // 2. Prepare digits sorted by cost - Ascending
+    // DigitCost is a wrapper to map each digit with its corresponding cost
+    List<DigitCost> digitCosts = new ArrayList<>();
+
+    for (int i = 0; i < costs.size(); i++) {
+        digitCosts.add(new DigitCost(i, costs.get(i)));
+    } 
+    // Sort by cost ascending, for this input not needed as digits are already sorted
+    Collections.sort(digitCosts);
+
+    // 3. Assign cheapest digits to most frequent children
+    for (int i = 0; i < sortedChildren.size(); i++) {
+        Node child = sortedChildren.get(i);
+        int assignedDigit = digitCosts.get(i).digit; // i-th cheapest digit
+        generateCodesCostAware(child, currentCode + assignedDigit, codeTable, costs);
+    }
+}
+\end{lstlisting}
+\textbf{5. Berechnung der Gesamtlänge}
+
+\begin{lstlisting}
+// 5. Calculate total cost of encoded message
+private static long calculateTotalCost(Map<Character, String> codeTable, Map<Character, Long> frequencyMap,
+        List<Integer> costs) {
+    long totalCost = 0;
+
+    // Iterate over each character
+    for (Map.Entry<Character, Long> entry : frequencyMap.entrySet()) {
+        char character = entry.getKey();
+        long frequency = entry.getValue();
+        String code = codeTable.get(character);
+
+        long costOfCode = 0;
+        for (char digitChar : code.toCharArray()) {
+            int digit = Character.getNumericValue(digitChar);
+            costOfCode += costs.get(digit);
+        }
+        totalCost += frequency * costOfCode;
+    }
+    return totalCost;
+}
+\end{lstlisting}
+
+\subsection{Strategie 2}
+\subsubsection{Umsetzung}
+\subsubsection{Komplexitätsanalyse}
+\subsubsection{Beispiele}
+\subsubsection{Quellcode}
+\subsection{Strategie 3}
+\subsubsection{Umsetzung}
+\subsubsection{Komplexitätsanalyse}
+\subsubsection{Beispiele}
+\subsubsection{Quellcode}
+\subsection{Erweiterungen}
+\subsection{Vergleich der Strategien}
 \begin{thebibliography}{9}
 \bibitem{paperhuffman}
 David A. Huffman (1952) \emph{A Method for the Construction of Minimum-Redundancy Codes}, 
 \emph{Proceedings of the IRE}, 40(9), 1098--1101. 
 \url{https://doi.org/10.1109/JRPROC.1952.273898}
+
+\bibitem{papergolinli}
+Mordecai Golin and Li Jian (2007) \emph{More Efficient Algorithms and Analyses for Unequal Letter Cost Prefix-Free Coding}, 
+arXiv:0705.0253 [cs.IT]. \url{https://doi.org/10.48550/arXiv.0705.0253}
+
+\bibitem{papergolinrote}
+M. J. Golin and G. Rote (1998) \emph{A dynamic programming algorithm for constructing optimal prefix-free codes with unequal letter costs}, 
+\emph{IEEE Transactions on Information Theory}, 44(5), 1770--1781. 
+\url{https://doi.org/10.1109/18.705558}
 
 
 \end{thebibliography}
