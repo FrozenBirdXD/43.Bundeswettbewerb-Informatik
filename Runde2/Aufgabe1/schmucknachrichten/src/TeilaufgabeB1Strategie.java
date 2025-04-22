@@ -36,7 +36,7 @@ public class TeilaufgabeB1Strategie {
         String input;
         try {
             // 1. Read input from file
-            input = Files.readString(Path.of("beispielaufgaben/b/schmuck4.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/b/schmuck9.txt"));
         } catch (IOException e) {
             System.out.println("Error: InputFile not found");
             return;
@@ -245,7 +245,7 @@ public class TeilaufgabeB1Strategie {
             String c;
             c = switch (character) {
                 case ' ' -> "␣";
-                case '"' -> c = "\\\"";
+                case '"' -> c = "\"";
                 default -> String.valueOf(character);
             };
             String code = codeTable.get(character);

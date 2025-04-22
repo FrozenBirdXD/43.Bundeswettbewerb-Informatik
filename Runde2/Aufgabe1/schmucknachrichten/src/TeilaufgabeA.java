@@ -190,7 +190,7 @@ public class TeilaufgabeA {
             String c;
             c = switch (character) {
                 case ' ' -> "␣";
-                case '"' -> c = "\\\"";
+                case '"' -> c = "\"";
                 default -> String.valueOf(character);
             };
             System.out.println("  '" + c + "': " + codeTable.get(character) + " (Freq: "
