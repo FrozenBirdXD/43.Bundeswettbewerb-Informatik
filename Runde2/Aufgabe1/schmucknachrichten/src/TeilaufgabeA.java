@@ -48,7 +48,7 @@ public class TeilaufgabeA {
 
             // 4. Generate Huffman codes
             Map<Character, String> codeTable = new HashMap<>();
-            generateCodes(root, "", codeTable, numColors);
+            generateCodes(root, "", codeTable);
 
             // 5. Calculate total length of encoded message
             long totalLength = calculateTotalLength(codeTable, frequencyMap, inputWrapper.diameters.get(0));
@@ -139,7 +139,7 @@ public class TeilaufgabeA {
     }
 
     // 4. Generate Huffman codes by traversing tree with recursion and DFS
-    private static void generateCodes(Node node, String currentCode, Map<Character, String> codeTable, int numColors) {
+    private static void generateCodes(Node node, String currentCode, Map<Character, String> codeTable) {
         // Base case
         if (node == null) {
             return;
@@ -156,7 +156,7 @@ public class TeilaufgabeA {
 
         // Assign codes 0 until k-1 to children
         for (int i = 0; i < node.children.size(); i++) {
-            generateCodes(node.children.get(i), currentCode + i, codeTable, numColors);
+            generateCodes(node.children.get(i), currentCode + i, codeTable);
         }
     }
 
