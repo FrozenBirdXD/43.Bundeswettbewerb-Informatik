@@ -82,7 +82,7 @@ public class TeilaufgabeB1Strategie {
                     "\nCodetabelle:\n(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)");
             printCodeTable(codeTable, frequencyMap, diameters);
             System.out.println("\nGesamtlänge der Botschaft " + totalLength + " (Anzahl in Perlen) bzw. "
-                    + (double) totalLength / 10 + "cm");
+                    + totalLength / 10.0 + "cm");
         }
     }
 
