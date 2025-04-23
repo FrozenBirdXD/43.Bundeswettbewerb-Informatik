@@ -218,7 +218,7 @@ public class TeilaufgabeB2Strategie {
         // L in paper
         double currentL = P_start;
 
-        // Calculate edges Lm*, Rm* (relative limits inside of w) and assigns symbols
+        // Calculate edges Lm*, Rm* (relative limits inside of w) and assign symbols
         // Index m is Bin m+1 in Paper (0 to k-1 here)
         for (int m = 0; m < k; m++) {
             Perle diamInfo = sortedDiameters.get(m);
@@ -229,7 +229,7 @@ public class TeilaufgabeB2Strategie {
             for (int i = l; i <= r; i++) {
                 Symbol sym = symbols.get(i);
                 // Centerpoint s_i = P_{i-1} + p_i / 2
-                // Wahrscheinlichkeitsmittelpunkt
+                // Wahrscheinlichkeitsmittelpunkt, Heuristik
                 double midPoint = sym.cumulativeProbStart + sym.probability / 2.0;
 
                 // Check if fits to Bin m
