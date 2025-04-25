@@ -520,7 +520,7 @@ private static void printCodeTable(Map<Character, String> codeTable, Map<Charact
 Die Grundidee dieser Aufgabe bleibt gleich: Ein Unicode-Text soll mit Hilfe von Perlen kodiert werden. Allerdings haben die Perlen nun einen unterschiedlichen Durchmesser. Ziel ist es nun, die Gesamtlänge der resultierenden Perlenkette, also die kodierte Nachricht, zu minimieren.  \\
 Wenn dieses Problem weiterhin als Optimierungsproblem zu Erstellung einer optimalen, präfixfreien Kodierung (wie bereits im ersten Teil der Aufgabe) betrachtet wird, führt die Einführung variabler Perlendurchmesser zu einer Verallgemeinerung des ursprünglichen Problems. Denn in dieser Erweiterung entspricht der Durchmesser jeder Perle den Kosten des jeweiligen Symbols im Codealphabet. Im Folgenden wird einfachheitshalber, die Perle als Symbol bezeichnet, da diese verwendet werden, um den Text zu kodieren und der Durchmesser der Perle wird als Kosten des Symbols bezeichnet. \\
 \newline
-Diese Variante ist bekannt als das Problem der \textbf{präfixfreien Kodierung mit ungleichen Symbolkosten} (prefix-free coding with unequal letter cost). Im Gegensatz zur klassischen Huffman-Kodierung, die von gleichen Symbolkosten ausgeht, ist diese Verallgemeinerung deutlich komplexer. Es ist bis heute \textbf{nicht bekannt}, ob dieses Problem in \textbf{P} liegt oder \textbf{NP-schwer} ist.  
+Diese Variante ist bekannt als das Problem der \textbf{präfixfreien Kodierung mit ungleichen Symbolkosten} (prefix-free coding with unequal letter cost). Im Gegensatz zur klassischen Huffman-Kodierung, die von gleichen Symbolkosten ausgeht, ist diese Verallgemeinerung deutlich komplexer. Es ist bis heute \textbf{nicht bekannt}, ob dieses allgemeine Problem in \textbf{P} liegt oder \textbf{NP-schwer} ist. Allerdings gibt es einen (komplexen) Algorithmus, der die optimale Kodierung findet, wenn die Symbolkosten postive ganze Zahlen sind. Diese Vereinfachung trifft auf diese Teilaufgabe zu, weshalb dieser Algorithmus in Kapitel 2.4 noch eingeführt wird. Somit ist Teilaufgabe B in polynomieller Zeit lösbar.
 \\\newline
 \textbf{Überlegungen zum Lösungsansatz}\\
 \newline
@@ -846,7 +846,7 @@ Häufigkeitsanalyse & $\mathcal{O}(L)$ & $\mathcal{O}(k)$ \\
 Berechnung der Gesamtlänge & $\mathcal{O}(k)$ & $\mathcal{O}(1)$ \\
 Ausgabe Codetabelle (mit Sortierung) & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)$ \\
 \hline
-\textbf{Gesamt} & $\boldsymbol{\mathcal{O}(L + k \log k)}$ & $\boldsymbol{\mathcal{O}(L + k + n + k \log k)}$ \\
+\textbf{Gesamt} & $\boldsymbol{\mathcal{O}(L + k \log k + n)}$ & $\boldsymbol{\mathcal{O}(L + k + n + k \log k)}$ \\
 \hline
 \end{tabular}
 \caption{Laufzeit- und Speicherkomplexität Teilaufgabe B mit Strategie 2}
@@ -862,8 +862,8 @@ Ausgabe Codetabelle (mit Sortierung) & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)
 \vspace{1em}
 Insgesamt ist die Laufzeit dominiert durch die rekurive Struktur des Algorithmus und die optionale Sortierung für die Ausgabe der Codetabelle. Der Speicherbedarf (hier geschätzt) ist etwas größer als bei Strategie 1, dennoch nicht bemerkenswertes. Die tatsächliche Speicherkomplexität hängt stark von der Struktur des generierten Codes ab und der Tiefe des Rekursionsstacks.
 \newline
-Wenn die Liste mit $n$ Kodierungsbuchstaben nicht sortiert wäre, wie in den Beispielen der BwInf Webseite, müsste diese noch sortiert werden und die Gesamtlaufzeit erhöht sich um $\mathcal{O}(n \log n)$. Allerdings ist $n$ oft sehr klein, was also keinen großen Unterschied macht.
-Daher erweist sich dieser Algorithmus auch bei größeren Texten als leistungsfähig und mit derselben asymptoischen Laufzeit wie Strategie 1.
+Wenn die Liste mit $n$ Kodierungsbuchstaben nicht sortiert wäre, wie in den Beispielen der BwInf Webseite, müsste diese noch sortiert werden und die Gesamtlaufzeit erhöht sich um $\mathcal{O}(n \log n)$. 
+Daher erweist sich dieser Algorithmus auch bei größeren Texten als leistungsfähig und mit ungefähr derselben asymptoischen Laufzeit wie Strategie 1.
 
 \subsubsection{Beispiele}
 Hier die Ausgaben des Programmes zu den Beispielen auf der BwInf-Webseite. Mit Ausnahme der Datei \textit{schmuck5.txt} (für die ein offizieller Vergleichswert vorliegt), wurde die Konsolenausgabe auf die Gesamtlänge der kodierten Nachricht reduziert. Dies wurde gemacht für eine klarere Vergleichbarkeit der Ergebnisse zwischen den noch folgenden Algorithmen. \\Die gesamte Ausgabe ist hier \textbf{AusgabenBStrategie2.txt} \\ \newline \textbf{EDIT} \\ \newline zufinden. 
@@ -1046,7 +1046,7 @@ private static void generateCodesGolinLi(List<Symbol> symbols, int l, int r,
     // L in paper
     double currentL = P_start;
 
-    // Calculate edges Lm*, Rm* (relative limits inside of w) and assigns symbols
+    // Calculate edges Lm*, Rm* (relative limits inside of w) and assign symbols
     // Index m is Bin m+1 in Paper (0 to k-1 here)
     for (int m = 0; m < k; m++) {
         Perle diamInfo = sortedDiameters.get(m);
@@ -1057,7 +1057,7 @@ private static void generateCodesGolinLi(List<Symbol> symbols, int l, int r,
         for (int i = l; i <= r; i++) {
             Symbol sym = symbols.get(i);
             // Centerpoint s_i = P_{i-1} + p_i / 2
-            // Wahrscheinlichkeitsmittelpunkt
+            // Wahrscheinlichkeitsmittelpunkt, Heuristik
             double midPoint = sym.cumulativeProbStart + sym.probability / 2.0;
 
             // Check if fits to Bin m
@@ -1114,7 +1114,7 @@ private static void generateCodesGolinLi(List<Symbol> symbols, int l, int r,
         // Elements are still there, that are not inside a bin -> problem somewhere
         // Add to last non empty bin
         System.out.println(
-                "Irgendwas broken, leck mich, Elemente [" + firstItemIndex + " ... " + r + "] nicht zugeordnet");
+                "Irgendwas broken, eyyy ich kann nicht mehr, Elemente [" + firstItemIndex + " ... " + r + "] nicht zugeordnet");
         if (!finalBins.isEmpty()) {
             List<Integer> lastBin = finalBins.get(finalBins.size() - 1);
             for (int i = firstItemIndex; i <= r; i++) {
@@ -1171,12 +1171,204 @@ private static void generateCodesGolinLi(List<Symbol> symbols, int l, int r,
 }
 \end{lstlisting}
 
-\subsection{Strategie 3}
+\subsection{Strategie 3: Dynamische Programmierung Golin/Rote}
+\subsubsection{Kernidee}
+Der in Strategie 2 umgesetzte Algorithmus bringt zufriedenstellende Lösungen für dieses Teilproblem in einer sehr skalierbaren Laufzeit. Dennoch sind die Beispielängen der BwInf-Webseite besser als die berechneten Werte dieses Programms. Daher wird vermutet, dass die Werte die Gesamtlänge einer optimal kodierten Nachricht sind. Um diese Vermutung zu überprüfen, wird im Folgenden ein anspruchsvoller dynamischer Programmieransatz implementiert, der von Golin und Rote in \cite{papergolinrote} vorgestellt wird. Der Algorithmus garantiert eine optimale Kodierung von $k$ Quellsymbolen in einer Laufzeit von $\mathcal{O}(k^{C+2})$ , wenn die Kosten $C$ der Kodierungsbuchstaben eine ganze positive Zahl ist. Dieser Ansatz wurde zuletzt gewählt, da die Eingabebeispiele große Werte von $k$ haben (insbesondere \textit{schmuck8.txt} und \textit{schmuck9.txt}, wegen den vielen verschiedenen (chinesischen/japanischen) Zeichen) und $C$ bis zu 6 wird, was die Laufzeit stark beeinflusst, aber noch im Rahmen des Möglichen bleibt. Der Ansatz, das Problem in ein ILP umzuformen wurde versucht, aber aufgrund exponentieller Laufzeiten verworfen. \\
+\newline
+Aus Kapitel 1 und 2.1 ist klar geworden, dass der einfache greedy Ansatz von Huffman für ungleiche Buchstabenkosten nicht mehr garantiert zum optimalen Codebaum führt, aus dem die Codes erstellt werden können. Das Ziel des Folgenden beschriebenen Ansatzes ist es daher (zumindest vom Konzept her), die Konstruktion eines solchen optimalen Codebaums. 
+\\\newline
+Die Kernidee dieses Algorithmus ist es, das Problem der optimalen Codebaum-Konstruktion in ein Kürzeste-Wege-Problem auf einen \textbf{Zustandsgraphen} zu überführen. Anstatt wie Huffman den Baum von den Blättern zur Wurzel (Bottom-Up) aufzubauen, verfolgt dieser Ansatz eine Top-Down-Strategie mit dynamischer Programmierung (DP). DP ist eine Methode, bei dem ein Problem in Teilprobleme zerlegt wird, deren Lösungen gespeichert werden, um sie zur Berechnung der Gesamtlösung wiederzuverwenden.
+\\\newline
+Der Algorithmus erstellt gedanklich einen gewichteten, gerichteten, azyklischen Graphen. Jeder \textbf{Knoten} in diesem Graphen steht für einen eindeutigen \textbf{Zustand} während des schrittweisen Aufbaus des Codebaums. (Wichtig: Graph und Baum sind separat zu betrachten. Der Graph stellt Möglichkeiten dar, \textbf{wie} man den Codebaum aufbauen kann). Dieser Zustand wird als "\textbf{Signatur}" $S = (m; l_1, l_2, ..., l_C)$ bezeichnet. Diese Signatur fasst alle wichtigen Informationen über den aktuellen Baufortschritt des Baums zusammen (wenn es im Folgenden um den Zustandsgraphen geht, werden Signatur und Knoten und Zustand als Synonyme verwendet):
+\begin{itemize}
+  \item $m$: Gibt an, wie viele der $k$ Quellsymbole bereits einen finalen Platz im entstehenden Baum erhalten haben (d.h., ihr Pfad endet an einem Blatt). 
+  \item $(m; l_1, l_2, ..., l_C)$:     Beschreiben die Anzahl der aktuell "offenen" Astenden (potenzielle Blätter) auf den nächsten $C$ relevanten Tiefen-Ebenen des Baumes. Diese bilden die "Front", an der der Baum weiter ausgebaut werden kann. 
+\end{itemize}
+
+Eine gerichtete Kante von einer Signatur $S$ zu einer Signatur $S'$ im Graphen steht für einen \textbf{Expansions- schritt} beim Aufbau des Baums. Dieser Schritt entscheidet, was mit der aktuellen "Wachstumsfront" des Baumes, wo sich $l_1$ offene Endknoten befinden, geschieht. Er entscheidet, wie diese offene Endknoten behandelt werden. Dies wird durch eine Variable $q$ quantifiziert, was die Anzahl dieser $l_1$ offenen Endknoten, die in diesem Schritt ausgewählt werden, um weiter zu expandieren, ist. Das bedeutet, diese $q$ Knoten werden zu inneren Knoten des Baumes und erhalten neue Kinder entsprechend den Buchstaben des Zielalphabets und deren Kosten. Die verbleibenden $(l_1 - q)$ Knoten dieser Gruppe werden in diesem Schritt zu finalen Blättern, wo die Pfade dann enden.  
+\\
+Das Gewicht der Kanten zwischen den Signaturen in dem Graph, gibt die zusätzlichen Kosten an, die durch diesen Expansionsschritt entstehen. Da sich durch den Expansionsschritt die Pfadlänge zu diesen noch offenen Enden erhöht, steigt ihr Beitrag zu den Gesamtkosten. Die Kantenkosten sind daher die Summe der Wahrscheinlichkeiten dieser "wartenden" Symbole.
+\\
+Ein wichtiger Aspekt (für die Effizienz, damit $\mathcal{O}(k^{C+2})$ erreicht wird, und nicht $\mathcal{O}(k(n-1)^{C+2})$) des Algorithmus, ist die \textbf{Reduktion der Signaturen}. Wenn ein Expansionsschritt zu einer Signatur führt, die mehr als die benötigten $k$ Blätter hätte, werden die überzähligen, tiefsten Blätter entfernt ("reduce"-Operation). Dadurch wird sichergestellt, dass nur die Signaturen betrachtet werden, die maximal $k$ Blätter kodieren, was die Größe des Zustandsgraphen eingrenzt. 
+\\
+Ein Pfad von der Signatur $S_0$ (repräsentiert die leere Wurzel der Baums) zum Zielzustand (alle $k$ Symbole sind im Baum platziert, keine offenen Enden mehr) entspricht der gesamten Sequenz für den Bau von einen präfixfreien Codebaum. Der kürzeste Pfad in diesem Zustandsgraphen entspricht der Sequenz des Baus des Codebaums mit den minimal möglichen durchschnittlichen Gesamtkosten. Die Länge (Summe der Kantengewichte) dieses kürzesten Pfades ist dieser optimale Kostenwert. 
+\\
+\newline
+Da der Graph keine Zyklen enthält, kann der kürzeste Pfad effizient mit DP gefunden werden (hat Ähnlichkeiten zu Dijkstra mit der PriorityQueue). Der Algorithmus durchläuft die Zustände (Signaturen) so, dass sicherstellt, dass ein Zustand erst verarbeitet wird, wenn die optimalen Kosten dorthin bekannt sind (topologische Reihenfolge). Für jeden erreichten Zustand $S$ werden alle möglichen nächsten Zustände $S'$ (durch Expansion mit $q$) betrachtet. Die Kosten, um $S'$ über $S$ zu erreichen, werden mit den bisher besten bekannten Kosten für $S'$ verglichen und gegebenenfalls aktualisiert. Dabei wird gespeichert, von welchem Vorgänger $S$ und mit welcher Entscheidung $q$ der beste Weg nach $S'$ führte. Das bedeutet, zu jedem Zustand $S'$ wird gespeichert, wie man zu $S'$ gelangt ist.  
+\\
+Es ist anzumerken, dass der Zustandsgraph nicht explizit komplett aufgebaut und dann durchsucht wird. Dies wäre wegen der potenziell riesigen Anzahl möglicher Signaturen für größere Eingaben sehr ineffizient. Stattdessen wird der relevante Teil des Graphen implizit und schrittweise während der Ausführung des DP aufgebaut und gleichzeitig ausgewertet. Mit diesem Prozess wird der kürzeste Pfad gefunden und gespeichert, sowie seine Länge. Der gerade beschriebene Algorithmus zum Erstellen des Zustandsgraphen und das Finden des kürzesten Pfads wird in \cite{papergolinrote} vorgestellt. Das Finden der Codetabelle wird allerdings nicht mehr explizit ausgeführt und im Folgenden wird dieser Prozess beschrieben:
+\\\newline
+Sobald die minimalen Kosten zum Gelangen zu dem Zielzustand berechnet sind, wird der optimale Weg rekonstruiert. Durch \textbf{Backtracking} (Zurückverfolgen der gespeicherten optimalen Vorgänger vom Ziel zum Startknoten) erhält man den kürzesten Pfad. Dieser Pfad repräsentiert die \textbf{Sequenz der optimalen Expansionsentscheidungen ($q$-Werte)}, die zur Konstruktion des optimalen Codebaums führen.
+\\
+Diese Sequenz dient als Bauplan für diesen Baum. Anstatt nun einen expliziten Baum im Speicher aufzubauen, kann der optimale Codebaum simuliert werden, indem dieser Bauplan Schritt für Schritt abgearbeitet wird. Dabei werden die aktiven Codewort-Präfixe und ihre Tiefen verwaltet und die Codewörter werden direkt generiert.
+\\
+Obwohl sich die Konstruktion der optimalen Baumstruktur wegen der ungleichen Buchstabenkosten stark vom Standard-Huffman unterscheidet, bleibt das Prinzip der Zuweisung von Symbolen zu Blättern dasselbe: Das Quellsymbol mit der höchsten Wahrscheinlichkeit wird dem Blatt mit der geringsten Tiefe im resultierenden optimalen Baum zugeordnet, das zweitwahrscheinlichste dem Blatt mit der zweitgeringsten Tiefe usw. Die finalen Codewörter ergeben sich dann wie üblich aus den Pfaden von der Wurzel zu diesen zugewiesenen Blättern. In 2.4.2 (Umsetzung) wird genauer auf die verwendete Methode des Erstellens der Codetabelle eingegangen
+\\\newline
+Zusammengefasst funktioniert der Algorithmus aus \cite{papergolinrote}, da mit der dynamischer Programmierung gezielt alle sinnvollen Möglichkeiten durchgegangen werden, wie man den Codebaum aufbauen kann. Die Signatur speichert dabei alle wichtigen Infos, die später gebraucht werden, um die bestmöglichen Entscheid- ungen des Baumaufbaus zu treffen. Da die Kosten im Zustandsgraph genau den tatsächlichen Aufbaukosten des Codebaums entsprechen, garantiert der kürzeste Weg im Graph, dass die günstigste Bauweise des Codes gefunden wird.
+
+
 \subsubsection{Umsetzung}
+Die Implementierung des DPs für den Graphen basiert auf der in \cite[Figure 6]{papergolinrote} dargestellten Struktur des Algorithmus. Im Folgenden wird der gesamte Prozess zur Lösung der Teilaufgabe B gezeigt, wobei der Fokus auf den Schritten liegt, die zur Berechnung der optimalen Kosten führen und aufzeigen, wie daraus die finale Codetabelle erstellt wird. \\
+Wrapperklassen, die die Ergebnisse von einzelnen Schritten speichern, um sie zu den nächsten Schritten zu Verfügung zu stellen, werden nicht extra explizit angesprochen. Eine wichtige häufig verwendete Klasse ist allerdings die \textbf{Signature} Klasse, die eine Signatur im Graphen darstellt und die in 2.4.1 entsprechend beschriebene Attribute speichert. 
+\\\newline
+Der Code ist wie folgt strukturiert:
+\begin{enumerate}
+  \item \textbf{Vorverarbeitung und Initialisierung}
+  \begin{enumerate}
+    \item \textbf{Einlesen der Daten und Frequenzanalyse}\\
+    Diese zwei Teilschritte sind identisch zu der implementierten Version in den vorherigen Strategien. Allerdings wird zusätzlich die eingelesenen Zeichen bei der Frequenzanalyse bereits hier nach ihrer Häufigkeit sortiert und nicht erst bei der Ausgabe der Codetabelle, da dies für kommende Schritte nötig ist. 
+    \item \textbf{Berechnung der kumulativen Frequenzen}\\
+    Um die Kosten für die Kanten bei der Erstellung des Zustandsgraphen im Graphen effizient zu berechnen, wird ein Array erstellt. Das $i$-te Element ist dabei die Summe der Häufigkeiten der Symbole von Index $i$ bis $k-1$. Dies erlaubt die Berechnung der Kantekosten (Summe der Wahrscheinlichkeiten der noch nicht platzierten Symbole) in $\mathcal{O}(1)$. 
+    \item \textbf{Berechnung des charakteristischen Vektors}\\
+    Aus der Liste der Kodierungsbuchstabenkosten wird der charkteristische Verktor $d$ berechnet. Dieser Vektor $d=(d_1, ..., d_C)$ ist eine Zusammenfassung der Kostenstruktur des Zielalphabets, denn er gibt an, wie viele Kodierungsbuchstaben ($d_j$) genau die Kosten $j$ haben. Er wird im Algorithmus gebraucht, um bei einem Expansionsschritt (also wenn $q$ Knoten erweitert werden) zu berechnen, wie viele neue "offene Enden" (potenzielle Blätter) auf welchen relativen Tiefen $(+1, +2, ..., +C)$ entstehen und wie sich dadurch die Signatur für den nächsten Zustand verändert vgl. \cite[Lemma 3]{papergolinrote}.
+  \end{enumerate}
+  \item \textbf{DP zur Kostenminimierung}
+  \begin{enumerate}
+    \item \textbf{Erstellung der Variablen für die DP}\\
+    Für den kommenden Teil mit der Dynamischen Programmierung müssen wichtige Datenstrukturen erstellt werden, um die Ergebnisse vom DP zu speichern: 
+    \begin{itemize}
+      \item HashMap \textit{opt}: speichert für jede bisher erreichte Signatur, was die bisher gefundenen minimalen Kosten sind ($OPT[S]$ im Paper).
+      \item HashMap \textit{pred}: speichert, von welcher Vorgänger-Signatur und mit welcher Expansionsentscheidung $q$ sie optimal erreicht wurde. Dies ist essenziell für das spätere Backtracking. 
+      \item Es wird (wie bei Dijkstra) ein Start $S_0$ und Zielknoten finalState für den Graphen definiert ($S_0$: Startsignatur, finalState: Zielsignatur mit $(k; 0, ..., 0)$), damit klar ist, wann mit der Suche nach dem kürzesten Pfad aufgehört werden kann. 
+      \item Eine PriorityQueue $pq$ wird erstellt und $S_0$ wird hinzugefügt. Sie steuert die Exploration des Zustandsgraphen in einer ähnlichen Weise wie Dijkstra, indem Zustände mit den aktuell geringsten Kosten zuerst verarbeitet werden, was die topologische Reihenfolge sicherstellt. 
+    \end{itemize}
+  \item \textbf{Hauptschleife für DP}\\
+  In diesem Abschnitt wird der im Paper beschriebene DP-Algorithmus zur impliziten Konstruktion und Exploration des Zustandgraphen implementiert: \\
+  \newline
+  Die Hauptschleife wird definiert: Solange es Zustände in der $pq$ gibt, wird der Zustand \textit{current} mit den geringsten Kosten \textit{currentCost} entnommen. Es wird überprüft, ob dieser Zustand bereits über einen kürzeren Pfad erreicht wurde oder ob das Ziel bereits mit geringeren Kosten gefunden wurde. Außerdem wird überprüft, ob der Zielknoten \textit{finalState} erreicht wurde. 
+  \newline
+  Innerhalb dieser Schleife wird auch der in 2.4.1 beschriebene Expansionsschritt durchgeführt, wo für die aktuelle Signatur alle möglichen nächsten Zustände generiert werden:
+  \begin{enumerate}
+    \item Die Anzahl der offenen Enden an der Front ($l_1$) wird aus der Signatur geholt 
+    \item Die Kosten für den Expansionsschritt werden mit dem Array aus Schritt 1b berechnet 
+    \item Eine Schleife iteriert über alle möglichen Expansionsentscheidungen $q$ (von 0 bis $l_1$)
+    \item Für jedes $q$ wird die nächste Signatur (vor der Reduktion der Singaturen) berechnet  
+    \item Anschließend wird in 2.4.1 beschriebene Prozess von der Reduktion der Signaturen angewendet 
+    \item Wenn nun der Pfad zu dieser neuen Signatur besser ist, werden \textit{pred} und \textit{opt} aktualisiert  
+  \end{enumerate}
+
+  \end{enumerate}
+  \item \textbf{Ergebnissicherung von DP}\\
+  Nach der DP-Schleife wird überprüft, ob tatsächlich ein Endzustand erreicht wurde und die finalen minimalen Kosten (Länge des kürzesten Pfads im Graph) abgespeichert 
+  \item \textbf{Rekonstruktion der Blattiefen}\\
+  Nun wird der erste Teil der Erstellung der Codetabelle durchgeführt. Ein intuitiver Ansatz wäre, mittels Backtracking den optimalen Pfad zurückzuverfolgen und daraus den optimalen Codebaum zu erstellen. Allerdings bin ich bei der Recherche für diese Aufgabe auf den canonical Huffman Code gestoßen, der die Codes generiert, ohne dabei den Baum explizit zu bauen. Das fand ich interessant und die kleine (also… in meiner Vorstellung kleine) Änderung wollte ich implementieren. Spoiler: Die geplante Stunde wurde zu 20, meine To-do-Liste hat gelacht, und mein Schlafrhythmus wurde (mal wieder) dabei rekursiv aufgelöst – leider ohne memoization. Ich habe leider viel zu spät mit der Bearbeitung dieser Aufgabe angefangen, aber naja passiert... Jetzt wieder in den formalen Stil. Daher wird im Folgenden der erste Teil der Erstellung der Codetabelle, basierend auf den canonical Huffman Code, ohne die explizite Erstellung des Codebaums, implementiert. Dies wird gemacht, indem der optimale Pfad genommen wird, um zu ermitteln, wie viele der $k$ Blätter im optimalen Baum auf welcher spezifischen Tiefe landen müssen. Mit dem aus Schritt 2 berechneten Pfad wird der optimale Bauprozess des Codebaums "nachgespielt", wobei nur gesichert wird, wann die Blätter finalisiert werden und auf welcher Tiefe. Denn um die finale Codetabelle zu erstellen, wird nicht die volle Baumstruktur benötigt, sondern nur die \textbf{Verteilung der Blatttiefen}.  
+  \begin{enumerate}
+    \item Zunächst wird mit der \textit{pred} Map der Pfad von der Zielsignatur zurück zur Startsignatur $S_0$ verfolgt. Die dabei gesammelten Informationen zur Erstellung des Baums, wie die $q$ Werte, werden in einer Liste path gespeichert und anschließend umgedreht, um die optimale Sequenz von $S_0$ zum Ziel zu erhalten. 
+    \item Eine HashMap \textit{leavesFinishedAtDepth} wird angelegt, in der das Endresultat gespeichert wird. Diese soll die exakte Anzahl der Blätter, die im optimalen Codebaum auf jeder Tiefe enden müssen. Zusätzlich werden direkt die Blätter die nach dem Start bei $S_0$ existieren, unter der Berücksichtigung der initialen Reduktion, ermittelt. \\
+    Um die Vorwärtssimulation der Erstellung des Baums zu implementieren, wird durch die optimale q-Sequenz (path) iteriert. Innerhalb dieser Schleife wird bestimmt, wie viele der Blätter an der aktuellen Front expandiert und wie viele finalisiert werden. Anschließend wird die Reduktionslogik simuliert, indem berechnet wird, wie viele Blätter insgesamt existieren würden und wie viele davon entfernt werden müssen, um $k$ nicht zu überschreiten. Dann wird die Anzahl der Blätter, die bei der aktuellen Simulationstiefe \textit{simDepth} tatsächlich finalisiert werden, wird berechnet und in die \textit{leavesFinishedAtDepth} Map hinzugefügt. Schließlich überprüft, ob die berechneten Werte tatsächlich stimmen und \textit{leavesFinishedAtDepth} wird zurückgegeben.  
+  \end{enumerate}
+  \item \textbf{Generierung der Codetabelle}\\
+  Um nun die Codetabelle zu erstellen, werden die aus Schritt 1a. (Frequenzanalyse) und Schritt 4. (Blatttiefen) berechneten Werte verwendet. Diese Methode funktioniert, indem bekommt diese Anforderungen (die berechnenten Werte) und erzeugt eine konkrete, präfixfreie Codetabelle, die diese Anforderungen erfüllt. Dabei ist sie unabhängig vom Golin-Rote-Algorithmus und betrachtet nur das Teilproblem: "Finde eine Menge von $k$ präfixfreien Codes, sodass diese Codes die vorgegebene Tiefe besitzen, und ordne diese den Symbolen $P_1$ bis $P_k$ in der gegebenen Reihenfolge zu." Dies ist ein Standardproblem. Wenn man die Längen (oder hier äquivalent: die Kosten/Tiefen) der Codewörter eines optimalen Codes kennt, gibt es Algorithmen, um einen tatsächlichen präfixfreien Code mit genau diesen Längen zu konstruieren. Das bekannteste Beispiel dafür ist die Konstruktion von \textbf{Canonical Huffman Codes}. Das Folgende implementiert eine Variante davon, der einen systematischen, greedy Generierungs- und Zuweisungsansatz verfolgt: 
+  \\\newline
+  Zunächst wird eine Liste von $k$ Zielen (TargetInfo Objekte) erstellt. In dieser Liste wird für jedes der $k$ Symbolen, seine zugehörige optimale Tiefe (analog zu seinen Kosten) gespeichert. Diese Liste wird anschließend nach Tiefe sortiert, damit Codewörter für geringere Tiefen bevorzugt zugewiesen werden. Außerdem wird eine Kandidaten Liste \textit{candidatePool} erzeugt, die generierte, aber noch nicht verwendete Codewort-Kandidaten speichert. \\
+  Dann erzeugt ein Generator (eine Deque) die systematisch Codewort-Kandidaten erzeugt\\ $("0", "1", ..., "00", "01", ...)$. Es wird über die Ziele, die jeweils ein Symbol $s$ und seine benötigte Tiefe $d$ speichert, iteriert, beginnend mit dem mit den geringsten Kosten. Zuerst wird im \textit{candiatePool} nach einem passenden Kandidaten für $s$ gesucht. Wenn dieser präfixfrei zu bereits vergebenen Codes ist, wird dieser verwendet. Falls kein passender Code im Pool war, werden neue Kandidaten aus dem Generator genommen. Dabei wird jeder Kandidat auf Kosten und Präfixfreiheit überprüft: 
+  \begin{itemize}
+    \item Kosten passt und präfixfrei: Code wird zugewiesen 
+    \item Kosten passt, aber nicht präfixfrei: Kandidat wird (zurück) in den Pool gelegt 
+    \item Kosten passt nicht: Kandidat wird in den Pool gelegt 
+  \end{itemize}
+  Dieser Generierungs- und Prüfprozess wird fortgesetzt, bis ein passender, präfixfreier Code für das aktuelle Ziel gefunden wird oder ein Generierungslimit erreicht ist. 
+  \\\newline
+  Nachdem alle $k$ Ziele abgearbeitet wurde, wurde die vollständige, präfixfreie Codetabelle gefunden. 
+  \item \textbf{Ausgabe der Codetabelle} \\
+  Analog zu den bisherigen Strategien
+  
+\end{enumerate}
+
 \subsubsection{Komplexitätsanalyse}
+Für die Komplexitätsanalyse werden zur besseren Übersicht die verwendeten Variablen im Folgenden nochmals erläutert:
+\begin{itemize}
+  \item $L$: Gesamtlänge des Eingabetextes
+  \item $k$: Anzahl der einzigartigen Quellsymbole (im Paper oft als $n$ bezeichnet)
+  \item $n$: Größe des Zielalphabets (Anzahl der verschiedenen Kostenwerte)
+  \item $C$: Maximale Kosten eines Zeichens des Zielalphabets
+  \item $V$: Anzahl der Knoten (Signaturen) im impliziten Zustandsgraphen
+  \item $E$: Anzahl der Kanten im impliziten Zustandsgraphen
+\end{itemize}
+
+\vspace{0.2cm}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Schritt} & \textbf{Laufzeit} & \textbf{Speicherbedarf} \\
+\hline
+\textbf{Vorverarbeitung} & $\mathcal{O}(L + k \log k)$ & $\mathcal{O}(k)$ \\
+\textbf{DP zur Kostenminimierung} & $\mathcal{O}(k^{C+2}\cdot C)$ & $\mathcal{O}(C \cdot k^{C+1})$ \\
+\textbf{Ergebnissicherung von DP} & $\mathcal{O}(k^{C+1}\cdot C)$ & $\mathcal{O}(1)$ \\
+\textbf{Rekonstruktion der Blatttiefen} & $\mathcal{O}(\text{L-path} \cdot k \log k)$ & $\mathcal{O}(\text{L-path} \cdot C)$ \\
+\textbf{Generierung der Codetabelle} & $\mathcal{O}(>k\cdot \text{L-max})$ & $\mathcal{O}(>k\cdot \text{L-max})$ \\
+Ausgabe Codetabelle & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)$ \\
+\hline
+\textbf{Gesamt} & $\boldsymbol{\mathcal{O}(C\cdot k^{C+2})}$ & $\boldsymbol{\mathcal{O}(C\cdot k^{C+1})}$ \\
+\hline
+\end{tabular}
+\caption{Laufzeit- und Speicherkomplexität Teilaufgabe B mit Strategie 3}
+\end{table}
+
+\begin{itemize}
+  \item \textbf{Vorverarbeitung}:
+  \begin{itemize}
+    \item \textbf{Laufzeit}:
+      Häufigkeitsanalyse iteriert durch den Text $\mathcal{O}(L)$. Sortieren der $k$ Symbole liegt in $\mathcal{O}(k \log k)$; Gesamt: $\mathcal{O}(L + k \log k)$
+    \item \textbf{Speicher}: \textit{frequencyMap, sortedSymbols, freqCounts, cumFreq} sind jeweils in $\mathcal{O}(k)$, der charakteristische Vektor ist ein Array der Größe $C \mathcal{O}(C)$; Gesamt: Dominiert von $\mathcal{O}(k)$.
+  \end{itemize}
+  \item \textbf{DP zur Kostenminimierung}:
+  \begin{itemize}
+    \item \textbf{Laufzeit}: Schritt 2a in $\mathcal{O}(C)$. Die Hauptschleife von Schritt 2b. läuft im schlimmsten Fall so oft, wie Kanten im Graphen (ähnlich wie Dijkstra), was $\mathcal{O}(E)$ ist. Die kleinste Signatur aus der PriorityQueue zu holen, ist in $\mathcal{O}(\log |PQ|)$, wo $|PQ|$ die Größe der Queue ist. Da sie im schlimmsten Fall so groß wird wie $V$: $\mathcal{O}(\log V) = \mathcal{O}(\log (k^{C+1})) = \mathcal{O}(C\log k)$.\\
+    Das Überprüfen, ob der Zielknoten erreicht wurde ist in $\mathcal{O}(C)$, da $m$ und die Liste der Länge $C$ verglichen werden muss. Die Kostenberechnung der Kanten ist konstant wegen \textit{cumFreq} und die Schleife für die Expansionsentscheidungen läuft bis zu $\mathcal{O}(k)$ mal, da sie $l_1 + 1$  mal läuft und $l_1 <=k$. In dieser Schleife ist alles in $\mathcal{O}(C)$ bis auf das Hinzufügen in die PriorityQueue das in $\mathcal{O}(\log |PQ|) = \mathcal{O}(C\log k)$ da als Min-Heap implementiert ist, um das eingefügte Element an die richtige Position zu bringen. \\
+    Die Kosten pro Iteration der $q$ Schleife (Expansionsentscheidungen) ist somit bei $\mathcal{O}(C+ C\log k)=\mathcal{O}(C\log k)$.\\
+    Die Hauptschleife von 2b hat somit Kosten von $\mathcal{O}(C\log k) \cdot \mathcal{O}(k \cdot C \log k)$ pro Iteration.\\
+    Gesamtkosten: Normalerweise wäre mit der PriorityQueue die Laufzeit bei ca. $\mathcal{O}(E \log V) = \mathcal{O}(C\cdot k^{C+2}\cdot \log k)$ (siehe Dijkstra). Aber \cite[Richtung Ende Kapitel 4]{papergolinrote} argumentiert, dass die Laufzeit in $\mathcal{O}(C\cdot k^{C+2})$ ist, wegen der Struktur des Problems und auch wegen der (impliziten) topologischen Verarbeitsungsreihenfolge. $C$ wird allerdings oft weggelassen, da diese in der Realität oft nur eine sehr kleine Konstante ist.
+    \item \textbf{Speicher}:
+    Der Speicher ist hier dominiert von den HashMaps \textit{opt, pred} und der PriorityQueue \textit{pq}. Die Maps sind in $\mathcal{O}(k^{C+1})$, da die erreichten Zustände als Schlüssel gespeichert werden. Die Anzahl der Zustände $|V'|$ ist $\mathcal{O}(k^{C+1})$ und jede Signatur speichert eine Liste der Länge $C$. Die PriorityQueue kann im schlimmsten Fall einen sehr großen Teil der Zustände haben, bevor sie verarbeitet werden. Sie ist in der selben Komplexität wie die Maps, da sie bis zu $\mathcal{O}(V')$ groß werden kann.
+  \end{itemize}
+  \item \textbf{Ergebnissicherung von DP}:
+  \begin{itemize}
+    \item \textbf{Laufzeit}:
+    Um zu überprüfen, ob ein Zielknoten erreicht wurde (auch anderes Objekt, mit denselben Signatur), muss im schlimmsten Fall über $V$ Elemente iteriert werden, die jeweils $\mathcal{O}(C)$ brauchen, um überprüft zu werden. Gesamt daher in $\mathcal{O}(k^{C+1} \cdot C)$.
+    \item \textbf{Speicher}: Konstant
+  \end{itemize}
+  \item \textbf{Rekonstruktion der Blatttiefen}:
+  \begin{itemize}
+    \item \textbf{Laufzeit}:
+    Für das Backtracking wird $\mathcal{\text{L-path}}$ gebraucht mit \textit{L-Path} ist Länge des optimalen Pfads. Für die Simulation für das Erstellen des Baums, läuft die Schleife \textit{L-path} mal. Innerhalb dieser Schleife dominiert das Sortieren von \textit{activeLeaves.Keyset()} mit einer Laufzeit von $\mathcal{O}(k \log k)$. Gesamt: Im worst case also ca. $\mathcal{O}(\text{L-path}\cdot k \log k)$.
+    \item \textbf{Speicher}:
+    Hier dominiert die Liste \textit{path} mit $\mathcal{O}(\text{L-path} \cdot C)$.
+  \end{itemize}
+  \item \textbf{Generierung der Codetabelle}:
+  \begin{itemize}
+    \item \textbf{Laufzeit}:
+    Um zunächst die Targets (Ziele) zu erstellen, iteriert die Schleife über \textit{depthsCounts} und $k$ Symbole. Geschätzt benötigt das $\mathcal{O}(k+ k\log k)$, da die Tiefen danach noch sortiert werden. Die Hauptschleife iteriert über $k$ Targets und die Pool Prüfung iteriert über maximal $k$ zugewiesene Codes. Dort braucht der Präfix Check, wenn L-max die Maximale codewortlänge ist, $\mathcal{O}(\text{L-max})$. Also braucht jeder Kandidat $\mathcal{O}(k\cdot \text{L-max})$. \textbf{Insgesamt hängt die Laufzeit stark davon ab, wie schnell passende, präfixfreie Codes gefunden werden}. Im best Case wenn sie schnell gefunden werden $\mathcal{O}(k\cdot \text{L-max})$. Der worst Case kann sehr groß sein, was aber nicht direkt einfach von $k$ oder $C$ abhängt.
+    \item \textbf{Speicher}:
+    Der Speicher für \textit{codeMap, assignedCodesList} ist bei $\mathcal{O}(k\cdot \text{L-max})$. Da der Generator theoretisch sehr groß werden kann, ist der Speicher für diese Methode schwer abzuschätzen, sollte aber in der Praxis noch akzeptabel sein.
+  \end{itemize}
+
+\end{itemize}
 \subsubsection{Beispiele}
+
 \subsubsection{Quellcode}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/2.png}
+    \caption*{Image 1 caption} % use \caption{} if you want numbered
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/2.png}
+    \caption*{Image 2 caption}
+  \end{minipage}
+  \caption{Comparison of Image 1 and Image 2}
+  \label{fig:comparison2}
+\end{figure}
+
 \subsection{Vergleich der Strategien}
+
 \begin{thebibliography}{9}
 \bibitem{paperhuffman}
 David A. Huffman (1952) \emph{A Method for the Construction of Minimum-Redundancy Codes}, 
