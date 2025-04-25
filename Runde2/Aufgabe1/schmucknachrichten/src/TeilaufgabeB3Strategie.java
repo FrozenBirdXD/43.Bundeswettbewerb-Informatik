@@ -19,7 +19,7 @@ public class TeilaufgabeB3Strategie {
         String input;
         try {
             // 1. Read input from file
-            input = Files.readString(Path.of("beispielaufgaben/b/schmuck5.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/b/schmuck8.txt"));
         } catch (IOException e) {
             System.out.println("Error: InputFile not found");
             return;
@@ -47,7 +47,10 @@ public class TeilaufgabeB3Strategie {
         } else {
             printCodeTable(result.codeTable, result.frequencyMap, diameters);
             System.out.println("\nGesamtlänge der Botschaft " + result.totalCost + " (Anzahl in Perlen) bzw. "
-                    + result.totalCost / 10.0 + "cm");
+                    + result.totalCost / 10.0 + "cm\n");
+            // 4. Encode
+            String encodedText = encodeText(text, result.codeTable);
+            System.out.println("Kodierte Nachricht: " + encodedText);
         }
     }
 
@@ -114,7 +117,7 @@ public class TeilaufgabeB3Strategie {
         PriorityQueue<StateCost> pq = new PriorityQueue<>();
         pq.add(new StateCost(0L, S0));
 
-        System.out.println("   n = " + k + ", C = " + C + ", r=" + r + ", S0 = " + S0);
+        System.out.println("   k = " + k + ", C = " + C + ", r=" + r + ", S0 = " + S0);
         System.out.println("2a. Running Dynamic Programming (Dijkstra-like)");
         long processedCount = 0;
         // Store the actual final signature, to begin null, check after dp, if still
@@ -740,5 +743,16 @@ public class TeilaufgabeB3Strategie {
                     + frequencyMap.get(character) + ", Länge: " + length + ")");
         }
         System.out.println("}");
+    }
+
+    private static String encodeText(String text, Map<Character, String> codeTable) {
+        StringBuilder encodedTextBuilder = new StringBuilder();
+        // Iterate over each character
+        for (int i = 0; i < text.length(); i++) {
+            char symbol = text.charAt(i);
+            String codeword = codeTable.get(symbol);
+            encodedTextBuilder.append(codeword);
+        }
+        return encodedTextBuilder.toString();
     }
 }

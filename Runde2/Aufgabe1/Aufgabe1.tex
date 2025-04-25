@@ -39,6 +39,14 @@
   captionpos=b,
 }
 
+\usepackage{etoolbox}
+\usepackage{verbatim}
+\makeatletter
+\def\@xobeysp{\ }
+\let\verbatim@nolig@list\empty
+\appto\verbatim@font{\raggedright}
+\makeatother
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 
@@ -1216,9 +1224,9 @@ Der Code ist wie folgt strukturiert:
   \item \textbf{Vorverarbeitung und Initialisierung}
   \begin{enumerate}
     \item \textbf{Einlesen der Daten und Frequenzanalyse}\\
-    Diese zwei Teilschritte sind identisch zu der implementierten Version in den vorherigen Strategien. Allerdings wird zusätzlich die eingelesenen Zeichen bei der Frequenzanalyse bereits hier nach ihrer Häufigkeit sortiert und nicht erst bei der Ausgabe der Codetabelle, da dies für kommende Schritte nötig ist. 
+    Diese zwei Teilschritte sind identisch zu der implementierten Version in den vorherigen Strategien. Allerdings wird zusätzlich die eingelesenen Zeichen bei der Frequenzanalyse bereits hier nach ihrer Häufigkeit sortiert, da dies für kommende Schritte nötig ist. 
     \item \textbf{Berechnung der kumulativen Frequenzen}\\
-    Um die Kosten für die Kanten bei der Erstellung des Zustandsgraphen im Graphen effizient zu berechnen, wird ein Array erstellt. Das $i$-te Element ist dabei die Summe der Häufigkeiten der Symbole von Index $i$ bis $k-1$. Dies erlaubt die Berechnung der Kantekosten (Summe der Wahrscheinlichkeiten der noch nicht platzierten Symbole) in $\mathcal{O}(1)$. 
+    Um die Kosten für die Kanten bei der Erstellung des Zustandsgraphen im Graphen effizient zu berechnen, wird ein Array erstellt. Das $i$-te Element ist dabei die Summe der Häufigkeiten der Symbole von Index $i$ bis $k-1$. Dies erlaubt die Berechnung der Kantenkosten (Summe der Wahrscheinlichkeiten der noch nicht platzierten Symbole) in $\mathcal{O}(1)$. 
     \item \textbf{Berechnung des charakteristischen Vektors}\\
     Aus der Liste der Kodierungsbuchstabenkosten wird der charkteristische Verktor $d$ berechnet. Dieser Vektor $d=(d_1, ..., d_C)$ ist eine Zusammenfassung der Kostenstruktur des Zielalphabets, denn er gibt an, wie viele Kodierungsbuchstaben ($d_j$) genau die Kosten $j$ haben. Er wird im Algorithmus gebraucht, um bei einem Expansionsschritt (also wenn $q$ Knoten erweitert werden) zu berechnen, wie viele neue "offene Enden" (potenzielle Blätter) auf welchen relativen Tiefen $(+1, +2, ..., +C)$ entstehen und wie sich dadurch die Signatur für den nächsten Zustand verändert vgl. \cite[Lemma 3]{papergolinrote}.
   \end{enumerate}
@@ -1243,31 +1251,31 @@ Der Code ist wie folgt strukturiert:
     \item Die Kosten für den Expansionsschritt werden mit dem Array aus Schritt 1b berechnet 
     \item Eine Schleife iteriert über alle möglichen Expansionsentscheidungen $q$ (von 0 bis $l_1$)
     \item Für jedes $q$ wird die nächste Signatur (vor der Reduktion der Singaturen) berechnet  
-    \item Anschließend wird in 2.4.1 beschriebene Prozess von der Reduktion der Signaturen angewendet 
+    \item Anschließend wird der in 2.4.1 beschriebene Prozess von der Reduktion der Signaturen angewendet 
     \item Wenn nun der Pfad zu dieser neuen Signatur besser ist, werden \textit{pred} und \textit{opt} aktualisiert  
   \end{enumerate}
 
   \end{enumerate}
   \item \textbf{Ergebnissicherung von DP}\\
-  Nach der DP-Schleife wird überprüft, ob tatsächlich ein Endzustand erreicht wurde und die finalen minimalen Kosten (Länge des kürzesten Pfads im Graph) abgespeichert 
+  Nach der DP-Schleife wird überprüft, ob tatsächlich ein Endzustand erreicht wurde und die finalen minimalen Kosten (Länge des kürzesten Pfads im Graph) abgespeichert. 
   \item \textbf{Rekonstruktion der Blattiefen}\\
-  Nun wird der erste Teil der Erstellung der Codetabelle durchgeführt. Ein intuitiver Ansatz wäre, mittels Backtracking den optimalen Pfad zurückzuverfolgen und daraus den optimalen Codebaum zu erstellen. Allerdings bin ich bei der Recherche für diese Aufgabe auf den canonical Huffman Code gestoßen, der die Codes generiert, ohne dabei den Baum explizit zu bauen. Das fand ich interessant und die kleine (also… in meiner Vorstellung kleine) Änderung wollte ich implementieren. Spoiler: Die geplante Stunde wurde zu 20, meine To-do-Liste hat gelacht, und mein Schlafrhythmus wurde (mal wieder) dabei rekursiv aufgelöst – leider ohne memoization. Ich habe leider viel zu spät mit der Bearbeitung dieser Aufgabe angefangen, aber naja passiert... Jetzt wieder in den formalen Stil. Daher wird im Folgenden der erste Teil der Erstellung der Codetabelle, basierend auf den canonical Huffman Code, ohne die explizite Erstellung des Codebaums, implementiert. Dies wird gemacht, indem der optimale Pfad genommen wird, um zu ermitteln, wie viele der $k$ Blätter im optimalen Baum auf welcher spezifischen Tiefe landen müssen. Mit dem aus Schritt 2 berechneten Pfad wird der optimale Bauprozess des Codebaums "nachgespielt", wobei nur gesichert wird, wann die Blätter finalisiert werden und auf welcher Tiefe. Denn um die finale Codetabelle zu erstellen, wird nicht die volle Baumstruktur benötigt, sondern nur die \textbf{Verteilung der Blatttiefen}.  
+  Nun wird der erste Teil der Erstellung der Codetabelle durchgeführt. Ein intuitiver Ansatz wäre, mittels Backtracking den optimalen Pfad zurückzuverfolgen und daraus den optimalen Codebaum zu erstellen. Allerdings bin ich bei der Recherche für diese Aufgabe auf den canonical Huffman Code gestoßen, der die Codes generiert, ohne dabei den Baum explizit zu bauen. Das fand ich interessant und die kleine (also… in meiner Vorstellung kleine) Änderung wollte ich implementieren. Spoiler: Die geplante Stunde wurde zu 20, meine To-do-Liste hat gelacht, und mein Schlafrhythmus wurde (mal wieder) dabei rekursiv aufgelöst – leider ohne Memoization. Ich habe leider viel zu spät mit der Bearbeitung dieser Aufgabe angefangen, aber naja passiert... Daher wird im Folgenden der erste Teil der Erstellung der Codetabelle, basierend auf den canonical Huffman Code, ohne die explizite Erstellung des Codebaums, implementiert. Dies wird gemacht, indem der optimale Pfad genommen wird, um zu ermitteln, wie viele der $k$ Blätter im optimalen Baum auf welcher spezifischen Tiefe landen müssen. Mit dem aus Schritt 2 berechneten Pfad wird der optimale Bauprozess des Codebaums "nachgespielt", wobei nur gesichert wird, wann die Blätter finalisiert werden und auf welcher Tiefe. Denn um die finale Codetabelle zu erstellen, wird nicht die volle Baumstruktur benötigt, sondern nur die \textbf{Verteilung der Blatttiefen}.  
   \begin{enumerate}
     \item Zunächst wird mit der \textit{pred} Map der Pfad von der Zielsignatur zurück zur Startsignatur $S_0$ verfolgt. Die dabei gesammelten Informationen zur Erstellung des Baums, wie die $q$ Werte, werden in einer Liste path gespeichert und anschließend umgedreht, um die optimale Sequenz von $S_0$ zum Ziel zu erhalten. 
-    \item Eine HashMap \textit{leavesFinishedAtDepth} wird angelegt, in der das Endresultat gespeichert wird. Diese soll die exakte Anzahl der Blätter, die im optimalen Codebaum auf jeder Tiefe enden müssen. Zusätzlich werden direkt die Blätter die nach dem Start bei $S_0$ existieren, unter der Berücksichtigung der initialen Reduktion, ermittelt. \\
-    Um die Vorwärtssimulation der Erstellung des Baums zu implementieren, wird durch die optimale q-Sequenz (path) iteriert. Innerhalb dieser Schleife wird bestimmt, wie viele der Blätter an der aktuellen Front expandiert und wie viele finalisiert werden. Anschließend wird die Reduktionslogik simuliert, indem berechnet wird, wie viele Blätter insgesamt existieren würden und wie viele davon entfernt werden müssen, um $k$ nicht zu überschreiten. Dann wird die Anzahl der Blätter, die bei der aktuellen Simulationstiefe \textit{simDepth} tatsächlich finalisiert werden, wird berechnet und in die \textit{leavesFinishedAtDepth} Map hinzugefügt. Schließlich überprüft, ob die berechneten Werte tatsächlich stimmen und \textit{leavesFinishedAtDepth} wird zurückgegeben.  
+    \item Eine HashMap \textit{leavesFinishedAtDepth} wird angelegt, in der das Endresultat gespeichert wird. Diese soll die exakte Anzahl der Blätter, die im optimalen Codebaum auf jeder Tiefe enden müssen, halten. Zusätzlich werden direkt die Blätter, die nach dem Start bei $S_0$ existieren, unter der Berücksichtigung der initialen Reduktion, ermittelt. \\
+    Um die Vorwärtssimulation der Erstellung des Baums zu implementieren, wird durch die optimale $q$-Sequenz (\textit{path}) iteriert. Innerhalb dieser Schleife wird bestimmt, wie viele der Blätter an der aktuellen Front expandiert und wie viele finalisiert werden. Anschließend wird die Reduktionslogik simuliert, indem berechnet wird, wie viele Blätter insgesamt existieren würden und wie viele davon entfernt werden müssen, um $k$ nicht zu überschreiten. Dann wird die Anzahl der Blätter, die bei der aktuellen Simulationstiefe \textit{simDepth} tatsächlich finalisiert werden, berechnet und in die \textit{leavesFinishedAtDepth} Map hinzugefügt. Schließlich wird überprüft, ob die berechneten Werte tatsächlich stimmen und \textit{leavesFinishedAtDepth} wird zurückgegeben.  
   \end{enumerate}
   \item \textbf{Generierung der Codetabelle}\\
-  Um nun die Codetabelle zu erstellen, werden die aus Schritt 1a. (Frequenzanalyse) und Schritt 4. (Blatttiefen) berechneten Werte verwendet. Diese Methode funktioniert, indem bekommt diese Anforderungen (die berechnenten Werte) und erzeugt eine konkrete, präfixfreie Codetabelle, die diese Anforderungen erfüllt. Dabei ist sie unabhängig vom Golin-Rote-Algorithmus und betrachtet nur das Teilproblem: "Finde eine Menge von $k$ präfixfreien Codes, sodass diese Codes die vorgegebene Tiefe besitzen, und ordne diese den Symbolen $P_1$ bis $P_k$ in der gegebenen Reihenfolge zu." Dies ist ein Standardproblem. Wenn man die Längen (oder hier äquivalent: die Kosten/Tiefen) der Codewörter eines optimalen Codes kennt, gibt es Algorithmen, um einen tatsächlichen präfixfreien Code mit genau diesen Längen zu konstruieren. Das bekannteste Beispiel dafür ist die Konstruktion von \textbf{Canonical Huffman Codes}. Das Folgende implementiert eine Variante davon, der einen systematischen, greedy Generierungs- und Zuweisungsansatz verfolgt: 
+  Um nun die Codetabelle zu erstellen, werden die aus Schritt 1a. (Frequenzanalyse) und Schritt 4. (Blatttiefen) berechneten Werte verwendet. Diese Methode funktioniert, indem man diese Anforderungen (die berechnenten Werte) bekommt und daraus eine konkrete, präfixfreie Codetabelle erstellt, die diese Anforderungen erfüllt. Dabei ist sie unabhängig vom Golin-Rote-Algorithmus und betrachtet nur das Teilproblem: "Finde eine Menge von $k$ präfixfreien Codes, sodass diese Codes die vorgegebene Tiefe besitzen, und ordne diese den Symbolen $P_1$ bis $P_k$ in der gegebenen Reihenfolge zu." Dies ist ein Standardproblem. Wenn man die Längen (oder hier äquivalent: die Kosten/Tiefen) der Codewörter eines optimalen Codes kennt, gibt es Algorithmen, um einen tatsächlichen präfixfreien Code mit genau diesen Längen zu konstruieren. Das bekannteste Beispiel dafür ist die Konstruktion von \textbf{Canonical Huffman Codes}. Das Folgende implementiert eine Variante davon, der einen systematischen, greedy Generierungs- und Zuweisungsansatz verfolgt: 
   \\\newline
-  Zunächst wird eine Liste von $k$ Zielen (TargetInfo Objekte) erstellt. In dieser Liste wird für jedes der $k$ Symbolen, seine zugehörige optimale Tiefe (analog zu seinen Kosten) gespeichert. Diese Liste wird anschließend nach Tiefe sortiert, damit Codewörter für geringere Tiefen bevorzugt zugewiesen werden. Außerdem wird eine Kandidaten Liste \textit{candidatePool} erzeugt, die generierte, aber noch nicht verwendete Codewort-Kandidaten speichert. \\
-  Dann erzeugt ein Generator (eine Deque) die systematisch Codewort-Kandidaten erzeugt\\ $("0", "1", ..., "00", "01", ...)$. Es wird über die Ziele, die jeweils ein Symbol $s$ und seine benötigte Tiefe $d$ speichert, iteriert, beginnend mit dem mit den geringsten Kosten. Zuerst wird im \textit{candiatePool} nach einem passenden Kandidaten für $s$ gesucht. Wenn dieser präfixfrei zu bereits vergebenen Codes ist, wird dieser verwendet. Falls kein passender Code im Pool war, werden neue Kandidaten aus dem Generator genommen. Dabei wird jeder Kandidat auf Kosten und Präfixfreiheit überprüft: 
+  Zunächst wird eine Liste von $k$ Targets (TargetInfo Objekte, bzw. auch Ziele genannt) erstellt. In dieser Liste wird für jedes der $k$ Symbolen, seine zugehörige optimale Tiefe (analog zu seinen Kosten) gespeichert. Diese Liste wird anschließend nach Tiefe sortiert, damit Codewörter für geringere Tiefen bevorzugt zugewiesen werden. Außerdem wird eine Kandidaten Liste \textit{candidatePool} erzeugt, die generierte, aber noch nicht verwendete, Codewort-Kandidaten speichert. \\
+  Dann erzeugt ein Generator (eine Deque) systematisch die Codewort-Kandidaten $("0", "1", ..., "00",\\ "01", ...)$. Es wird über die Targets, die jeweils ein Symbol $s$ und seine benötigte Tiefe $d$ speichert, iteriert, beginnend mit dem mit den geringsten Kosten. Zuerst wird im \textit{candiatePool} nach einem passenden Kandidaten für $s$ gesucht. Wenn dieser präfixfrei zu bereits vergebenen Codes ist, wird dieser verwendet. Falls kein passender Code im Pool war, werden neue Kandidaten aus dem Generator genommen. Dabei wird jeder Kandidat auf Kosten und Präfixfreiheit überprüft: 
   \begin{itemize}
     \item Kosten passt und präfixfrei: Code wird zugewiesen 
     \item Kosten passt, aber nicht präfixfrei: Kandidat wird (zurück) in den Pool gelegt 
     \item Kosten passt nicht: Kandidat wird in den Pool gelegt 
   \end{itemize}
-  Dieser Generierungs- und Prüfprozess wird fortgesetzt, bis ein passender, präfixfreier Code für das aktuelle Ziel gefunden wird oder ein Generierungslimit erreicht ist. 
+  Dieser Generierungs- und Prüfprozess wird fortgesetzt, bis ein passender, präfixfreier Code für das aktuelle Target gefunden wird oder ein Generierungslimit erreicht ist. 
   \\\newline
   Nachdem alle $k$ Ziele abgearbeitet wurde, wurde die vollständige, präfixfreie Codetabelle gefunden. 
   \item \textbf{Ausgabe der Codetabelle} \\
@@ -1276,7 +1284,7 @@ Der Code ist wie folgt strukturiert:
 \end{enumerate}
 
 \subsubsection{Komplexitätsanalyse}
-Für die Komplexitätsanalyse werden zur besseren Übersicht die verwendeten Variablen im Folgenden nochmals erläutert:
+Für das Verständnis ist es empfehlenswert, den Code nebenbei offen zu haben, um die Laufzeiten nachzuvollziehen. Für die Komplexitätsanalyse werden zur besseren Übersicht die verwendeten Variablen im Folgenden nochmals erläutert:
 \begin{itemize}
   \item $L$: Gesamtlänge des Eingabetextes
   \item $k$: Anzahl der einzigartigen Quellsymbole (im Paper oft als $n$ bezeichnet)
@@ -1297,8 +1305,8 @@ Für die Komplexitätsanalyse werden zur besseren Übersicht die verwendeten Var
 \textbf{Vorverarbeitung} & $\mathcal{O}(L + k \log k)$ & $\mathcal{O}(k)$ \\
 \textbf{DP zur Kostenminimierung} & $\mathcal{O}(k^{C+2}\cdot C)$ & $\mathcal{O}(C \cdot k^{C+1})$ \\
 \textbf{Ergebnissicherung von DP} & $\mathcal{O}(k^{C+1}\cdot C)$ & $\mathcal{O}(1)$ \\
-\textbf{Rekonstruktion der Blatttiefen} & $\mathcal{O}(\text{L-path} \cdot k \log k)$ & $\mathcal{O}(\text{L-path} \cdot C)$ \\
-\textbf{Generierung der Codetabelle} & $\mathcal{O}(>k\cdot \text{L-max})$ & $\mathcal{O}(>k\cdot \text{L-max})$ \\
+\textbf{Rekonstruktion der Blatttiefen} & $\mathcal{O}(L_{path} \cdot k \log k)$ & $\mathcal{O}(L_{path} \cdot C)$ \\
+\textbf{Generierung der Codetabelle} & $\mathcal{O}(>k\cdot L_{max})$ & $\mathcal{O}(>k\cdot L_{\text{max}})$ \\
 Ausgabe Codetabelle & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)$ \\
 \hline
 \textbf{Gesamt} & $\boldsymbol{\mathcal{O}(C\cdot k^{C+2})}$ & $\boldsymbol{\mathcal{O}(C\cdot k^{C+1})}$ \\
@@ -1317,12 +1325,12 @@ Ausgabe Codetabelle & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)$ \\
   \item \textbf{DP zur Kostenminimierung}:
   \begin{itemize}
     \item \textbf{Laufzeit}: Schritt 2a in $\mathcal{O}(C)$. Die Hauptschleife von Schritt 2b. läuft im schlimmsten Fall so oft, wie Kanten im Graphen (ähnlich wie Dijkstra), was $\mathcal{O}(E)$ ist. Die kleinste Signatur aus der PriorityQueue zu holen, ist in $\mathcal{O}(\log |PQ|)$, wo $|PQ|$ die Größe der Queue ist. Da sie im schlimmsten Fall so groß wird wie $V$: $\mathcal{O}(\log V) = \mathcal{O}(\log (k^{C+1})) = \mathcal{O}(C\log k)$.\\
-    Das Überprüfen, ob der Zielknoten erreicht wurde ist in $\mathcal{O}(C)$, da $m$ und die Liste der Länge $C$ verglichen werden muss. Die Kostenberechnung der Kanten ist konstant wegen \textit{cumFreq} und die Schleife für die Expansionsentscheidungen läuft bis zu $\mathcal{O}(k)$ mal, da sie $l_1 + 1$  mal läuft und $l_1 <=k$. In dieser Schleife ist alles in $\mathcal{O}(C)$ bis auf das Hinzufügen in die PriorityQueue das in $\mathcal{O}(\log |PQ|) = \mathcal{O}(C\log k)$ da als Min-Heap implementiert ist, um das eingefügte Element an die richtige Position zu bringen. \\
+    Das Überprüfen, ob der Zielknoten erreicht wurde, ist in $\mathcal{O}(C)$, da $m$ und die Liste der Länge $C$ verglichen werden muss. Die Kostenberechnung der Kanten ist konstant wegen \textit{cumFreq} und die Schleife für die Expansionsentscheidungen läuft bis zu $\mathcal{O}(k)$ mal, da sie $l_1 + 1$  mal läuft und $l_1 \le k$. In dieser Schleife ist alles in $\mathcal{O}(C)$ bis auf das Hinzufügen in die PriorityQueue das in $\mathcal{O}(\log |PQ|) = \mathcal{O}(C\log k)$, um das eingefügte Element an die richtige Position zu bringen, da sie als Min-Heap implementiert ist. \\
     Die Kosten pro Iteration der $q$ Schleife (Expansionsentscheidungen) ist somit bei $\mathcal{O}(C+ C\log k)=\mathcal{O}(C\log k)$.\\
     Die Hauptschleife von 2b hat somit Kosten von $\mathcal{O}(C\log k) \cdot \mathcal{O}(k \cdot C \log k)$ pro Iteration.\\
     Gesamtkosten: Normalerweise wäre mit der PriorityQueue die Laufzeit bei ca. $\mathcal{O}(E \log V) = \mathcal{O}(C\cdot k^{C+2}\cdot \log k)$ (siehe Dijkstra). Aber \cite[Richtung Ende Kapitel 4]{papergolinrote} argumentiert, dass die Laufzeit in $\mathcal{O}(C\cdot k^{C+2})$ ist, wegen der Struktur des Problems und auch wegen der (impliziten) topologischen Verarbeitsungsreihenfolge. $C$ wird allerdings oft weggelassen, da diese in der Realität oft nur eine sehr kleine Konstante ist.
     \item \textbf{Speicher}:
-    Der Speicher ist hier dominiert von den HashMaps \textit{opt, pred} und der PriorityQueue \textit{pq}. Die Maps sind in $\mathcal{O}(k^{C+1})$, da die erreichten Zustände als Schlüssel gespeichert werden. Die Anzahl der Zustände $|V'|$ ist $\mathcal{O}(k^{C+1})$ und jede Signatur speichert eine Liste der Länge $C$. Die PriorityQueue kann im schlimmsten Fall einen sehr großen Teil der Zustände haben, bevor sie verarbeitet werden. Sie ist in der selben Komplexität wie die Maps, da sie bis zu $\mathcal{O}(V')$ groß werden kann.
+    Der Speicher ist hier dominiert von den HashMaps \textit{opt, pred} und der PriorityQueue \textit{pq}. Die Maps sind in $\mathcal{O}(k^{C+1})$, da die erreichten Zustände als Schlüssel gespeichert werden. Die Anzahl der Zustände $V'$ ist $\mathcal{O}(k^{C+1})$, wo $V'$ die Anzahl der Knoten im reduzierten Graphen ist und jede Signatur speichert eine Liste der Länge $C$. Die PriorityQueue kann im schlimmsten Fall einen sehr großen Teil der Zustände haben, bevor sie verarbeitet werden. Sie ist in der selben Komplexität wie die Maps, da sie bis zu $\mathcal{O}(V')$ groß werden kann.
   \end{itemize}
   \item \textbf{Ergebnissicherung von DP}:
   \begin{itemize}
@@ -1333,22 +1341,1169 @@ Ausgabe Codetabelle & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)$ \\
   \item \textbf{Rekonstruktion der Blatttiefen}:
   \begin{itemize}
     \item \textbf{Laufzeit}:
-    Für das Backtracking wird $\mathcal{\text{L-path}}$ gebraucht mit \textit{L-Path} ist Länge des optimalen Pfads. Für die Simulation für das Erstellen des Baums, läuft die Schleife \textit{L-path} mal. Innerhalb dieser Schleife dominiert das Sortieren von \textit{activeLeaves.Keyset()} mit einer Laufzeit von $\mathcal{O}(k \log k)$. Gesamt: Im worst case also ca. $\mathcal{O}(\text{L-path}\cdot k \log k)$.
+    Für das Backtracking wird $\mathcal{O}(L_{path})$ gebraucht, mit $L_{path}$ als Länge des optimalen Pfads. Für die Simulation für das Erstellen des Baums, läuft die Schleife $L_{path}$ mal. Innerhalb dieser Schleife dominiert das Sortieren von \textit{activeLeaves.Keyset()} mit einer Laufzeit von $\mathcal{O}(k \log k)$. Gesamt: Im worst Case also ca. $\mathcal{O}(L_{path}\cdot k \log k)$.
     \item \textbf{Speicher}:
-    Hier dominiert die Liste \textit{path} mit $\mathcal{O}(\text{L-path} \cdot C)$.
+    Hier dominiert die Liste \textit{path} mit $\mathcal{O}(L_{path} \cdot C)$.
   \end{itemize}
   \item \textbf{Generierung der Codetabelle}:
   \begin{itemize}
     \item \textbf{Laufzeit}:
-    Um zunächst die Targets (Ziele) zu erstellen, iteriert die Schleife über \textit{depthsCounts} und $k$ Symbole. Geschätzt benötigt das $\mathcal{O}(k+ k\log k)$, da die Tiefen danach noch sortiert werden. Die Hauptschleife iteriert über $k$ Targets und die Pool Prüfung iteriert über maximal $k$ zugewiesene Codes. Dort braucht der Präfix Check, wenn L-max die Maximale codewortlänge ist, $\mathcal{O}(\text{L-max})$. Also braucht jeder Kandidat $\mathcal{O}(k\cdot \text{L-max})$. \textbf{Insgesamt hängt die Laufzeit stark davon ab, wie schnell passende, präfixfreie Codes gefunden werden}. Im best Case wenn sie schnell gefunden werden $\mathcal{O}(k\cdot \text{L-max})$. Der worst Case kann sehr groß sein, was aber nicht direkt einfach von $k$ oder $C$ abhängt.
+    Um zunächst die Targets (Ziele) zu erstellen, iteriert die Schleife über \textit{depthsCounts} und $k$ Symbole. Geschätzt benötigt das $\mathcal{O}(k+ k\log k)$, da die Tiefen danach noch sortiert werden. Die Hauptschleife iteriert über $k$ Targets und die Pool Prüfung iteriert über maximal $k$ zugewiesene Codes. Dort braucht der Präfix Check, wenn $L_{max}$ die maximale Codewortlänge ist, $\mathcal{O}(L_{max})$. Also braucht jeder Kandidat $\mathcal{O}(k\cdot L_{max})$. \textbf{Insgesamt hängt die Laufzeit stark davon ab, wie schnell passende, präfixfreie Codes gefunden werden}. Im best Case wenn sie schnell gefunden werden $\mathcal{O}(k\cdot L_{max})$. Der worst Case kann sehr groß sein, was aber nicht direkt einfach von $k$ oder $C$ abhängt.
     \item \textbf{Speicher}:
-    Der Speicher für \textit{codeMap, assignedCodesList} ist bei $\mathcal{O}(k\cdot \text{L-max})$. Da der Generator theoretisch sehr groß werden kann, ist der Speicher für diese Methode schwer abzuschätzen, sollte aber in der Praxis noch akzeptabel sein.
+    Der Speicher für \textit{codeMap, assignedCodesList} ist bei $\mathcal{O}(k\cdot L_{max})$. Da der Generator theoretisch sehr groß werden kann, ist der Speicher für diese Methode schwer abzuschätzen, sollte aber in der Praxis noch akzeptabel sein.
   \end{itemize}
 
 \end{itemize}
 \subsubsection{Beispiele}
+Hier die Ausgaben des Programmes zu den Beispielen auf der BwInf-Webseite. Die gesamte Ausgabe ist hier \textbf{AusgabenBStrategie3.txt} \\ \newline \textbf{EDIT} \\ \newline zufinden. Zusätzlich ist hier die Ausführungszeit angegeben (intel i3-12100f, mit 32GB Ram).
+\begin{enumerate}
+  \item \textbf{schmuck1.txt}
+  \begin{verbatim}
+1. Preprocessing
+   k = 25, C = 2, n=3, S0 = (0; 2, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Reached target finalState = (25; 0, 0) with cost 191
+2b. DP Finished. Processed 319 states
+   Total states in OPT table: 262
+3. Minimum Total Cost (Sum Freq*Depth): 191
+4. Reconstructing Code
+   Reconstructing path
+------------------------------
+Execution time: 55 ms
+------------------------------
+{
+  'e': 2 (Freq: 9, Länge: 2)
+  't': 02 (Freq: 6, Länge: 3)
+  '␣': 12 (Freq: 5, Länge: 3)
+  'i': 000 (Freq: 3, Länge: 3)
+  'n': 001 (Freq: 3, Länge: 3)
+  'r': 010 (Freq: 3, Länge: 3)
+  'w': 011 (Freq: 3, Länge: 3)
+  'B': 012 (Freq: 2, Länge: 4)
+  'I': 102 (Freq: 2, Länge: 4)
+  '"': 002 (Freq: 2, Länge: 4)
+  'b': 112 (Freq: 2, Länge: 4)
+  'f': 1000 (Freq: 2, Länge: 4)
+  's': 1001 (Freq: 2, Länge: 4)
+  'D': 1010 (Freq: 1, Länge: 4)
+  'F': 1011 (Freq: 1, Länge: 4)
+  'N': 1100 (Freq: 1, Länge: 4)
+  'W': 1101 (Freq: 1, Länge: 4)
+  'a': 1002 (Freq: 1, Länge: 5)
+  'd': 1012 (Freq: 1, Länge: 5)
+  'h': 1102 (Freq: 1, Länge: 5)
+  'k': 1112 (Freq: 1, Länge: 5)
+  'm': 11100 (Freq: 1, Länge: 5)
+  'o': 11101 (Freq: 1, Länge: 5)
+  'u': 11110 (Freq: 1, Länge: 5)
+  'ü': 11111 (Freq: 1, Länge: 5)
+}
+
+Gesamtlänge der Botschaft 191 (Anzahl in Perlen) bzw. 19.1cm
+
+Kodierte Nachricht: 0121101102110010111210010221102021210001111101012002101000021
+201211110001101221001011200002200112102001100011101010111001002020001112011202021
+12201120101122002
+  \end{verbatim}
+  \item \textbf{schmuck2.txt}
+  \begin{verbatim}
+1. Preprocessing
+   k = 9, C = 5, n=2, S0 = (0; 1, 0, 0, 0, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Reached target finalState = (9; 0, 0, 0, 0, 0) with cost 135
+2b. DP Finished. Processed 246 states
+   Total states in OPT table: 268
+3. Minimum Total Cost (Sum Freq*Depth): 135
+4. Reconstructing Code
+   Reconstructing path
+------------------------------
+Execution time: 59 ms
+------------------------------
+{
+  'a': 0 (Freq: 33, Länge: 1)
+  '␣': 101 (Freq: 1, Länge: 11)
+  'b': 110 (Freq: 1, Länge: 11)
+  'g': 111 (Freq: 1, Länge: 15)
+  'd': 1001 (Freq: 1, Länge: 12)
+  'e': 10001 (Freq: 1, Länge: 13)
+  'f': 100001 (Freq: 1, Länge: 14)
+  'c': 1000000 (Freq: 1, Länge: 11)
+  'h': 1000001 (Freq: 1, Länge: 15)
+}
+
+Gesamtlänge der Botschaft 135 (Anzahl in Perlen) bzw. 13.5cm
+
+Kodierte Nachricht: 00000000000000000000000000000000010111010000001001100011000011
+111000001
+  \end{verbatim}
+  \item \textbf{schmuck3.txt}
+  \begin{verbatim}
+1. Preprocessing
+   k = 9, C = 3, n=3, S0 = (0; 1, 1, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Reached target finalState = (9; 0, 0, 0) with cost 279
+2b. DP Finished. Processed 36 states
+   Total states in OPT table: 46
+3. Minimum Total Cost (Sum Freq*Depth): 279
+4. Reconstructing Code
+   Reconstructing path
+------------------------------
+Execution time: 43 ms
+------------------------------
+{
+  'a': 1 (Freq: 34, Länge: 2)
+  'c': 2 (Freq: 34, Länge: 3)
+  'b': 00 (Freq: 34, Länge: 2)
+  '␣': 02 (Freq: 3, Länge: 4)
+  'd': 011 (Freq: 1, Länge: 5)
+  'f': 012 (Freq: 1, Länge: 6)
+  'e': 0100 (Freq: 1, Länge: 5)
+  'g': 0101 (Freq: 1, Länge: 6)
+  'h': 0102 (Freq: 1, Länge: 7)
+}
+
+Gesamtlänge der Botschaft 279 (Anzahl in Perlen) bzw. 27.9cm
+
+Kodierte Nachricht: 11111111111111111111111111111111110200000000000000000000000000
+0000000000000000000000000000000000000000000222222222222222222222222222222222220201
+1010001201010102
+  \end{verbatim}
+  \item \textbf{schmuck4.txt}
+  \begin{verbatim}
+1. Preprocessing
+   k = 14, C = 5, n=2, S0 = (0; 1, 0, 0, 0, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Reached target finalState = (14; 0, 0, 0, 0, 0) with cost 137
+2b. DP Finished. Processed 1555 states
+   Total states in OPT table: 1596
+3. Minimum Total Cost (Sum Freq*Depth): 137
+4. Reconstructing Code
+   Reconstructing path
+------------------------------
+Execution time: 68 ms
+------------------------------
+{
+  'g': 11 (Freq: 1, Länge: 10)
+  'a': 001 (Freq: 1, Länge: 7)
+  'i': 011 (Freq: 1, Länge: 11)
+  'j': 101 (Freq: 1, Länge: 11)
+  'b': 0001 (Freq: 1, Länge: 8)
+  'c': 0100 (Freq: 1, Länge: 8)
+  'd': 1000 (Freq: 1, Länge: 8)
+  'l': 0101 (Freq: 1, Länge: 12)
+  'm': 1001 (Freq: 1, Länge: 12)
+  'f': 00001 (Freq: 1, Länge: 9)
+  'h': 000001 (Freq: 1, Länge: 10)
+  'k': 0000001 (Freq: 1, Länge: 11)
+  'e': 00000000 (Freq: 1, Länge: 8)
+  'n': 00000001 (Freq: 1, Länge: 12)
+}
+
+Gesamtlänge der Botschaft 137 (Anzahl in Perlen) bzw. 13.7cm
+
+Kodierte Nachricht: 0010001010010000000000000001110000010111010000001010110010000
+0001
+  \end{verbatim}
+  \item \textbf{schmuck5.txt}
+  \begin{verbatim}
+1. Preprocessing
+   k = 41, C = 6, n=7, S0 = (0; 2, 1, 1, 1, 1, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Reached target finalState = (41; 0, 0, 0, 0, 0, 0) with cost 3162
+2b. DP Finished. Processed 485 states
+   Total states in OPT table: 1068
+3. Minimum Total Cost (Sum Freq*Depth): 3162
+4. Reconstructing Code
+   Reconstructing path
+------------------------------
+Execution time: 105 ms
+------------------------------
+{
+  '␣': 2 (Freq: 151, Länge: 2)
+  'e': 00 (Freq: 110, Länge: 2)
+  't': 3 (Freq: 71, Länge: 3)
+  'i': 02 (Freq: 67, Länge: 3)
+  'o': 12 (Freq: 64, Länge: 3)
+  's': 010 (Freq: 61, Länge: 3)
+  'a': 011 (Freq: 58, Länge: 3)
+  'n': 100 (Freq: 56, Länge: 3)
+  'r': 101 (Freq: 51, Länge: 3)
+  'c': 110 (Freq: 44, Länge: 3)
+  'd': 111 (Freq: 37, Länge: 3)
+  'l': 4 (Freq: 33, Länge: 4)
+  'm': 03 (Freq: 27, Länge: 4)
+  'h': 13 (Freq: 26, Länge: 4)
+  'u': 012 (Freq: 25, Länge: 4)
+  'f': 102 (Freq: 20, Länge: 4)
+  'p': 112 (Freq: 20, Länge: 4)
+  'b': 5 (Freq: 16, Länge: 5)
+  'y': 04 (Freq: 13, Länge: 5)
+  'g': 14 (Freq: 11, Länge: 5)
+  '.': 013 (Freq: 8, Länge: 5)
+  'v': 6 (Freq: 5, Länge: 6)
+  'x': 05 (Freq: 5, Länge: 6)
+  ',': 103 (Freq: 5, Länge: 5)
+  'q': 113 (Freq: 5, Länge: 5)
+  'w': 15 (Freq: 4, Länge: 6)
+  'F': 014 (Freq: 3, Länge: 6)
+  'T': 104 (Freq: 3, Länge: 6)
+  '-': 06 (Freq: 1, Länge: 7)
+  '1': 16 (Freq: 1, Länge: 7)
+  'A': 106 (Freq: 1, Länge: 8)
+  'G': 116 (Freq: 1, Länge: 8)
+  '2': 015 (Freq: 1, Länge: 7)
+  '5': 105 (Freq: 1, Länge: 7)
+  '9': 115 (Freq: 1, Länge: 7)
+  ';': 016 (Freq: 1, Länge: 8)
+  'H': 1142 (Freq: 1, Länge: 8)
+  'S': 11400 (Freq: 1, Länge: 8)
+   '’': 11411 (Freq: 1, Länge: 8)
+  'j': 11401 (Freq: 1, Länge: 8)
+  'z': 11410 (Freq: 1, Länge: 8)
+}
+
+Gesamtlänge der Botschaft 3162 (Anzahl in Perlen) bzw. 316.2cm
+
+Kodierte Nachricht: 114000120303011101042104130201021120111120010121402600010201120
+30031312111210212101211012100010310101211030210014203021000203012030610100111012100
+11101110011004211210100102020521101211100010210212101231300214001000010101142111020
+10110101003002100120201000400010010211013011100100004215023131201232110121000103101
+01102100301001321041300211012010301021210221101211100240033001010102100000011121001
+23250020011301201141032011100111231300201004035124010200100110121110011120111010021
+00123201101001001203001112312250020011301201144042112101125011540001321062010124012
+30212100213011111211210100602120120104042500001002140260010025042114201210210203011
+10020210021611510501521021210123130020101120011002011421100110100020210021513021101
+32011442110121110024003300101010201110100212102200113012011421101201030132104130021
+12101000100010032111006004121120300100320201020114140051010110211001320140210101031
+03201031010121103012101002102012100110302121000102011101002111001020210000111103202
+10023001010301021210221513021101321000011000010010011101042011100111201001210210202
+11002001003211012100111023021210001021021210123130020005020103001001100021210221121
+01001020205211012111000102030110425002010301130011101320141011203231300010002110121
+00111023021210001010324021000001110120210000113012011402302000102011101002111001010
+26001112151302110132030110425002012010001112312211013011101011110300101021141000211
+21010010202052110121110001001321161203121010411411010202100300140010121121011214101
+01103030210014201141412101023130320201023130010020120100011123122110121000103101012
+11032121123020301203211012111000102010012511401001103231223130001000202100001130120
+11402302000100162011100200400140111003211012035021000113121010201142011112112101120
+11110132312212530110210020112010310102110340421101203112012301130212100011420005112
+00101020010011000202010211210100010001003001112312211100031210001031010113002313002
+11210101111030211001150240230421210223130020300313121110132014021000114404103201012
+03002011111111023021210001142110121110210014211210112540003010201110100211102010110
+01201001000111201110011120112112101125400032121022110401101001002102021100113021210
+02020102310100011300111013
+  \end{verbatim}
+  Dieses Ergebnis (3162) ist der Vergleichswert (3162) von der BwInf Webseite, dies bestätigt die Vermutung, dass der angegebene Wert die optimale Kodierungslänge ist :)
+
+  \item \textbf{schmuck6.txt}
+  \\
+  Ich habe es nicht geschafft, dass Unicodezeichen hier in einem verbatim in latex angezeigt werden, daher sind die Zeichen leer. In der Textdatei mit den gesamten Ausgaben, sind diese Zeichen sichtbar.
+  \begin{verbatim}
+1. Preprocessing
+   k = 34, C = 3, n=3, S0 = (0; 1, 1, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Reached target finalState = (34; 0, 0, 0) with cost 234
+2b. DP Finished. Processed 2496 states
+   Total states in OPT table: 1892
+3. Minimum Total Cost (Sum Freq*Depth): 234
+4. Reconstructing Code
+   Reconstructing path
+------------------------------
+Execution time: 99 ms
+------------------------------
+{
+  '': 02 (Freq: 3, Länge: 4)
+  '': 12 (Freq: 2, Länge: 5)
+  '': 21 (Freq: 2, Länge: 5)
+  '': 002 (Freq: 2, Länge: 5)
+  '': 011 (Freq: 2, Länge: 5)
+  '': 22 (Freq: 1, Länge: 6)
+  '': 101 (Freq: 1, Länge: 5)
+  '': 110 (Freq: 1, Länge: 5)
+  '': 200 (Freq: 1, Länge: 5)
+  '': 112 (Freq: 1, Länge: 7)
+  '': 102 (Freq: 1, Länge: 6)
+  '': 111 (Freq: 1, Länge: 6)
+  '': 202 (Freq: 1, Länge: 7)
+  '': 012 (Freq: 1, Länge: 6)
+  '': 201 (Freq: 1, Länge: 6)
+  '': 1001 (Freq: 1, Länge: 6)
+  '': 1002 (Freq: 1, Länge: 7)
+  '': 0011 (Freq: 1, Länge: 6)
+  '': 0101 (Freq: 1, Länge: 6)
+  '': 0012 (Freq: 1, Länge: 7)
+  '': 0102 (Freq: 1, Länge: 7)
+  '': 0002 (Freq: 1, Länge: 6)
+  '': 01001 (Freq: 1, Länge: 7)
+  '': 00001 (Freq: 1, Länge: 6)
+  '': 00010 (Freq: 1, Länge: 6)
+  '': 10001 (Freq: 1, Länge: 7)
+  '': 01000 (Freq: 1, Länge: 6)
+  '': 10000 (Freq: 1, Länge: 6)
+  '': 00101 (Freq: 1, Länge: 7)
+  '': 00100 (Freq: 1, Länge: 6)
+  '': 00002 (Freq: 1, Länge: 7)
+  '': 00011 (Freq: 1, Länge: 7)
+  '': 000001 (Freq: 1, Länge: 7)
+  '': 000000 (Freq: 1, Länge: 6)
+}
+
+Gesamtlänge der Botschaft 234 (Anzahl in Perlen) bzw. 23.4cm
+
+Kodierte Nachricht: 10201020100100100100210010200011000000111010102100010100000101202
+00112100021010111000000010112000022001200001212200220100201102110001201200000112
+  \end{verbatim}
+  \item \textbf{schmuck7.txt}
+\begin{verbatim}
+1. Preprocessing
+   k = 82, C = 4, n=10, S0 = (0; 7, 1, 1, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Reached target finalState = (82; 0, 0, 0, 0) with cost 134559
+2b. DP Finished. Processed 205 states
+   Total states in OPT table: 476
+3. Minimum Total Cost (Sum Freq*Depth): 134559
+4. Reconstructing Code
+   Reconstructing path
+------------------------------
+Execution time: 270 ms
+------------------------------
+{
+  '␣': 0 (Freq: 13488, Länge: 1)
+  'e': 1 (Freq: 11480, Länge: 1)
+  'n': 2 (Freq: 7761, Länge: 1)
+  'i': 3 (Freq: 5018, Länge: 1)
+  'r': 7 (Freq: 4011, Länge: 2)
+  's': 40 (Freq: 3507, Länge: 2)
+  'a': 41 (Freq: 3307, Länge: 2)
+  'd': 42 (Freq: 3272, Länge: 2)
+  'h': 43 (Freq: 3213, Länge: 2)
+  't': 44 (Freq: 3174, Länge: 2)
+  'u': 45 (Freq: 2609, Länge: 2)
+  'l': 46 (Freq: 2448, Länge: 2)
+  'c': 50 (Freq: 1991, Länge: 2)
+  'g': 51 (Freq: 1665, Länge: 2)
+  'm': 52 (Freq: 1521, Länge: 2)
+  'o': 53 (Freq: 1304, Länge: 2)
+  'b': 54 (Freq: 1141, Länge: 2)
+  ',': 55 (Freq: 1077, Länge: 2)
+  'f': 56 (Freq: 1000, Länge: 2)
+  'w': 60 (Freq: 941, Länge: 2)
+  '.': 61 (Freq: 831, Länge: 2)
+  'k': 62 (Freq: 798, Länge: 2)
+  'z': 63 (Freq: 631, Länge: 2)
+  'S': 8 (Freq: 498, Länge: 3)
+  'ä': 47 (Freq: 455, Länge: 3)
+  'ü': 57 (Freq: 434, Länge: 3)
+  'ö': 67 (Freq: 399, Länge: 3)
+  'v': 640 (Freq: 361, Länge: 3)
+  'F': 641 (Freq: 300, Länge: 3)
+  'p': 642 (Freq: 300, Länge: 3)
+  'ß': 643 (Freq: 278, Länge: 3)
+  'D': 644 (Freq: 277, Länge: 3)
+  'E': 645 (Freq: 243, Länge: 3)
+  'V': 646 (Freq: 242, Länge: 3)
+  'W': 650 (Freq: 231, Länge: 3)
+  'N': 651 (Freq: 218, Länge: 3)
+  'K': 652 (Freq: 206, Länge: 3)
+  'B': 653 (Freq: 193, Länge: 3)
+  'A': 654 (Freq: 159, Länge: 3)
+  'M': 655 (Freq: 159, Länge: 3)
+  'H': 656 (Freq: 152, Länge: 3)
+  'I': 660 (Freq: 134, Länge: 3)
+  'L': 661 (Freq: 126, Länge: 3)
+  'R': 662 (Freq: 115, Länge: 3)
+  'G': 663 (Freq: 106, Länge: 3)
+  'T': 664 (Freq: 102, Länge: 3)
+  'Z': 9 (Freq: 79, Länge: 4)
+  'j': 48 (Freq: 72, Länge: 4)
+  'J': 58 (Freq: 68, Länge: 4)
+  '-': 68 (Freq: 66, Länge: 4)
+  ';': 647 (Freq: 37, Länge: 4)
+  '(': 657 (Freq: 32, Länge: 4)
+  ')': 667 (Freq: 32, Länge: 4)
+  ':': 6650 (Freq: 28, Länge: 4)
+  '_': 6651 (Freq: 28, Länge: 4)
+  'O': 6652 (Freq: 27, Länge: 4)
+  'U': 6653 (Freq: 25, Länge: 4)
+  '[': 6654 (Freq: 24, Länge: 4)
+  ']': 6655 (Freq: 24, Länge: 4)
+  '“': 6656 (Freq: 21, Länge: 4)
+  '„': 6660 (Freq: 21, Länge: 4)
+  'P': 6661 (Freq: 20, Länge: 4)
+  '1': 6662 (Freq: 16, Länge: 4)
+  '4': 6663 (Freq: 13, Länge: 4)
+  '3': 6664 (Freq: 9, Länge: 4)
+  '?': 6665 (Freq: 8, Länge: 4)
+  '!': 49 (Freq: 7, Länge: 5)
+  '2': 59 (Freq: 7, Länge: 5)
+  '5': 69 (Freq: 7, Länge: 5)
+  '6': 648 (Freq: 6, Länge: 5)
+  '0': 658 (Freq: 5, Länge: 5)
+  '8': 668 (Freq: 3, Länge: 5)
+  'Ä': 6667 (Freq: 3, Länge: 5)
+  'q': 6657 (Freq: 3, Länge: 5)
+   '’': 66663 (Freq: 2, Länge: 5)
+  '7': 66660 (Freq: 2, Länge: 5)
+  '9': 66661 (Freq: 2, Länge: 5)
+  'Q': 66662 (Freq: 2, Länge: 5)
+  'Ö': 649 (Freq: 1, Länge: 6)
+  'C': 66664 (Freq: 1, Länge: 5)
+  'x': 66665 (Freq: 1, Länge: 5)
+  'y': 66666 (Freq: 1, Länge: 5)
+}
+
+Gesamtlänge der Botschaft 134559 (Anzahl in Perlen) bzw. 13455.9cm
+
+Kodierte Nachricht: 654454004215206611541204524017170646675114661066116244353206... (die kodierte Nachricht ist mehr als 110KB)
+\end{verbatim}
+
+\item \textbf{schmuck8.txt}
+\begin{verbatim}
+1. Preprocessing
+   k = 321, C = 3, n=5, S0 = (0; 2, 2, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Processed 30000 states (pop ops), PQ size 372225
+   Processed 60000 states (pop ops), PQ size 664988
+   Processed 90000 states (pop ops), PQ size 803740
+    ... 
+   Processed 900000 states (pop ops), PQ size 674085
+   Processed 930000 states (pop ops), PQ size 644298
+   Processed 990000 states (pop ops), PQ size 586335
+   Processed 1110000 states (pop ops), PQ size 468469
+   Processed 1170000 states (pop ops), PQ size 408474
+   Reached target finalState = (321; 0, 0, 0) with cost 3287
+2b. DP Finished. Processed 1188509 states
+   Total states in OPT table: 1059938
+3. Minimum Total Cost (Sum Freq*Depth): 3287
+4. Reconstructing Code
+   Reconstructing path
+------------------------------
+Execution time: 38.298 s
+------------------------------
+{
+  '': 4 (Freq: 33, Länge: 3)
+  '': 02 (Freq: 27, Länge: 3)
+  '': 04 (Freq: 13, Länge: 4)
+  '': 14 (Freq: 13, Länge: 4)
+  '': 22 (Freq: 12, Länge: 4)
+  '': 23 (Freq: 11, Länge: 4)
+  '': 32 (Freq: 11, Länge: 4)
+  '': 33 (Freq: 10, Länge: 4)
+  '': 002 (Freq: 10, Länge: 4)
+  '': 003 (Freq: 9, Länge: 4)
+  '': 012 (Freq: 7, Länge: 4)
+  '': 030 (Freq: 7, Länge: 4)
+  '': 013 (Freq: 7, Länge: 4)
+  '': 34 (Freq: 6, Länge: 5)
+  '': 24 (Freq: 6, Länge: 5)
+  '': 031 (Freq: 6, Länge: 4)
+  '': 033 (Freq: 5, Länge: 5)
+  '': 104 (Freq: 5, Länge: 5)
+  '': 004 (Freq: 5, Länge: 5)
+  '': 032 (Freq: 5, Länge: 5)
+  '': 014 (Freq: 5, Länge: 5)
+  '': 132 (Freq: 4, Länge: 5)
+  '': 114 (Freq: 4, Länge: 5)
+  '': 202 (Freq: 4, Länge: 5)
+
+  ...
+
+ 
+  '': 000113 (Freq: 1, Länge: 7)
+  '': 110001 (Freq: 1, Länge: 6)
+  '': 101101 (Freq: 1, Länge: 6)
+  '': 100100 (Freq: 1, Länge: 6)
+  '': 010000 (Freq: 1, Länge: 6)
+  '': 000000 (Freq: 1, Länge: 6)
+  '': 110111 (Freq: 1, Länge: 6)
+  '': 101003 (Freq: 1, Länge: 7)
+  '': 101012 (Freq: 1, Länge: 7)
+  '': 011111 (Freq: 1, Länge: 6)
+  '': 011112 (Freq: 1, Länge: 7)
+  '': 101013 (Freq: 1, Länge: 7)
+  '': 101102 (Freq: 1, Länge: 7)
+  '': 011113 (Freq: 1, Länge: 7)
+  '': 000001 (Freq: 1, Länge: 6)
+  '': 000002 (Freq: 1, Länge: 7)
+  '': 000010 (Freq: 1, Länge: 6)
+  '': 001002 (Freq: 1, Länge: 7)
+  '': 001010 (Freq: 1, Länge: 6)
+  '': 101110 (Freq: 1, Länge: 6)
+  '': 000003 (Freq: 1, Länge: 7)
+  '': 000011 (Freq: 1, Länge: 6)
+  '': 010110 (Freq: 1, Länge: 6)
+  '': 110112 (Freq: 1, Länge: 7)
+}
+
+Gesamtlänge der Botschaft 3287 (Anzahl in Perlen) bzw. 328.7cm
+
+Kodierte Nachricht: 010020001031100030103100003344102131420103010411321101011001130...
+\end{verbatim}
+\item \textbf{schmuck9.txt}
+
+\begin{verbatim}
+1. Preprocessing
+   k = 674, C = 4, n=4, S0 = (0; 1, 1, 1, 1)
+2a. Running Dynamic Programming (Dijkstra-like)
+   Processed 30000 states (pop ops), PQ size 257044
+   Processed 60000 states (pop ops), PQ size 666081
+   Processed 90000 states (pop ops), PQ size 1315271
+   Processed 120000 states (pop ops), PQ size 1524169
+   Processed 150000 states (pop ops), PQ size 1631613
+
+    ...
+
+   Processed 7230000 states (pop ops), PQ size 56443913
+   Processed 7260000 states (pop ops), PQ size 56748051
+   Processed 7290000 states (pop ops), PQ size 57033159
+   Processed 7320000 states (pop ops), PQ size 57361366
+   Processed 7350000 states (pop ops), PQ size 57750525
+   Processed 7380000 states (pop ops), PQ size 58057696
+   Processed 7410000 states (pop ops), PQ size 58362853
+   Processed 7440000 states (pop ops), PQ size 58707514
+
+   Ab hier habe ich abgebrochen. 
+\end{verbatim}
+Diese Lösungsansatz ist mit Werten von $k = 674, C = 4, n=4, S_0 = (0; 1, 1, 1, 1)$ und einer Laufzeit von $\mathcal{O}(C\cdot k^{C+2})=\mathcal{O}(4\cdot674^{6})$ und mit einem Speicherbedarf von $\mathcal{O}(4\cdot 674^{5})$ nicht mehr realistisch. Der benötigte Speicher wäre im Größenbereich von Petabytes an RAM, (aber hängt davon ab wie viele Zustände tatsächlich erreicht werden: Landau-Notation ist nur eine obere Schranke)
+\end{enumerate}
 
 \subsubsection{Quellcode}
+\textbf{Wichtige Teile des Quellcodes:}
+\\\newline
+\textbf{Berechnung des characteristischen Vektors d}
+\begin{lstlisting}
+// Calculate characteristic vector d and max cost C
+private static CharacteristicVectorResult calculateCharacteristicVector(List<Integer> costs) {
+    if (costs == null || costs.isEmpty()) {
+        return new CharacteristicVectorResult(new int[0], 0);
+    }
+    // Find max C
+    int maxC = 0;
+    for (int cost : costs) {
+        if (cost > 0) {
+            maxC = Math.max(maxC, cost);
+        }
+    }
+    if (maxC == 0) {
+        return new CharacteristicVectorResult(new int[0], 0);
+    }
+
+    // Count occurrences of every positive cost up to maxC
+    int[] dCounts = new int[maxC + 1]; // dCounts[i] store count for cost i
+    for (int cost : costs) {
+        if (cost > 0) {
+            dCounts[cost]++;
+        }
+    }
+    // Create final 'd' array which starts from cost 1
+    int[] dResult = Arrays.copyOfRange(dCounts, 1, maxC + 1);
+    return new CharacteristicVectorResult(dResult, maxC);
+}
+\end{lstlisting}
+
+\textbf{Hauptmethode mit DP}
+\begin{lstlisting}
+// Main solver method
+private static OptimalCodingResult solveOptimalCode(String text, List<Integer> alphabetCosts) {
+    // 1. Preprocessing step
+    System.out.println("1. Preprocessing");
+    // 1a. Calculate symbol frequencies
+    FrequencyResult freqResult = calculateFrequencies(text);
+    if (freqResult.sortedSymbols.isEmpty()) {
+        return new OptimalCodingResult(Collections.emptyMap(), 0, null, null);
+    }
+
+    // Num of unique symbols k
+    int k = freqResult.sortedSymbols.size();
+    // Frequency counts
+    long[] freqCounts = freqResult.sortedSymbols.stream().mapToLong(Map.Entry::getValue).toArray();
+
+    // 1b. Precompute cumulative frequency counts (suffix sums)
+    // Needed for edge cost calculation in O(1)
+    long[] cumFreq = new long[k + 1];
+    // cumFreq[i] = sum of frequencies from index i to n-1 (i.e., P_{i+1} + ... +
+    // P_n)
+    for (int i = k - 1; i >= 0; i--) {
+        cumFreq[i] = cumFreq[i + 1] + freqCounts[i];
+    }
+
+    // 1c. Calculate characteristic vector 'd' and maximum cost 'C'
+    CharacteristicVectorResult charVecResult = calculateCharacteristicVector(alphabetCosts);
+    int[] d = charVecResult.d;
+    int C = charVecResult.C;
+    if (C == 0) {
+        System.err.println("Error: No valid alphabet costs provided (C=0).");
+        return new OptimalCodingResult(null, Long.MAX_VALUE, "Invalid alphabet costs", null);
+    }
+    int r = alphabetCosts.size();
+
+    // 2. Build Zustandsgraph
+    // Explore signatures to find min cost path
+    // Simulate building optimal code tree top-down
+
+    // 2a. Init DP table (OPT) and Predecessor table (Pred)
+    // Saves minimal cost to get to a signature from S0
+    Map<Signature, Long> opt = new HashMap<>();
+    // Saves the current best way to get to a signature
+    Map<Signature, PredecessorInfo> pred = new HashMap<>();
+
+    // Calculate initial signature S0
+    // List full of 0
+    List<Integer> initialLsRaw = new ArrayList<>(Collections.nCopies(C, 0));
+    for (int i = 0; i < d.length; ++i) {
+        // Set initial to values of characteristic vector
+        initialLsRaw.set(i, d[i]); // d has length C
+    }
+    // Signature of "root"
+    Signature initialSigRaw = new Signature(0, initialLsRaw);
+    Signature S0 = reduceSignature(initialSigRaw, k);
+    opt.put(S0, 0L);
+
+    // Target sig: all Symbols in the tree have a codeword
+    Signature finalState = new Signature(k, Collections.nCopies(C, 0));
+
+    // Priority Queue for Dijkstra like (process states with lowest cost first)
+    PriorityQueue<StateCost> pq = new PriorityQueue<>();
+    pq.add(new StateCost(0L, S0));
+
+    System.out.println("   n = " + k + ", C = " + C + ", r=" + r + ", S0 = " + S0);
+    System.out.println("2a. Running Dynamic Programming (Dijkstra-like)");
+    long processedCount = 0;
+    // Store the actual final signature, to begin null, check after dp, if still
+    // null
+    Signature actualFinalSig = null;
+    // Store the final cost to get from S0 to final State
+    long finalCostFound = Long.MAX_VALUE;
+
+    // 2b. Main DP loop
+    while (!pq.isEmpty()) {
+        // Get state with smallest cost from queue
+        StateCost current = pq.poll();
+        long currentCost = current.cost;
+        Signature currentSig = current.signature;
+        processedCount++;
+
+        // If found a shorter path to a signature already, skip
+        if (currentCost > opt.getOrDefault(currentSig, Long.MAX_VALUE)) {
+            continue;
+        }
+
+        // Check if reached target state
+        if (currentSig.equals(finalState)) {
+            if (currentCost < finalCostFound) {
+                finalCostFound = currentCost;
+                actualFinalSig = currentSig;
+                System.out.println("   Reached target finalState = " + currentSig + " with cost " + currentCost);
+                break;
+            }
+        }
+
+        // Small optimization
+        if (actualFinalSig != null && currentCost >= finalCostFound)
+            continue;
+
+        // Logging
+        if (processedCount % 30000 == 0) {
+            System.out.println("   Processed " + processedCount + " states (pop ops), PQ size " + pq.size());
+        }
+
+        // --- Generate next states
+        // Get data from current signature
+        int m = currentSig.m;
+        int l1 = currentSig.getL(0);
+
+        // Calculate cost added for expansion step (edge weight in state graph)
+        long edgeCost = (m < k) ? cumFreq[m] : 0;
+        long newBaseCost = currentCost + edgeCost;
+
+        // Iterate through possible expansions q
+        for (int q = 0; q <= l1; q++) {
+            // Get signature for an expansion
+            Signature nextSigRaw = getNextSigRaw(currentSig, q, d, C);
+            Signature nextSignature = reduceSignature(nextSigRaw, k);
+
+            // Update if a better path is found
+            if (newBaseCost < opt.getOrDefault(nextSignature, Long.MAX_VALUE)) {
+                // Better cost was found to get to a signature
+                opt.put(nextSignature, newBaseCost);
+                // Store how to get to that signature
+                pred.put(nextSignature, new PredecessorInfo(currentSig, q));
+                // Add a new state to explore to pq
+                pq.add(new StateCost(newBaseCost, nextSignature));
+            }
+        }
+    }
+
+    System.out.println("2b. DP Finished. Processed " + processedCount + " states");
+    System.out.println("   Total states in OPT table: " + opt.size());
+
+    // 3. Get result and check if finalState was reached
+    if (actualFinalSig == null) {
+        // Check if anystate (n, 0, ..., 0) was reached if finalState was not hit
+        // directly
+        boolean foundEquivalent = false;
+        // Iterate over all signatures in opt and check if state was reached that is
+        // equivalent
+        for (Map.Entry<Signature, Long> entry : opt.entrySet()) {
+            Signature sig = entry.getKey();
+            // Check if m == n and all l_i == 0
+            if (sig.m == k && sig.list.stream().allMatch(l -> l == 0)) {
+                if (entry.getValue() < finalCostFound) {
+                    finalCostFound = entry.getValue();
+                    actualFinalSig = sig;
+                    foundEquivalent = true;
+                }
+            }
+        }
+        if (foundEquivalent) {
+            System.out.println(
+                    "   Reached equivalent final state " + actualFinalSig + " with cost " + finalCostFound);
+        } else {
+            System.out.println("Error: Target signature finalState not reached");
+            return new OptimalCodingResult(null, Long.MAX_VALUE, "Target state not reachable", null);
+        }
+    }
+
+    // Optimal cost found by DP
+    long minTotalCost = finalCostFound;
+    System.out.println("3. Minimum Total Cost (Sum Freq*Depth): " + minTotalCost);
+
+    // 4. Reconstruct code
+    System.out.println("4. Reconstructing Code");
+    // Reconstruct path and determine leaf depths
+    // Simulates the optimal tree construction process based on pred map
+    Map<Integer, Long> leafDepthsCounts = getLeafDepthsFromPath(actualFinalSig, pred, S0, k, d, alphabetCosts);
+
+    // Error
+    if (leafDepthsCounts == null) {
+        System.out.println("  Error:( Failed to reconstruct leaf depths");
+        return new OptimalCodingResult(null, minTotalCost, "Leaf depth reconstruction failed", null);
+    }
+
+    // 5b. Create actual code table using determined dpeths
+    Map<Character, String> codeTable = buildCodeFromDepths(freqResult.sortedSymbols, leafDepthsCounts,
+            alphabetCosts);
+
+    if (codeTable == null) {
+        System.err.println("   Failed to assign codewords from depths.");
+        return new OptimalCodingResult(null, minTotalCost, "Codeword assignment failed", null);
+    }
+
+    return new OptimalCodingResult(codeTable, minTotalCost, null, freqResult.counts);
+}
+\end{lstlisting}
+\textbf{Rekonstruktion der Blatttiefen}
+\begin{lstlisting}
+// ------------- Reconstruction of tree and Code Assignment
+
+// Step 4
+// Trace back path from finalSig to S0 and simulate tree construction to find
+// leaf depths
+// Then simulates tree construction process (forward) along this optimal path to
+// find exact depth at wich each of the n leaves is finalized
+private static Map<Integer, Long> getLeafDepthsFromPath(
+        Signature finalSig, Map<Signature, PredecessorInfo> pred, Signature S0,
+        int n, int[] characVector, List<Integer> alphabetCosts) {
+    System.out.println("   Reconstructing path");
+    List<PredecessorInfo> path = new ArrayList<>();
+    Signature currentSignature = finalSig;
+
+    // 4a. Backtrack from final state to S0 with pred map
+    while (!currentSignature.equals(S0)) {
+        PredecessorInfo info = pred.get(currentSignature);
+        if (info == null) {
+            System.out.println(
+                    "   Error: Cannot backtrack from signature " + currentSignature + "; failed");
+            return null;
+        }
+        // Add info about step to current Sign
+        path.add(info);
+        currentSignature = info.previousSignature;
+    }
+    // Path currently in reverse order (final -> S0), reverse here for forward
+    // simulation
+    Collections.reverse(path);
+
+    if (path.isEmpty() && S0.equals(finalSig)) {
+        // Handle n=0 or n=1 case where path might be empty
+        return (S0.m == n) ? new HashMap<>() : null;
+    }
+
+    // 4b. --- Simulate forward construction
+    // Store final result
+    Map<Integer, Long> leavesFinishedAtDepth = new HashMap<>();
+    // Track currently open end (potentiall leaves) and their depths during
+    // simulation
+    Map<Integer, Long> activeLeaves = new HashMap<>();
+
+    // Init active leaves based on initial state S0 (after reduction)
+    // Need to know wich children root has according to S0
+    Signature unreducedS0 = new Signature(0, Arrays.stream(characVector).boxed().collect(Collectors.toList()));
+    if (S0.equals(unreducedS0)) {
+        for (int cost : alphabetCosts) {
+            if (cost > 0)
+                activeLeaves.put(cost, activeLeaves.getOrDefault(cost, 0L) + 1);
+        }
+    } else {
+        Map<Integer, Long> tempActive = new HashMap<>();
+        for (int cost : alphabetCosts) {
+            if (cost > 0)
+                tempActive.put(cost, tempActive.getOrDefault(cost, 0L) + 1);
+        }
+        long currentTotal = 0;
+        List<Integer> sortedDepths = new ArrayList<>(tempActive.keySet());
+        Collections.sort(sortedDepths);
+        for (int depth : sortedDepths) {
+            long countAtDepth = tempActive.get(depth);
+            long canKeep = n - currentTotal;
+            long keep = Math.min(countAtDepth, canKeep);
+            if (keep > 0) {
+                activeLeaves.put(depth, keep);
+                currentTotal += keep;
+            }
+            if (currentTotal >= n)
+                break;
+        }
+    }
+
+    // Simulate forward along path
+    int currentLevel = 0; // Track implicit level of signatures
+    for (PredecessorInfo info : path) {
+        // Optimal expansion for this step
+        int q = info.q;
+        int simDepth = currentLevel + 1;
+
+        long numActiveAtSimDepth = activeLeaves.getOrDefault(simDepth, 0L);
+
+        // Determine how many nodes at simDepth expand or finalize
+        long nodesToExpand = Math.min(q, numActiveAtSimDepth);
+        long nodesToFinalize = numActiveAtSimDepth - nodesToExpand;
+
+        // Update active leaves
+        activeLeaves.remove(simDepth);
+
+        // Add children of expanded nodes to active leaves
+        for (int i = 0; i < nodesToExpand; i++) {
+            for (int cost : alphabetCosts) {
+                if (cost > 0)
+                    activeLeaves.put(simDepth + cost, activeLeaves.getOrDefault(simDepth + cost, 0L) + 1);
+            }
+        }
+
+        // Simulate Reduction
+        long currentFinishedCount = leavesFinishedAtDepth.values().stream().mapToLong(Long::longValue).sum();
+        long currentActiveCount = activeLeaves.values().stream().mapToLong(Long::longValue).sum();
+        long potentialTotal = currentFinishedCount + currentActiveCount + nodesToFinalize;
+        // How man leaves to remove to stay in n
+        long leavesToRemove = Math.max(0, potentialTotal - n);
+
+        // Remove deepest leaves first
+        long removedCount = 0;
+        if (leavesToRemove > 0) {
+            List<Integer> sortedActiveDepths = new ArrayList<>(activeLeaves.keySet());
+            sortedActiveDepths.sort(Collections.reverseOrder()); // Deepest first, -> takes most of runtime when
+                                                                  // timecomplexity is viewed
+            for (int depth : sortedActiveDepths) {
+                // Removed enough
+                if (removedCount >= leavesToRemove)
+                    break; //
+                long canRemoveAtDepth = activeLeaves.get(depth);
+                long removeNow = Math.min(leavesToRemove - removedCount, canRemoveAtDepth);
+                activeLeaves.put(depth, activeLeaves.get(depth) - removeNow);
+                if (activeLeaves.get(depth) == 0) {
+                    activeLeaves.remove(depth);
+                }
+                removedCount += removeNow;
+            }
+        }
+
+        long nodesFinalizedThisStep = Math.max(0, nodesToFinalize - (leavesToRemove - removedCount));
+
+        if (nodesFinalizedThisStep > 0) {
+            leavesFinishedAtDepth.put(simDepth,
+                    leavesFinishedAtDepth.getOrDefault(simDepth, 0L) + nodesFinalizedThisStep);
+        }
+        // Move to next level
+        currentLevel++;
+    }
+
+    // After loop any remaining active leaves are finalized leaves
+    for (Map.Entry<Integer, Long> entry : activeLeaves.entrySet()) {
+        leavesFinishedAtDepth.put(entry.getKey(),
+                leavesFinishedAtDepth.getOrDefault(entry.getKey(), 0L) + entry.getValue());
+    }
+
+    // Verify
+    long totalLeavesReconstructed = leavesFinishedAtDepth.values().stream().mapToLong(Long::longValue).sum();
+    if (totalLeavesReconstructed != n) {
+        System.err.println(
+                "   Warning: Reconstructed " + totalLeavesReconstructed + " leaves, but expected " + n);
+    }
+
+    return leavesFinishedAtDepth;
+}
+\end{lstlisting}
+\textbf{Generierung der Codetabelle}
+\begin{lstlisting}
+// 5. Construct prefix free code
+public static Map<Character, String> buildCodeFromDepths(
+        List<Map.Entry<Character, Long>> symbolFreqs,
+        Map<Integer, Long> depthsCounts,
+        List<Integer> costs) {
+    if (symbolFreqs == null || symbolFreqs.isEmpty() || depthsCounts == null || depthsCounts.isEmpty()) {
+        return Collections.emptyMap();
+    }
+
+    int n = symbolFreqs.size();
+    int r = costs.size();
+    List<Character> symbols = symbolFreqs.stream().map(Map.Entry::getKey).collect(Collectors.toList());
+
+    // Create and sort targets
+    // Every entry represents one required leaf: tragetDepth, symbolIndex
+    List<TargetInfo> targets = new ArrayList<>();
+    int symbolIdx = 0;
+    int maxTargetDepth = 0;
+    List<Integer> sortedDepths = new ArrayList<>(depthsCounts.keySet());
+    Collections.sort(sortedDepths);
+
+    for (int depth : sortedDepths) {
+        // How many leaves are needed at this depth
+        long count = depthsCounts.get(depth);
+        maxTargetDepth = Math.max(maxTargetDepth, depth);
+        for (int i = 0; i < count; i++) {
+            if (symbolIdx < n) {
+                targets.add(new TargetInfo(depth, symbolIdx));
+                symbolIdx++;
+            } else {
+                System.out.println("Error: More depths specified than symbols");
+                break;
+            }
+        }
+        if (symbolIdx >= n)
+            break;
+    }
+
+    // Sort by depth, then symbol index
+    Collections.sort(targets);
+
+    // Generate and assing codes greedily
+    Map<Character, String> codeMap = new HashMap<>();
+    List<String> assignedCodesList = new ArrayList<>(); // For prefix checks
+
+    // Use queue for BFS like generation of candiate codewords
+    Deque<String> generatorQueue = new ArrayDeque<>();
+    // Start with single digit codes (children of root)
+    for (int i = 0; i < r; i++) {
+        generatorQueue.offerLast(String.valueOf(i));
+    }
+    // Pool to store codewords that have wrong cost for current target but match
+    // maybe later
+    Map<Integer, Deque<String>> candidatePool = new HashMap<>();
+
+    // Maximum generation limit to prevent infinite loops
+    int minCost = Integer.MAX_VALUE;
+    for (int cost : costs) {
+        if (cost > 0) {
+            minCost = Math.min(minCost, cost);
+        }
+    }
+    if (minCost == Integer.MAX_VALUE) {
+        minCost = 1; // Avoid durch null teilen
+    }
+
+    // Estimate max length needed plus 2 buffer
+    int worstCaseLen = (maxTargetDepth > 0) ? (maxTargetDepth / minCost + 2) : 1;
+    // Estimate of max nodes in full tree of that length and set cap
+    long MaxGeneratedNodes = (long) Math.min(10000000, Math.max(n * 10L, (long) Math.pow(r, worstCaseLen + 1)));
+    long generatedCount = 0;
+
+    // Iterate through targets and assing next available code
+    for (TargetInfo target : targets) {
+        int targetDepth = target.depth;
+        int targetSymbolIndex = target.symbolIndex;
+        char targetSymbol = symbols.get(targetSymbolIndex);
+        boolean foundCodeForTarget = false;
+
+        // 1. Check candidate pool
+        Deque<String> poolDeque = candidatePool.get(targetDepth);
+        if (poolDeque != null && !poolDeque.isEmpty()) {
+            // Temp store codes that fail prefix check
+            Deque<String> skipped = new ArrayDeque<>();
+            while (!poolDeque.isEmpty()) {
+                String candidate = poolDeque.pollFirst();
+                boolean isPrefixFree = true;
+                // Check if it acually is prefix free with already assigned codes
+                for (String assigned : assignedCodesList) {
+                    // Not prefix free
+                    if (candidate.startsWith(assigned) || assigned.startsWith(candidate)) {
+                        isPrefixFree = false;
+                        break;
+                    }
+                }
+                if (isPrefixFree) {
+                    // Found usable code
+                    codeMap.put(targetSymbol, candidate);
+                    assignedCodesList.add(candidate);
+                    foundCodeForTarget = true;
+                    break;
+                } else {
+                    // If fails prefix, but aside for a little
+                    skipped.offerLast(candidate);
+                }
+            }
+            // Put skipped back into pool (maybe used later)
+            while (!skipped.isEmpty()) {
+                poolDeque.offerLast(skipped.pollFirst());
+            }
+        }
+
+        // 2. Generate new codes if needed
+        // If no fitting code was in pool, create new candidates
+        if (!foundCodeForTarget) {
+            while (generatedCount < MaxGeneratedNodes) {
+                String codeword;
+                // Problem
+                if (generatorQueue.isEmpty()) {
+                    System.out.println("Error: Code generator queue empty????");
+                    return null;
+                }
+                // Dequeue next shortest prefix
+                String current = generatorQueue.pollFirst();
+                for (int i = 0; i < r; i++) {
+                    generatorQueue.offerLast(current + i);
+                }
+                // Use dequeued item as current candidate
+                codeword = current;
+
+                generatedCount++;
+                long currentCost = calculateCost(codeword, costs);
+                // Invalid cost
+                if (currentCost == Long.MAX_VALUE) {
+                    continue;
+                }
+                // Check if cost matches target depth
+                if (currentCost == targetDepth) {
+                    boolean isPrefixFree = true;
+                    // Check if prefix free
+                    for (String assigned : assignedCodesList) {
+                        if (codeword.startsWith(assigned) || assigned.startsWith(codeword)) {
+                            isPrefixFree = false;
+                            break;
+                        }
+                    }
+                    if (isPrefixFree) {
+                        // Found code
+                        codeMap.put(targetSymbol, codeword);
+                        assignedCodesList.add(codeword);
+                        foundCodeForTarget = true;
+                        break;
+                    } else {
+                        // Correct cost but not prefix free, maybe used later -> put in pool
+                        candidatePool.computeIfAbsent((int) currentCost, k -> new ArrayDeque<>())
+                                .offerLast(codeword);
+                    }
+                } else {
+                    candidatePool.computeIfAbsent((int) currentCost, k -> new ArrayDeque<>()).offerLast(codeword);
+                }
+            }
+
+            if (!foundCodeForTarget && generatedCount >= MaxGeneratedNodes) {
+                System.out.println(
+                        "Error: Max generation limit (" + MaxGeneratedNodes + ") reached for depth " + targetDepth);
+                return null;
+            }
+        }
+
+        if (!foundCodeForTarget) {
+            System.out.println(
+                    "FATAL: Failed to find code for symbol " + targetSymbol + "' depth " + targetDepth);
+            return null;
+        }
+
+    }
+
+    // Final check if all symbols received codes
+    if (codeMap.size() == n) {
+        return codeMap;
+    } else {
+        System.out.println(
+                "Error: Assignment loop finished but only assigned " + codeMap.size() + "/" + n + " codes");
+        return null;
+    }
+}
+\end{lstlisting}
+\textbf{Kleinere Hilfsmethoden die oben verwendet werden}
+\begin{lstlisting}
+// Apply reduce operation to signature
+// Ensures that signature represents at most n leaves
+private static Signature reduceSignature(Signature signature, int n) {
+    int m = signature.m;
+    int C = signature.getC();
+
+    // Ensure m is not exceeding n to begin with
+    int mPrime = Math.min(m, n);
+    List<Integer> lsPrime = new ArrayList<>(Collections.nCopies(C, 0)); // Init with zeros
+    long currentSum = mPrime; // Had overflow problem with int
+
+    // Iterate through levels l_1, l_2 ..., l_C
+    for (int j = 0; j < C; j++) { // j maps to l_{j+1}
+        int l_j_plus_1 = signature.getL(j); // ls.get(j)
+
+        // Ensure not exceeding n leaves
+        long remainingCapacity = n - currentSum;
+        // Get new count
+        int l_prime_j_plus_1 = (int) Math.max(0, Math.min(l_j_plus_1, remainingCapacity));
+
+        lsPrime.set(j, l_prime_j_plus_1);
+        currentSum += l_prime_j_plus_1;
+    }
+    return new Signature(mPrime, lsPrime);
+}
+
+// Calculate next raw signature before reduction
+private static Signature getNextSigRaw(Signature signature, int q, int[] d, int C) {
+    int m = signature.m;
+    int dLen = d.length; // d represent costs 1 to C
+
+    int l1 = signature.getL(0); // l1 is at index 0
+    int mPrime = m + l1 - q;
+    List<Integer> lsPrime = new ArrayList<>(Collections.nCopies(C, 0)); // Initit with zeros
+
+    // 1. Shift l's
+    for (int k = 0; k < C - 1; k++) { // k from 0 to C-2 relates to l'_1 to l'_{C-1}
+        lsPrime.set(k, signature.getL(k + 1));
+    }
+
+    // 2. Add new leaves by expanding q nodes
+    // Based on characteristic vector
+    for (int k = 0; k < C; k++) { // k from 0 to C-1 relates to d_1 to d_C
+        if (k < dLen) { // Check bounds for d (d has length C)
+            int currentVal = lsPrime.get(k);
+            lsPrime.set(k, currentVal + (q * d[k]));
+        }
+    }
+    return new Signature(mPrime, lsPrime);
+}
+
+// Calculate cost of one codeword
+private static long calculateCost(String codewordStr, List<Integer> costs) {
+    long cost = 0;
+    int r = costs.size();
+    for (int i = 0; i < codewordStr.length(); i++) {
+        char digitChar = codewordStr.charAt(i);
+        int digit = Character.getNumericValue(digitChar);
+        if (digit >= 0 && digit < r) {
+            cost += costs.get(digit);
+        } else {
+            // Invalid
+            System.out.println(
+                    "Warning: Invalid digit '" + digitChar + "' in codeword '" + codewordStr
+                            + "', at this point might aswell just quit");
+            return Long.MAX_VALUE;
+        }
+    }
+    return cost;
+}
+\end{lstlisting}
 
 \begin{figure}[htbp]
   \centering
