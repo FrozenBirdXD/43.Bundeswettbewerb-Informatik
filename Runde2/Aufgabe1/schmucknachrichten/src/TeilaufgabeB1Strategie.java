@@ -81,8 +81,10 @@ public class TeilaufgabeB1Strategie {
             System.out.println(
                     "\nCodetabelle:\n(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)");
             printCodeTable(codeTable, frequencyMap, diameters);
-            System.out.println("\nGesamtlänge der Botschaft " + totalLength + " (Anzahl in Perlen) bzw. "
-                    + totalLength / 10.0 + "cm");
+            System.out.println("\nGesamtlänge der Botschaft " + totalLength + " (in mm) bzw. "
+                    + totalLength / 10.0 + "cm\n");
+            String encodedText = encodeText(text, codeTable);
+            System.out.println("Kodierte Nachricht: " + encodedText);
         }
     }
 
@@ -192,8 +194,9 @@ public class TeilaufgabeB1Strategie {
 
         for (int i = 0; i < costs.size(); i++) {
             digitCosts.add(new DigitCost(i, costs.get(i)));
-        } 
-        // Sort by cost ascending, for this input not needed as digits are already sorted
+        }
+        // Sort by cost ascending, for this input not needed as digits are already
+        // sorted
         Collections.sort(digitCosts);
 
         // 3. Assign cheapest digits to most frequent children
@@ -259,5 +262,16 @@ public class TeilaufgabeB1Strategie {
                     + frequencyMap.get(character) + ", Länge: " + length + ")");
         }
         System.out.println("}");
+    }
+
+    private static String encodeText(String text, Map<Character, String> codeTable) {
+        StringBuilder encodedTextBuilder = new StringBuilder();
+        // Iterate over each character
+        for (int i = 0; i < text.length(); i++) {
+            char symbol = text.charAt(i);
+            String codeword = codeTable.get(symbol);
+            encodedTextBuilder.append(codeword);
+        }
+        return encodedTextBuilder.toString();
     }
 }

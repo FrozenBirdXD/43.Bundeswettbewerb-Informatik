@@ -46,7 +46,7 @@ public class TeilaufgabeB3Strategie {
             System.out.println("Could not find optimal code: " + result.errorMessage);
         } else {
             printCodeTable(result.codeTable, result.frequencyMap, diameters);
-            System.out.println("\nGesamtlänge der Botschaft " + result.totalCost + " (Anzahl in Perlen) bzw. "
+            System.out.println("\nGesamtlänge der Botschaft " + result.totalCost + " (in mm) bzw. "
                     + result.totalCost / 10.0 + "cm\n");
             // 4. Encode
             String encodedText = encodeText(text, result.codeTable);

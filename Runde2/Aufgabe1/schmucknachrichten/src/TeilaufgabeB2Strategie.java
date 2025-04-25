@@ -51,7 +51,7 @@ public class TeilaufgabeB2Strategie {
     private static final double TOLERANCE = 1e-9; // For floating point number comparisions
 
     // Implements most of core functionality of the algorithm by Golin/Li
-    //https://doi.org/10.48550/arXiv.0705.0253
+    // https://doi.org/10.48550/arXiv.0705.0253
     public static void main(String[] args) {
         String input;
         try {
@@ -91,7 +91,8 @@ public class TeilaufgabeB2Strategie {
         frequencyMap.entrySet().stream()
                 .sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())) // descending frequency
                 .forEach(entry -> {
-                    Symbol si = new Symbol(entry.getKey(), (double) entry.getValue() / totalFrequency); // probability < 1 and > 0
+                    Symbol si = new Symbol(entry.getKey(), (double) entry.getValue() / totalFrequency); // probability <
+                                                                                                        // 1 and > 0
                     symbols.add(si);
                 });
 
@@ -123,8 +124,12 @@ public class TeilaufgabeB2Strategie {
         printCodeTable(codeTable, frequencyMap, diameters);
 
         long totalLength = calculateTotalCost(codeTable, frequencyMap, inputWrapper.diameters);
-        System.out.println("\nGesamtlänge der Botschaft " + totalLength + " (Anzahl in Perlen) bzw. "
+        System.out.println("\nGesamtlänge der Botschaft " + totalLength + " (in mm) bzw. "
                 + totalLength / 10.0 + "cm");
+
+        // 4. Encode
+        String encodedText = encodeText(text, codeTable);
+        System.out.println("Kodierte Nachricht: " + encodedText);
     }
 
     // 1. Read input
@@ -182,7 +187,8 @@ public class TeilaufgabeB2Strategie {
         return low + (high - low) / 2.0;
     }
 
-    // 4. Recursive method for code generation with pseudocode from Golin/Li as basis
+    // 4. Recursive method for code generation with pseudocode from Golin/Li as
+    // basis
     // (Fig.6 in paper)
     // U is the current prefix code
     private static void generateCodesGolinLi(List<Symbol> symbols, int l, int r,
@@ -286,7 +292,8 @@ public class TeilaufgabeB2Strategie {
             // Elements are still there, that are not inside a bin -> problem somewhere
             // Add to last non empty bin
             System.out.println(
-                    "Irgendwas broken, eyyy ich kann nicht mehr, Elemente [" + firstItemIndex + " ... " + r + "] nicht zugeordnet");
+                    "Irgendwas broken, eyyy ich kann nicht mehr, Elemente [" + firstItemIndex + " ... " + r
+                            + "] nicht zugeordnet");
             if (!finalBins.isEmpty()) {
                 List<Integer> lastBin = finalBins.get(finalBins.size() - 1);
                 for (int i = firstItemIndex; i <= r; i++) {
@@ -397,5 +404,16 @@ public class TeilaufgabeB2Strategie {
                     + frequencyMap.get(character) + ", Länge: " + length + ")");
         }
         System.out.println("}");
+    }
+
+    private static String encodeText(String text, Map<Character, String> codeTable) {
+        StringBuilder encodedTextBuilder = new StringBuilder();
+        // Iterate over each character
+        for (int i = 0; i < text.length(); i++) {
+            char symbol = text.charAt(i);
+            String codeword = codeTable.get(symbol);
+            encodedTextBuilder.append(codeword);
+        }
+        return encodedTextBuilder.toString();
     }
 }

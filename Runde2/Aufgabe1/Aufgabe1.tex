@@ -260,7 +260,7 @@ Codetabelle:
   'H': 01011 (Freq: 1)
 }
 
-Gesamtlänge der Botschaft 113 (Anzahl in Perlen) bzw. 11.3cm
+Gesamtlänge der Botschaft 113 (in mm) bzw. 11.3cm
 \end{verbatim}
 
 
@@ -299,7 +299,7 @@ Codetabelle:
   '?': 20011 (Freq: 1)
 }
 
-Gesamtlänge der Botschaft 372 (Anzahl in Perlen) bzw. 37.2cm
+Gesamtlänge der Botschaft 372 (in mm) bzw. 37.2cm
 \end{verbatim}
 
 \item \textbf{schmuck01.txt}
@@ -354,7 +354,7 @@ Codetabelle:
   '…': 4201 (Freq: 1)
 }
 
-Gesamtlänge der Botschaft 1150 (Anzahl in Perlen) bzw. 115.0cm
+Gesamtlänge der Botschaft 1150 (in mm) bzw. 115.0cm
 \end{verbatim}
 \end{enumerate}
 
@@ -593,29 +593,110 @@ Ausgabe Codetabelle (mit Sortierung) & $\mathcal{O}(k \log k)$ & $\mathcal{O}(k)
   \item \textbf{Gesamtlänge:} Dieser Schritt iteriert über alle verschiedenen Symbole, die einen Code bekommen. Es wird über jedes Zeichen in Code iteriert und somit ist dieser Schritt in $\mathcal{O}(k \cdot L_{max})$. $L_{max}$ ist hier die maximale Code-Länge (konstant), daher $\mathcal{O}(k)$.
 \end{itemize}
 \subsubsection{Beispiele}
-Hier die Ausgaben des Programmes zu den Beispielen auf der BwInf-Webseite. Mit Ausnahme der Datei \textit{schmuck5.txt} (für die ein offizieller Vergleichswert vorliegt), wurde die Konsolenausgabe auf die Gesamtlänge der kodierten Nachricht reduziert. Dies wurde gemacht für eine klarere Vergleichbarkeit der Ergebnisse zwischen den noch folgenden Algorithmen. \\Die gesamte Ausgabe ist hier \textbf{AusgabenBStrategie1.txt} \\ \newline \textbf{EDIT} \\ \newline zufinden. 
-Die Ausgabe wird zu dem finalen (und besten) Programm ausführlicher gegeben. 
+Hier die Ausgaben des Programmes zu den Beispielen auf der BwInf-Webseite. \\Die gesamte Ausgabe ist hier \textbf{AusgabenBStrategie1.txt} \\ \newline \textbf{EDIT} \\ \newline zufinden. 
 
 \begin{enumerate}
   \item \textbf{schmuck1.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 197 (Anzahl in Perlen) bzw. 19.7cm
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  'e': 02 (Freq: 9, Länge: 3)
+  't': 11 (Freq: 6, Länge: 2)
+  '␣': 20 (Freq: 5, Länge: 3)
+  'r': 21 (Freq: 3, Länge: 3)
+  'i': 001 (Freq: 3, Länge: 3)
+  'n': 002 (Freq: 3, Länge: 4)
+  'w': 000 (Freq: 3, Länge: 3)
+  'B': 101 (Freq: 2, Länge: 3)
+  'I': 100 (Freq: 2, Länge: 3)
+  '"': 102 (Freq: 2, Länge: 4)
+  'b': 121 (Freq: 2, Länge: 4)
+  'f': 122 (Freq: 2, Länge: 5)
+  's': 120 (Freq: 2, Länge: 4)
+  'F': 222 (Freq: 1, Länge: 6)
+  'd': 220 (Freq: 1, Länge: 5)
+  'u': 221 (Freq: 1, Länge: 5)
+  'D': 0120 (Freq: 1, Länge: 5)
+  'N': 0121 (Freq: 1, Länge: 5)
+  'W': 0110 (Freq: 1, Länge: 4)
+  'a': 0122 (Freq: 1, Länge: 6)
+  'h': 0112 (Freq: 1, Länge: 5)
+  'k': 0100 (Freq: 1, Länge: 4)
+  'm': 0101 (Freq: 1, Länge: 4)
+  'o': 0102 (Freq: 1, Länge: 5)
+  'ü': 0111 (Freq: 1, Länge: 4)
+}
+
+Gesamtlänge der Botschaft 197 (in mm) bzw. 19.7cm
+Kodierte Nachricht: 101011010001212222012011020112112012201112120102012000102201012210022200212000002001
+1102002201000021220102210101012211001010000002111112102000022112102102
 \end{verbatim}
   \item \textbf{schmuck2.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 145 (Anzahl in Perlen) bzw. 14.5cm
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  'a': 0 (Freq: 33, Länge: 1)
+  '␣': 1100 (Freq: 1, Länge: 12)
+  'b': 1011 (Freq: 1, Länge: 16)
+  'c': 1000 (Freq: 1, Länge: 8)
+  'd': 1111 (Freq: 1, Länge: 20)
+  'e': 1010 (Freq: 1, Länge: 12)
+  'f': 1110 (Freq: 1, Länge: 16)
+  'g': 1001 (Freq: 1, Länge: 12)
+  'h': 1101 (Freq: 1, Länge: 16)
+}
+
+Gesamtlänge der Botschaft 145 (in mm) bzw. 14.5cm
+
+Kodierte Nachricht: 00000000000000000000000000000000011001011100011111010111010011101
 \end{verbatim}
   \item \textbf{schmuck3.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 279 (Anzahl in Perlen) bzw. 27.9cm
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  'a': 1 (Freq: 34, Länge: 2)
+  'b': 2 (Freq: 34, Länge: 3)
+  'c': 00 (Freq: 34, Länge: 2)
+  '␣': 010 (Freq: 3, Länge: 4)
+  'd': 020 (Freq: 1, Länge: 5)
+  'e': 012 (Freq: 1, Länge: 6)
+  'f': 011 (Freq: 1, Länge: 5)
+  'g': 021 (Freq: 1, Länge: 6)
+  'h': 022 (Freq: 1, Länge: 7)
+}
+
+Gesamtlänge der Botschaft 279 (in mm) bzw. 27.9cm
+
+Kodierte Nachricht: 1111111111111111111111111111111111010222222222222222222222222222222222201000000000000
+000000000000000000000000000000000000000000000000000000000010020012011021022
 \end{verbatim}
   \item \textbf{schmuck4.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 154 (Anzahl in Perlen) bzw. 15.4cm
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  'c': 111 (Freq: 1, Länge: 15)
+  'e': 110 (Freq: 1, Länge: 11)
+  'a': 0000 (Freq: 1, Länge: 4)
+  'b': 0111 (Freq: 1, Länge: 16)
+  'd': 1011 (Freq: 1, Länge: 16)
+  'f': 0010 (Freq: 1, Länge: 8)
+  'g': 0011 (Freq: 1, Länge: 12)
+  'h': 1001 (Freq: 1, Länge: 12)
+  'i': 0101 (Freq: 1, Länge: 12)
+  'j': 0100 (Freq: 1, Länge: 8)
+  'k': 1000 (Freq: 1, Länge: 8)
+  'l': 1010 (Freq: 1, Länge: 12)
+  'm': 0110 (Freq: 1, Länge: 12)
+  'n': 0001 (Freq: 1, Länge: 8)
+}
+
+Gesamtlänge der Botschaft 154 (in mm) bzw. 15.4cm
+
+Kodierte Nachricht: 000001111111011110001000111001010101001000101001100001
 \end{verbatim}
   \item \textbf{schmuck5.txt}
 \begin{verbatim}
@@ -665,29 +746,249 @@ Codetabelle:
   ';': 642 (Freq: 1, Länge: 12)
 }
 
-Gesamtlänge der Botschaft 4010 (Anzahl in Perlen) bzw. 401.0cm
+Gesamtlänge der Botschaft 4010 (in mm) bzw. 401.0cm
+
+Kodierte Nachricht: 6401411110204612135125012150215304262513130120221134120006216000420500
+030140414054503622115035111411643043061403060203056121504316513220500063012160004241232623
+033040210206501050434320300501310301012051202030331021335412001442050003014040250340163213
+512320500014012001620500063210344304012033306203004260323661402101302020306241232016111600
+010012303050006306202043203004202010114113062400260323661402101061215040060026010363265020
+100101445000321202062150431315001401106126033032625131303260612651141616110203250326466546
+531362160004241232011530550210205020132503213312505122021010205000632103443040120204320016
+236614021020500014632135123215043013034206313131000151130342501202106236004025056321345040
+141302014041405414043216140305450003012020432063165033061302503243041101200162133125051220
+330530101020461202030620114161650553034205000306545000301216000424123231325014303053200162
+150431651322050006301211026126032014024306632134040011241230132050003065450003011302105033
+020425033661402105453012020432063045131306213312505122110261260321401306240020512020402054
+304564132150431651322050006301632644001100046164501250343623042150400620402111150362202106
+200045412112501241230321401306240020500030140414054200154511141120500063012011460652305424
+002412301325033661402105453016422020323103620203420500116050302400045021020215150400020512
+240020060402503202201404505410612050011151440245000302102313215304530305325012150430130343
+062400206311000301404024324123215040205450502605105461200162412321134120006632134503021010
+611302010011320206065450003021020500065036221504006010311012020432065010514010130620203062
+022150400601031120016205100201015165050245000325012404302430663
 \end{verbatim}
 
 Dieses Ergebnis (4010) ist ca. $26.82\%$ schlechter als der Vergleichswert (3162) von der BwInf Webseite, daher ist hier noch viel Platz für Verbesserung.
   \item \textbf{schmuck6.txt}
+  Ich habe es nicht geschafft, dass Unicodezeichen hier in einem verbatim in latex angezeigt werden,
+daher sind die Zeichen leer. In der Textdatei mit den gesamten Ausgaben, sind diese Zeichen
+sichtba
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 244 (Anzahl in Perlen) bzw. 24.4cm
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  '': 010 (Freq: 3, Länge: 4)
+  '': 011 (Freq: 2, Länge: 5)
+  '': 012 (Freq: 2, Länge: 6)
+  '': 022 (Freq: 2, Länge: 7)
+  '': 020 (Freq: 2, Länge: 5)
+  '': 211 (Freq: 1, Länge: 7)
+  '': 212 (Freq: 1, Länge: 8)
+  '': 222 (Freq: 1, Länge: 9)
+  '': 220 (Freq: 1, Länge: 7)
+  '': 200 (Freq: 1, Länge: 5)
+  '': 202 (Freq: 1, Länge: 7)
+  '': 110 (Freq: 1, Länge: 5)
+  '': 112 (Freq: 1, Länge: 7)
+  '': 122 (Freq: 1, Länge: 8)
+  '': 101 (Freq: 1, Länge: 5)
+  '': 102 (Freq: 1, Länge: 6)
+  '': 100 (Freq: 1, Länge: 4)
+  '': 221 (Freq: 1, Länge: 8)
+  '': 201 (Freq: 1, Länge: 6)
+  '': 111 (Freq: 1, Länge: 6)
+  '': 120 (Freq: 1, Länge: 6)
+  '': 121 (Freq: 1, Länge: 7)
+  '': 210 (Freq: 1, Länge: 6)
+  '': 0210 (Freq: 1, Länge: 7)
+  '': 0002 (Freq: 1, Länge: 6)
+  '': 0021 (Freq: 1, Länge: 7)
+  '': 0011 (Freq: 1, Länge: 6)
+  '': 0000 (Freq: 1, Länge: 4)
+  '': 0001 (Freq: 1, Länge: 5)
+  '': 0022 (Freq: 1, Länge: 8)
+  '': 0020 (Freq: 1, Länge: 6)
+  '': 0012 (Freq: 1, Länge: 7)
+  '': 0010 (Freq: 1, Länge: 5)
+  '': 0211 (Freq: 1, Länge: 8)
+}
+
+Gesamtlänge der Botschaft 244 (in mm) bzw. 24.4cm
+
+Kodierte Nachricht: 1011112122010002211010021112222120201011200001000010220012001202100201021100001
+1200011011222012002202212102202001020000202100021011
 \end{verbatim}
   \item \textbf{schmuck7.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 153144 (Anzahl in Perlen) bzw. 15314.4cm
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  '␣': 1 (Freq: 13488, Länge: 1)
+  'e': 2 (Freq: 11480, Länge: 1)
+  'n': 4 (Freq: 7761, Länge: 1)
+  'i': 5 (Freq: 5018, Länge: 1)
+  'r': 6 (Freq: 4011, Länge: 1)
+  's': 7 (Freq: 3507, Länge: 2)
+  'a': 8 (Freq: 3307, Länge: 3)
+  'd': 9 (Freq: 3272, Länge: 4)
+  'h': 00 (Freq: 3213, Länge: 2)
+  't': 01 (Freq: 3174, Länge: 2)
+  'u': 03 (Freq: 2609, Länge: 2)
+  'l': 04 (Freq: 2448, Länge: 2)
+  'c': 05 (Freq: 1991, Länge: 2)
+  'g': 07 (Freq: 1665, Länge: 3)
+  'm': 08 (Freq: 1521, Länge: 4)
+  'o': 09 (Freq: 1304, Länge: 5)
+  'b': 30 (Freq: 1141, Länge: 2)
+  ',': 31 (Freq: 1077, Länge: 2)
+  'f': 32 (Freq: 1000, Länge: 2)
+  'w': 33 (Freq: 941, Länge: 2)
+  '.': 34 (Freq: 831, Länge: 2)
+  'k': 35 (Freq: 798, Länge: 2)
+  'z': 37 (Freq: 631, Länge: 3)
+  'S': 38 (Freq: 498, Länge: 4)
+  'ä': 39 (Freq: 455, Länge: 5)
+  'ü': 020 (Freq: 434, Länge: 3)
+  'ö': 021 (Freq: 399, Länge: 3)
+  'v': 022 (Freq: 361, Länge: 3)
+  'F': 024 (Freq: 300, Länge: 3)
+  'p': 023 (Freq: 300, Länge: 3)
+  'ß': 025 (Freq: 278, Länge: 3)
+  'D': 026 (Freq: 277, Länge: 3)
+  'E': 027 (Freq: 243, Länge: 4)
+  'V': 028 (Freq: 242, Länge: 5)
+  'W': 060 (Freq: 231, Länge: 3)
+  'N': 061 (Freq: 218, Länge: 3)
+  'K': 062 (Freq: 206, Länge: 3)
+  'B': 063 (Freq: 193, Länge: 3)
+  'A': 065 (Freq: 159, Länge: 3)
+  'M': 064 (Freq: 159, Länge: 3)
+  'H': 066 (Freq: 152, Länge: 3)
+  'I': 067 (Freq: 134, Länge: 4)
+  'L': 068 (Freq: 126, Länge: 5)
+  'R': 069 (Freq: 115, Länge: 6)
+  'G': 360 (Freq: 106, Länge: 3)
+  'T': 361 (Freq: 102, Länge: 3)
+  'Z': 363 (Freq: 79, Länge: 3)
+  'j': 364 (Freq: 72, Länge: 3)
+  'J': 365 (Freq: 68, Länge: 3)
+  '-': 366 (Freq: 66, Länge: 3)
+  ';': 367 (Freq: 37, Länge: 4)
+  '(': 368 (Freq: 32, Länge: 5)
+  ')': 369 (Freq: 32, Länge: 6)
+  ':': 0290 (Freq: 28, Länge: 7)
+  '_': 0291 (Freq: 28, Länge: 7)
+  'O': 0292 (Freq: 27, Länge: 7)
+  'U': 0293 (Freq: 25, Länge: 7)
+  '[': 0294 (Freq: 24, Länge: 7)
+  ']': 0295 (Freq: 24, Länge: 7)
+  '“': 0296 (Freq: 21, Länge: 7)
+  '„': 0297 (Freq: 21, Länge: 8)
+  'P': 0298 (Freq: 20, Länge: 9)
+  '1': 3620 (Freq: 16, Länge: 4)
+  '4': 3621 (Freq: 13, Länge: 4)
+  '3': 3622 (Freq: 9, Länge: 4)
+  '?': 3623 (Freq: 8, Länge: 4)
+  '!': 3625 (Freq: 7, Länge: 4)
+  '2': 3626 (Freq: 7, Länge: 4)
+  '5': 3624 (Freq: 7, Länge: 4)
+  '6': 3627 (Freq: 6, Länge: 5)
+  '0': 3628 (Freq: 5, Länge: 6)
+  'Ä': 3629 (Freq: 3, Länge: 7)
+  '8': 02991 (Freq: 3, Länge: 11)
+  'q': 02990 (Freq: 3, Länge: 11)
+   '’': 02995 (Freq: 2, Länge: 11)
+  '7': 02992 (Freq: 2, Länge: 11)
+  '9': 02994 (Freq: 2, Länge: 11)
+  'Q': 02993 (Freq: 2, Länge: 11)
+  'C': 02996 (Freq: 1, Länge: 11)
+  'Ö': 02997 (Freq: 1, Länge: 12)
+  'x': 02998 (Freq: 1, Länge: 13)
+  'y': 02999 (Freq: 1, Länge: 14)
+}
+
+Gesamtlänge der Botschaft 153144 (in mm) bzw. 15314.4cm
+
+Kodierte Nachricht: 0650371920810682302410347262610280210720434106823501509413620341063235844...
 \end{verbatim}
   \item \textbf{schmuck8.txt}
 \begin{verbatim}
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  '': 04 (Freq: 33, Länge: 4)
+  '': 10 (Freq: 27, Länge: 2)
+  '': 42 (Freq: 13, Länge: 5)
+  '': 43 (Freq: 13, Länge: 5)
+  '': 44 (Freq: 12, Länge: 6)
+  '': 000 (Freq: 11, Länge: 3)
+  '': 001 (Freq: 11, Länge: 3)
+  '': 002 (Freq: 10, Länge: 4)
+  '': 011 (Freq: 10, Länge: 3)
+  '': 024 (Freq: 9, Länge: 6)
+  '': 032 (Freq: 7, Länge: 5)
+  '': 031 (Freq: 7, Länge: 4)
+
   ...
-Gesamtlänge der Botschaft 3615 (Anzahl in Perlen) bzw. 361.5cm
+
+  '': 1344 (Freq: 1, Länge: 9)
+  '': 1310 (Freq: 1, Länge: 5)
+  '': 1233 (Freq: 1, Länge: 7)
+  '': 2001 (Freq: 1, Länge: 5)
+  '': 2002 (Freq: 1, Länge: 6)
+  '': 2033 (Freq: 1, Länge: 7)
+  '': 2032 (Freq: 1, Länge: 7)
+  '': 2030 (Freq: 1, Länge: 6)
+  '': 2300 (Freq: 1, Länge: 6)
+  '': 2302 (Freq: 1, Länge: 7)
+  '': 2234 (Freq: 1, Länge: 9)
+  '': 2233 (Freq: 1, Länge: 8)
+  '': 1301 (Freq: 1, Länge: 5)
+}
+
+Gesamtlänge der Botschaft 3615 (in mm) bzw. 361.5cm
+
+Kodierte Nachricht: 122020432424344202411004411014301210220040140240012110101121300341141334412...
+
 \end{verbatim}
   \item \textbf{schmuck9.txt}
 \begin{verbatim}
+Codetabelle:
+(Jede Ziffer steht für eine Perlenfarbe z.B. könnte '0' rot bedeuten und '1' blau)
+{
+  '': 30 (Freq: 173, Länge: 5)
+  '': 33 (Freq: 139, Länge: 8)
+  '': 000 (Freq: 138, Länge: 3)
+  '': 010 (Freq: 126, Länge: 4)
+  '': 011 (Freq: 123, Länge: 5)
+  '': 013 (Freq: 119, Länge: 7)
+  '': 021 (Freq: 112, Länge: 6)
+  '': 022 (Freq: 111, Länge: 7)
+  '': 023 (Freq: 108, Länge: 8)
+  '': 031 (Freq: 105, Länge: 7)
+  '': 100 (Freq: 89, Länge: 4)
+  '': 102 (Freq: 83, Länge: 6)
+  '': 103 (Freq: 81, Länge: 7)
+
   ...
-Gesamtlänge der Botschaft 41056 (Anzahl in Perlen) bzw. 4105.6cm
+
+  '': 132110 (Freq: 1, Länge: 14)
+  '': 200302 (Freq: 1, Länge: 13)
+  '': 132112 (Freq: 1, Länge: 16)
+  '': 131021 (Freq: 1, Länge: 14)
+  '': 131233 (Freq: 1, Länge: 19)
+  '': 131022 (Freq: 1, Länge: 15)
+  '': 210120 (Freq: 1, Länge: 12)
+  '': 200023 (Freq: 1, Länge: 13)
+  '': 210131 (Freq: 1, Länge: 14)
+  '': 0022200 (Freq: 1, Länge: 13)
+  '': 0022201 (Freq: 1, Länge: 14)
+}
+
+Gesamtlänge der Botschaft 41056 (in mm) bzw. 4105.6cm
+
+Kodierte Nachricht: 2023112003202011300230203203230300200220101020323030002300031001130231231112...
 \end{verbatim}
 Dieses Ergebnis (41056) ist ca. $12.18\%$ schlechter als der Vergleichswert (36597) von der BwInf Webseite, daher ist hier noch etwas Platz für Verbesserung.
 \end{enumerate}
@@ -881,23 +1182,107 @@ Die Ausgabe wird zu dem finalen (und besten) Programm ausführlicher gegeben.
 \begin{enumerate}
   \item \textbf{schmuck1.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 195 (Anzahl in Perlen) bzw. 19.5cm
+Charakteristische Wurzel c = 1.271553
+
+Codetabelle (Golin/Li):
+{
+  'e': 00 (Freq: 9, Länge: 2)
+  't': 010 (Freq: 6, Länge: 3)
+  '␣': 011 (Freq: 5, Länge: 3)
+  'i': 02 (Freq: 3, Länge: 3)
+  'n': 100 (Freq: 3, Länge: 3)
+  'r': 101 (Freq: 3, Länge: 3)
+  'w': 102 (Freq: 3, Länge: 4)
+  'f': 112 (Freq: 2, Länge: 4)
+  's': 120 (Freq: 2, Länge: 4)
+  'B': 1100 (Freq: 2, Länge: 4)
+  'I': 1101 (Freq: 2, Länge: 4)
+  '"': 1110 (Freq: 2, Länge: 4)
+  'b': 1111 (Freq: 2, Länge: 4)
+  'D': 121 (Freq: 1, Länge: 4)
+  'F': 122 (Freq: 1, Länge: 5)
+  'a': 201 (Freq: 1, Länge: 4)
+  'd': 202 (Freq: 1, Länge: 5)
+  'm': 211 (Freq: 1, Länge: 4)
+  'o': 212 (Freq: 1, Länge: 5)
+  'u': 220 (Freq: 1, Länge: 5)
+  'ü': 221 (Freq: 1, Länge: 5)
+  'N': 2000 (Freq: 1, Länge: 5)
+  'W': 2001 (Freq: 1, Länge: 5)
+  'h': 2100 (Freq: 1, Länge: 5)
+  'k': 2101 (Freq: 1, Länge: 5)
+}
+
+Gesamtlänge der Botschaft 195 (in mm) bzw. 19.5cm
+Kodierte Nachricht: 1100200111012000122011120010002100010011112221101011111012102000111100220100202001201
+02000201000100011110110011221210121120101002210110200010010111100102001011111001110
 \end{verbatim}
   \item \textbf{schmuck2.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 135 (Anzahl in Perlen) bzw. 13.5cm
+Charakteristische Wurzel c = 0.405685
+
+Codetabelle (Golin/Li):
+{
+  'a': 0 (Freq: 33, Länge: 1)
+  'f': 101 (Freq: 1, Länge: 11)
+  'g': 110 (Freq: 1, Länge: 11)
+  'h': 111 (Freq: 1, Länge: 15)
+  'e': 1001 (Freq: 1, Länge: 12)
+  'd': 10001 (Freq: 1, Länge: 13)
+  'c': 100001 (Freq: 1, Länge: 14)
+  '␣': 1000000 (Freq: 1, Länge: 11)
+  'b': 1000001 (Freq: 1, Länge: 15)
+}
+
+Gesamtlänge der Botschaft 135 (in mm) bzw. 13.5cm
+Kodierte Nachricht: 00000000000000000000000000000000010000001000001100001100011001101110111
 \end{verbatim}
   \item \textbf{schmuck3.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 287 (Anzahl in Perlen) bzw. 28.7cm
+Charakteristische Wurzel c = 0.879146
+
+Codetabelle (Golin/Li):
+{
+  'c': 1 (Freq: 34, Länge: 2)
+  'a': 00 (Freq: 34, Länge: 2)
+  'b': 01 (Freq: 34, Länge: 3)
+  '␣': 200 (Freq: 3, Länge: 5)
+  'h': 22 (Freq: 1, Länge: 6)
+  'd': 201 (Freq: 1, Länge: 6)
+  'g': 211 (Freq: 1, Länge: 7)
+  'e': 2100 (Freq: 1, Länge: 7)
+  'f': 2101 (Freq: 1, Länge: 8)
+}
+
+Gesamtlänge der Botschaft 287 (in mm) bzw. 28.7cm
+Kodierte Nachricht: 0000000000000000000000000000000000000000000000000000000000000000000020001010
+1010101010101010101010101010101010101010101010101010101010101012001111111111
+1111111111111111111111112002012100210121122
 \end{verbatim}
   \item \textbf{schmuck4.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 137 (Anzahl in Perlen) bzw. 13.7cm
+Charakteristische Wurzel c = 0.405685
+
+Codetabelle (Golin/Li):
+{
+  'n': 11 (Freq: 1, Länge: 10)
+  'k': 011 (Freq: 1, Länge: 11)
+  'l': 100 (Freq: 1, Länge: 7)
+  'm': 101 (Freq: 1, Länge: 11)
+  'f': 0001 (Freq: 1, Länge: 8)
+  'g': 0010 (Freq: 1, Länge: 8)
+  'h': 0011 (Freq: 1, Länge: 12)
+  'i': 0100 (Freq: 1, Länge: 8)
+  'j': 0101 (Freq: 1, Länge: 12)
+  'e': 00001 (Freq: 1, Länge: 9)
+  'd': 000001 (Freq: 1, Länge: 10)
+  'c': 0000001 (Freq: 1, Länge: 11)
+  'a': 00000000 (Freq: 1, Länge: 8)
+  'b': 00000001 (Freq: 1, Länge: 12)
+}
+
+Gesamtlänge der Botschaft 137 (in mm) bzw. 13.7cm
+Kodierte Nachricht: 00000000000000010000001000001000010001001000110100010101110010111
 \end{verbatim}
   \item \textbf{schmuck5.txt}
 \begin{verbatim}
@@ -948,29 +1333,250 @@ Codetabelle (Golin/Li):
   '1': 512 (Freq: 1, Länge: 8)
 }
 
-Gesamtlänge der Botschaft 3374 (Anzahl in Perlen) bzw. 337.4cm
+Gesamtlänge der Botschaft 3374 (in mm) bzw. 337.4cm
+Kodierte Nachricht: 501211201201110112310004221002101002311023010112003110240001010100110002010100112101001
+300221001120012100111101011112211120110211131100201021110220121120151111201013211111131
+101111231000231120102202401001210013010101002210011200011210010003110101110101121102000
+013021011211201001101000111100021010102000101011010012210110111111010200004100201121010
+021101100121001111010111121100211101110131200422100100012100101011101001002200121001301
+000200010011011010112101001110100101300111100011003001000010332111102003200110111130001
+121001000101310201301002001010001011112100130101300110112010001111000110011010110121120
+101013000111000030010000103321111020020031000231121003011030200010312004300101100200211
+011021001110021011013002311201040002100211101200310003001001011100311024000101110030310
+005002112222201110111000211100512605352002210011200011210010001012301012021102000012110
+101010000211100410210021221000110200200001210013010002000100110110101121010011011201000
+100220001033211110200001210010101131200422100100023112010101010111011001301040001020010
+023201010111011000210100110200311010301121100212312004110211210101132001010111122111201
+121111201000222111111201102100111101001101120100013010220211101013320002111000110101122
+011010010022004102100212210001110101201010110111011231000110111130010121122220212020101
+110110012100111130201102100111101002210011200011210010000104010210101101011112010001002
+200231120102202401001210013010101002011103100030010001010111100110101331200411112100201
+000112100101010100012100111130201102100111101320020002111010110112000211101033211110200
+020110201010100110112010001301011202400010130041021002122100020111031000300100021110101
+013000111000012210110112110120110101120261010002311201022024010012100130101013120044100
+201100112310502101000211101101031101011200231121003111121102012010211131100110200311100
+112020112102010002101000112100101110021110101013000111000012100111101011112211120110010
+023011022012112010012100130101010010121130510010120110001110000011210010101010000211101
+033211110200020110201010162001101110001020001031111011101100121002013002111110011100112
+021102000011023231121001101221000011100001003001111002111001100010101111202120112003100
+012100201232110111100110210011111020000010401230101120201011112010000210100231120101010
+101110110101300011100001301020110011110101111211001101000011210010002311211012011021211
+030022000201131000100220001121001000201010011210100133120041102111110200200310320010110
+020101000110131302011021001111102000012100130211131100231121003020001020110100110112010
+001302101122111011010101300110111130011000231121003020001020100100220012200110101101022
+202121100110210011100021010001111201011001101013312
 \end{verbatim}
 
 Dieses Ergebnis (3374) ist ca. $6.7\%$ schlechter als der Vergleichswert (3162) von der BwInf Webseite, also bereits eine großer Fortschritt im Verleich zu Strategie 1.
   \item \textbf{schmuck6.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 240 (Anzahl in Perlen) bzw. 24.0cm
+Charakteristische Wurzel c = 0.879146
+
+Codetabelle (Golin/Li):
+{
+  '': 0000 (Freq: 3, Länge: 4)
+  '': 0001 (Freq: 2, Länge: 5)
+  '': 0002 (Freq: 2, Länge: 6)
+  '': 0010 (Freq: 2, Länge: 5)
+  '': 0011 (Freq: 2, Länge: 6)
+  '': 22 (Freq: 1, Länge: 6)
+  '': 002 (Freq: 1, Länge: 5)
+  '': 012 (Freq: 1, Länge: 6)
+  '': 021 (Freq: 1, Länge: 6)
+  '': 022 (Freq: 1, Länge: 7)
+  '': 102 (Freq: 1, Länge: 6)
+  '': 111 (Freq: 1, Länge: 6)
+  '': 120 (Freq: 1, Länge: 6)
+  '': 121 (Freq: 1, Länge: 7)
+  '': 201 (Freq: 1, Länge: 6)
+  '': 210 (Freq: 1, Länge: 6)
+  '': 211 (Freq: 1, Länge: 7)
+  '': 0101 (Freq: 1, Länge: 6)
+  '': 0110 (Freq: 1, Länge: 6)
+  '': 0111 (Freq: 1, Länge: 7)
+  '': 0200 (Freq: 1, Länge: 6)
+  '': 0201 (Freq: 1, Länge: 7)
+  '': 1001 (Freq: 1, Länge: 6)
+  '': 1002 (Freq: 1, Länge: 7)
+  '': 1010 (Freq: 1, Länge: 6)
+  '': 1011 (Freq: 1, Länge: 7)
+  '': 1100 (Freq: 1, Länge: 6)
+  '': 1101 (Freq: 1, Länge: 7)
+  '': 2000 (Freq: 1, Länge: 6)
+  '': 2001 (Freq: 1, Länge: 7)
+  '': 01000 (Freq: 1, Länge: 6)
+  '': 01001 (Freq: 1, Länge: 7)
+  '': 10000 (Freq: 1, Länge: 6)
+  '': 10001 (Freq: 1, Länge: 7)
+}
+
+Gesamtlänge der Botschaft 240 (in mm) bzw. 24.0cm
+Kodierte Nachricht: 101012101001110101010100000002210001102020100000221001110020101200022001002001110
+1102110022000100000001011000021110010210001000110000020012021101110001
 \end{verbatim}
   \item \textbf{schmuck7.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 144964 (Anzahl in Perlen) bzw. 14496.4cm
+Charakteristische Wurzel c = 2.840332
+
+Codetabelle (Golin/Li):
+{
+  '␣': 0 (Freq: 13488, Länge: 1)
+  'e': 1 (Freq: 11480, Länge: 1)
+  'n': 2 (Freq: 7761, Länge: 1)
+  'i': 30 (Freq: 5018, Länge: 2)
+  'r': 31 (Freq: 4011, Länge: 2)
+  's': 32 (Freq: 3507, Länge: 2)
+  'a': 40 (Freq: 3307, Länge: 2)
+  'd': 41 (Freq: 3272, Länge: 2)
+  'h': 42 (Freq: 3213, Länge: 2)
+  't': 43 (Freq: 3174, Länge: 2)
+  'u': 50 (Freq: 2609, Länge: 2)
+  'l': 51 (Freq: 2448, Länge: 2)
+  'c': 52 (Freq: 1991, Länge: 2)
+  'g': 53 (Freq: 1665, Länge: 2)
+  'm': 54 (Freq: 1521, Länge: 2)
+  'o': 55 (Freq: 1304, Länge: 2)
+  'b': 60 (Freq: 1141, Länge: 2)
+  ',': 610 (Freq: 1077, Länge: 3)
+  'f': 611 (Freq: 1000, Länge: 3)
+  'w': 62 (Freq: 941, Länge: 2)
+  '.': 630 (Freq: 831, Länge: 3)
+  'k': 631 (Freq: 798, Länge: 3)
+  'z': 640 (Freq: 631, Länge: 3)
+  'S': 641 (Freq: 498, Länge: 3)
+  'ä': 642 (Freq: 455, Länge: 3)
+  'ü': 650 (Freq: 434, Länge: 3)
+  'ö': 651 (Freq: 399, Länge: 3)
+  'v': 652 (Freq: 361, Länge: 3)
+  'F': 653 (Freq: 300, Länge: 3)
+  'p': 654 (Freq: 300, Länge: 3)
+  'ß': 660 (Freq: 278, Länge: 3)
+  'D': 661 (Freq: 277, Länge: 3)
+  'E': 662 (Freq: 243, Länge: 3)
+  'V': 663 (Freq: 242, Länge: 3)
+  'W': 664 (Freq: 231, Länge: 3)
+  'N': 665 (Freq: 218, Länge: 3)
+  'K': 67 (Freq: 206, Länge: 3)
+  'B': 70 (Freq: 193, Länge: 3)
+  'A': 710 (Freq: 159, Länge: 4)
+  'M': 711 (Freq: 159, Länge: 4)
+  'H': 72 (Freq: 152, Länge: 3)
+  'I': 730 (Freq: 134, Länge: 4)
+  'L': 731 (Freq: 126, Länge: 4)
+  'R': 740 (Freq: 115, Länge: 4)
+  'G': 741 (Freq: 106, Länge: 4)
+  'T': 750 (Freq: 102, Länge: 4)
+  'Z': 751 (Freq: 79, Länge: 4)
+  'j': 752 (Freq: 72, Länge: 4)
+  'J': 760 (Freq: 68, Länge: 4)
+  '-': 761 (Freq: 66, Länge: 4)
+  ';': 762 (Freq: 37, Länge: 4)
+  '(': 763 (Freq: 32, Länge: 4)
+  ')': 764 (Freq: 32, Länge: 4)
+  '_': 77 (Freq: 28, Länge: 4)
+  ':': 765 (Freq: 28, Länge: 4)
+  'O': 80 (Freq: 27, Länge: 4)
+  'U': 81 (Freq: 25, Länge: 4)
+  '[': 820 (Freq: 24, Länge: 5)
+  ']': 821 (Freq: 24, Länge: 5)
+  '“': 83 (Freq: 21, Länge: 4)
+  '„': 840 (Freq: 21, Länge: 5)
+  'P': 841 (Freq: 20, Länge: 5)
+  '1': 850 (Freq: 16, Länge: 5)
+  '4': 851 (Freq: 13, Länge: 5)
+  '3': 860 (Freq: 9, Länge: 5)
+  '?': 861 (Freq: 8, Länge: 5)
+  '5': 87 (Freq: 7, Länge: 5)
+  '!': 862 (Freq: 7, Länge: 5)
+  '2': 863 (Freq: 7, Länge: 5)
+  '6': 90 (Freq: 6, Länge: 5)
+  '0': 91 (Freq: 5, Länge: 5)
+  '8': 92 (Freq: 3, Länge: 5)
+  'Ä': 93 (Freq: 3, Länge: 5)
+  'q': 940 (Freq: 3, Länge: 6)
+  '’': 941 (Freq: 2, Länge: 6)
+  '7': 950 (Freq: 2, Länge: 6)
+  '9': 951 (Freq: 2, Länge: 6)
+  'Q': 960 (Freq: 2, Länge: 6)
+  'y': 97 (Freq: 1, Länge: 6)
+  'C': 961 (Freq: 1, Länge: 6)
+  'Ö': 962 (Freq: 1, Länge: 6)
+  'x': 963 (Freq: 1, Länge: 6)
+}
+
+Gesamtlänge der Botschaft 144964 (in mm) bzw. 14496.4cm
+Kodierte Nachricht: 71050320411540731160120502321311310663651531516300731163143305520850630070163140224...
 \end{verbatim}
   \item \textbf{schmuck8.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 3433 (Anzahl in Perlen) bzw. 343.3cm
+Charakteristische Wurzel c = 1.501402
+
+Codetabelle (Golin/Li):
+{
+  '': 000 (Freq: 33, Länge: 3)
+  '': 001 (Freq: 27, Länge: 3)
+  '': 002 (Freq: 13, Länge: 4)
+  '': 0100 (Freq: 13, Länge: 4)
+  '': 0101 (Freq: 12, Länge: 4)
+  '': 0110 (Freq: 11, Länge: 4)
+  '': 0111 (Freq: 11, Länge: 4)
+  '': 012 (Freq: 10, Länge: 4)
+  '': 0112 (Freq: 10, Länge: 5)
+  '': 013 (Freq: 9, Länge: 4)
+  '': 014 (Freq: 7, Länge: 5)
+  '': 0200 (Freq: 7, Länge: 5)
+  '': 0201 (Freq: 7, Länge: 5)
+  '': 021 (Freq: 6, Länge: 4)
+  '': 210010 (Freq: 1, Länge: 7)
+  '': 210011 (Freq: 1, Länge: 7)
+  '': 211010 (Freq: 1, Länge: 7)
+  '': 211011 (Freq: 1, Länge: 7)
+  '': 300010 (Freq: 1, Länge: 7)
+  '': 300011 (Freq: 1, Länge: 7)
+  '': 301010 (Freq: 1, Länge: 7)
+  '': 301011 (Freq: 1, Länge: 7)
+  '': 310010 (Freq: 1, Länge: 7)
+  '': 310011 (Freq: 1, Länge: 7)
+  '': 311010 (Freq: 1, Länge: 7)
+  '': 311011 (Freq: 1, Länge: 7)
+}
+
+Gesamtlänge der Botschaft 3433 (in mm) bzw. 343.3cm
+Kodierte Nachricht: 410222221211022200310220001020111411200122100011303101030011121101313011403112100210...
 \end{verbatim}
   \item \textbf{schmuck9.txt}
 \begin{verbatim}
-  ...
-Gesamtlänge der Botschaft 38516 (Anzahl in Perlen) bzw. 3851.6cm
+Charakteristische Wurzel c = 0.946777
+
+Codetabelle (Golin/Li):
+{
+  '': 00000 (Freq: 173, Länge: 5)
+  '': 00001 (Freq: 139, Länge: 6)
+  '': 00010 (Freq: 138, Länge: 6)
+  '': 00011 (Freq: 126, Länge: 7)
+  '': 0002 (Freq: 123, Länge: 6)
+  '': 00100 (Freq: 119, Länge: 6)
+  '': 00101 (Freq: 112, Länge: 7)
+  '': 0011 (Freq: 111, Länge: 6)
+  '': 002 (Freq: 108, Länge: 5)
+  '': 003 (Freq: 105, Länge: 6)
+  '': 01000 (Freq: 89, Länge: 6)
+  '': 01001 (Freq: 83, Länge: 7)
+  '': 32000001 (Freq: 1, Länge: 14)
+  '': 300001000 (Freq: 1, Länge: 13)
+  '': 300001001 (Freq: 1, Länge: 14)
+  '': 300010000 (Freq: 1, Länge: 13)
+  '': 300010001 (Freq: 1, Länge: 14)
+  '': 300100000 (Freq: 1, Länge: 13)
+  '': 300100001 (Freq: 1, Länge: 14)
+  '': 301000000 (Freq: 1, Länge: 13)
+  '': 301000001 (Freq: 1, Länge: 14)
+  '': 310000000 (Freq: 1, Länge: 13)
+  '': 310000001 (Freq: 1, Länge: 14)
+}
+
+Gesamtlänge der Botschaft 38516 (in mm) bzw. 3851.6cm
+Kodierte Nachricht: 31130312010201031200113100032100021210231001113201020000012001123000010111002102000101...
 \end{verbatim}
 Dieses Ergebnis (38516) ist ca. $5.2\%$ schlechter als der Vergleichswert (36597) von der BwInf Webseite, daher eigentlich schon akzeptabel.
 \end{enumerate}
@@ -1399,7 +2005,7 @@ Execution time: 55 ms
   'ü': 11111 (Freq: 1, Länge: 5)
 }
 
-Gesamtlänge der Botschaft 191 (Anzahl in Perlen) bzw. 19.1cm
+Gesamtlänge der Botschaft 191 (in mm) bzw. 19.1cm
 
 Kodierte Nachricht: 0121101102110010111210010221102021210001111101012002101000021
 201211110001101221001011200002200112102001100011101010111001002020001112011202021
@@ -1431,7 +2037,7 @@ Execution time: 59 ms
   'h': 1000001 (Freq: 1, Länge: 15)
 }
 
-Gesamtlänge der Botschaft 135 (Anzahl in Perlen) bzw. 13.5cm
+Gesamtlänge der Botschaft 135 (in mm) bzw. 13.5cm
 
 Kodierte Nachricht: 00000000000000000000000000000000010111010000001001100011000011
 111000001
@@ -1462,7 +2068,7 @@ Execution time: 43 ms
   'h': 0102 (Freq: 1, Länge: 7)
 }
 
-Gesamtlänge der Botschaft 279 (Anzahl in Perlen) bzw. 27.9cm
+Gesamtlänge der Botschaft 279 (in mm) bzw. 27.9cm
 
 Kodierte Nachricht: 11111111111111111111111111111111110200000000000000000000000000
 0000000000000000000000000000000000000000000222222222222222222222222222222222220201
@@ -1499,7 +2105,7 @@ Execution time: 68 ms
   'n': 00000001 (Freq: 1, Länge: 12)
 }
 
-Gesamtlänge der Botschaft 137 (Anzahl in Perlen) bzw. 13.7cm
+Gesamtlänge der Botschaft 137 (in mm) bzw. 13.7cm
 
 Kodierte Nachricht: 0010001010010000000000000001110000010111010000001010110010000
 0001
@@ -1562,7 +2168,7 @@ Execution time: 105 ms
   'z': 11410 (Freq: 1, Länge: 8)
 }
 
-Gesamtlänge der Botschaft 3162 (Anzahl in Perlen) bzw. 316.2cm
+Gesamtlänge der Botschaft 3162 (in mm) bzw. 316.2cm
 
 Kodierte Nachricht: 114000120303011101042104130201021120111120010121402600010201120
 30031312111210212101211012100010310101211030210014203021000203012030610100111012100
@@ -1647,7 +2253,7 @@ Execution time: 99 ms
   '': 000000 (Freq: 1, Länge: 6)
 }
 
-Gesamtlänge der Botschaft 234 (Anzahl in Perlen) bzw. 23.4cm
+Gesamtlänge der Botschaft 234 (in mm) bzw. 23.4cm
 
 Kodierte Nachricht: 10201020100100100100210010200011000000111010102100010100000101202
 00112100021010111000000010112000022001200001212200220100201102110001201200000112
@@ -1751,7 +2357,7 @@ Execution time: 270 ms
   'y': 66666 (Freq: 1, Länge: 5)
 }
 
-Gesamtlänge der Botschaft 134559 (Anzahl in Perlen) bzw. 13455.9cm
+Gesamtlänge der Botschaft 134559 (in mm) bzw. 13455.9cm
 
 Kodierte Nachricht: 654454004215206611541204524017170646675114661066116244353206... (die kodierte Nachricht ist mehr als 110KB)
 \end{verbatim}
@@ -1834,7 +2440,7 @@ Execution time: 38.298 s
   '': 110112 (Freq: 1, Länge: 7)
 }
 
-Gesamtlänge der Botschaft 3287 (Anzahl in Perlen) bzw. 328.7cm
+Gesamtlänge der Botschaft 3287 (in mm) bzw. 328.7cm
 
 Kodierte Nachricht: 010020001031100030103100003344102131420103010411321101011001130...
 \end{verbatim}
@@ -2505,24 +3111,31 @@ private static long calculateCost(String codewordStr, List<Integer> costs) {
 }
 \end{lstlisting}
 
-\begin{figure}[htbp]
-  \centering
-  \begin{minipage}[b]{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/2.png}
-    \caption*{Image 1 caption} % use \caption{} if you want numbered
-  \end{minipage}
-  \hfill
-  \begin{minipage}[b]{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/2.png}
-    \caption*{Image 2 caption}
-  \end{minipage}
-  \caption{Comparison of Image 1 and Image 2}
-  \label{fig:comparison2}
-\end{figure}
-
 \subsection{Vergleich der Strategien}
+\begin{itemize}
+  \item \textbf{Strategie 1} ist die einfachste Lösung, führt jedoch, wie zu erwarten war, zu den schlechtesten Ergebnissen. Nur die Optimierung der Kantenzuweisung auf einem frequenzbasierten Baum reicht, um die Kosten effektiv zu berücksichtigen (Beispiel \textit{schmuck5.txt}: 4010 vs. 3162).
+  \item \textbf{Strategie 2} zeigt eine deutliche Verbesserung im Vergleich zu Strategie 1. Durch die Berücksichtigung der Kosten bei der rekursiven Aufteilung mit der charakteristischen Wurzel $c$ kann eine bessere Annäherung an die optimale Lösung erreicht werden (Beispiel \textit{schmuck5.txt}: 3374). Diese Methode bietet allerdings keine Garantie für die Optimalität der Lösung. Dies spiegelt sich auch in den Ergebnissen im Vergleich zu den optimalen Werten wider. Die Laufzeit bleibt dabei aber sehr gut.
+  \item \textbf{Strategie 3} ist mit Abstand am aufwendigsten in der Implementierung und hat die höchste theoretische Zeit- und Speicherkomplexität. Da es notwendig ist, einen großen Zustandsraum (potenziell $\mathcal{O}(C\cdot k^{C+1})$ Signaturen) zu speichern, begrenzt dies die praktische Anwendbarkeit bei sehr großen §$k$ und auch für größere $C$. Dennoch ist dies der einzige der drei Ansätze, der garantiert die optimale Lösung liefert. Das Ergebnis für das Beispiel \textit{schmuck5.txt} (3162 Perlen), stimmt mit dem Referenzwert auf der BwInf-Webseite überein. Bei den restlichen Beispielen erzielt diese Methode die besten Ergebnisse.
+\end{itemize}
+Daher ist es sinnvoll die dritte Strategie anzuwenden, wenn die Eingabegrößen im Rahmen sind. Ansonsten sollte Strategie 2 verwendet werden.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Kriterium} & \textbf{Strategie 1 (Heuristik)} & \textbf{Strategie 2 (Golin/Li)} & \textbf{Strategie 3 (Golin/Rote)} \\ \hline \hline
+Optimalität & Nein (Heuristik) & Nein (Heuristik/Vereinf.) & Ja (wenn Kosten $\in \mathbb{N}$) \\ \hline
+Laufzeit (Theorie) & Schnell & Schnell & Hoch \\
+& $\mathcal{O}(L + k \log k)$ & $\mathcal{O}(L + k \log k + n)$ & $\mathcal{O}(C \cdot k^{C+2})$ \\ \hline
+Speicher (Theorie) & Gering & Mittel & Hoch \\
+& $\mathcal{O}(L + k)$ & $\mathcal{O}(L + k + n + k \log k)$ & $\mathcal{O}(C \cdot k^{C+1})$ \\ \hline
+Implementierung & Einfach & Mittel & Schwer \\ \hline
+Ergebnis & Deutlich suboptimal & Besser als S1, suboptimal & Optimal \\
+(Bsp. schmuck5) & (4010 Perlen) & (3374 Perlen) & (3162 Perlen) \\ \hline
+\end{tabular}
+\caption{Vergleich der implementierten Strategien für Teilaufgabe B}
+\label{tab:strategievergleich}
+\end{table}
 
 \begin{thebibliography}{9}
 \bibitem{paperhuffman}
@@ -2542,5 +3155,23 @@ M. J. Golin and G. Rote (1998) \emph{A dynamic programming algorithm for constru
 
 \end{thebibliography}
 
+EVTL noch
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/2.png}
+    \caption*{Image 1 caption} % use \caption{} if you want numbered
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/2.png}
+    \caption*{Image 2 caption}
+  \end{minipage}
+  \caption{Comparison of Image 1 and Image 2}
+  \label{fig:comparison2}
+\end{figure}
 
 \end{document}
