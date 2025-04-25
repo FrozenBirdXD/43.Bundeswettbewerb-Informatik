@@ -286,7 +286,7 @@ public class TeilaufgabeB2Strategie {
             // Elements are still there, that are not inside a bin -> problem somewhere
             // Add to last non empty bin
             System.out.println(
-                    "Irgendwas broken, leck mich, Elemente [" + firstItemIndex + " ... " + r + "] nicht zugeordnet");
+                    "Irgendwas broken, eyyy ich kann nicht mehr, Elemente [" + firstItemIndex + " ... " + r + "] nicht zugeordnet");
             if (!finalBins.isEmpty()) {
                 List<Integer> lastBin = finalBins.get(finalBins.size() - 1);
                 for (int i = firstItemIndex; i <= r; i++) {

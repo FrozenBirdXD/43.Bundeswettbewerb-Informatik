@@ -19,7 +19,7 @@ public class TeilaufgabeB3Strategie {
         String input;
         try {
             // 1. Read input from file
-            input = Files.readString(Path.of("beispielaufgaben/b/schmuck8.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/b/schmuck5.txt"));
         } catch (IOException e) {
             System.out.println("Error: InputFile not found");
             return;
@@ -37,7 +37,7 @@ public class TeilaufgabeB3Strategie {
         // End Timing
         long endTime = System.nanoTime();
         System.out.println("------------------------------");
-        long durationMs = (endTime - startTime) / 1_000_000;
+        long durationMs = (endTime - startTime) / 1000000;
         System.out.println("Execution time: " + durationMs + " ms");
         System.out.println("------------------------------");
 
@@ -55,7 +55,7 @@ public class TeilaufgabeB3Strategie {
     private static OptimalCodingResult solveOptimalCode(String text, List<Integer> alphabetCosts) {
         // 1. Preprocessing step
         System.out.println("1. Preprocessing");
-        // Calculate symbol frequencies
+        // 1a. Calculate symbol frequencies
         FrequencyResult freqResult = calculateFrequencies(text);
         if (freqResult.sortedSymbols.isEmpty()) {
             return new OptimalCodingResult(Collections.emptyMap(), 0, null, null);
@@ -66,8 +66,8 @@ public class TeilaufgabeB3Strategie {
         // Frequency counts
         long[] freqCounts = freqResult.sortedSymbols.stream().mapToLong(Map.Entry::getValue).toArray();
 
-        // Precompute cumulative frequency counts (suffix sums)
-        // Needed for edge cost calculation
+        // 1b. Precompute cumulative frequency counts (suffix sums)
+        // Needed for edge cost calculation in O(1)
         long[] cumFreq = new long[k + 1];
         // cumFreq[i] = sum of frequencies from index i to n-1 (i.e., P_{i+1} + ... +
         // P_n)
@@ -75,7 +75,7 @@ public class TeilaufgabeB3Strategie {
             cumFreq[i] = cumFreq[i + 1] + freqCounts[i];
         }
 
-        // Calculate characteristic vector 'd' and maximum cost 'C'
+        // 1c. Calculate characteristic vector 'd' and maximum cost 'C'
         CharacteristicVectorResult charVecResult = calculateCharacteristicVector(alphabetCosts);
         int[] d = charVecResult.d;
         int C = charVecResult.C;
@@ -89,7 +89,7 @@ public class TeilaufgabeB3Strategie {
         // Explore signatures to find min cost path
         // Simulate building optimal code tree top-down
 
-        // Init DP table (OPT) and Predecessor table (Pred)
+        // 2a. Init DP table (OPT) and Predecessor table (Pred)
         // Saves minimal cost to get to a signature from S0
         Map<Signature, Long> opt = new HashMap<>();
         // Saves the current best way to get to a signature
@@ -115,7 +115,7 @@ public class TeilaufgabeB3Strategie {
         pq.add(new StateCost(0L, S0));
 
         System.out.println("   n = " + k + ", C = " + C + ", r=" + r + ", S0 = " + S0);
-        System.out.println("2. Running Dynamic Programming (Dijkstra-like)");
+        System.out.println("2a. Running Dynamic Programming (Dijkstra-like)");
         long processedCount = 0;
         // Store the actual final signature, to begin null, check after dp, if still
         // null
@@ -123,7 +123,7 @@ public class TeilaufgabeB3Strategie {
         // Store the final cost to get from S0 to final State
         long finalCostFound = Long.MAX_VALUE;
 
-        // Main DP loop
+        // 2b. Main DP loop
         while (!pq.isEmpty()) {
             // Get state with smallest cost from queue
             StateCost current = pq.poll();
@@ -182,10 +182,10 @@ public class TeilaufgabeB3Strategie {
             }
         }
 
-        System.out.println("3. DP Finished. Processed " + processedCount + " states");
+        System.out.println("2b. DP Finished. Processed " + processedCount + " states");
         System.out.println("   Total states in OPT table: " + opt.size());
 
-        // 4. Get result and check if finalState was reached
+        // 3. Get result and check if finalState was reached
         if (actualFinalSig == null) {
             // Check if anystate (n, 0, ..., 0) was reached if finalState was not hit
             // directly
@@ -214,11 +214,11 @@ public class TeilaufgabeB3Strategie {
 
         // Optimal cost found by DP
         long minTotalCost = finalCostFound;
-        System.out.println("4. Minimum Total Cost (Sum Freq*Depth): " + minTotalCost);
+        System.out.println("3. Minimum Total Cost (Sum Freq*Depth): " + minTotalCost);
 
-        // 5. Reconstruct code
-        System.out.println("5. Reconstructing Code");
-        // 5a. Reconstruct path and determine leaf depths
+        // 4. Reconstruct code
+        System.out.println("4. Reconstructing Code");
+        // Reconstruct path and determine leaf depths
         // Simulates the optimal tree construction process based on pred map
         Map<Integer, Long> leafDepthsCounts = getLeafDepthsFromPath(actualFinalSig, pred, S0, k, d, alphabetCosts);
 
@@ -351,14 +351,14 @@ public class TeilaufgabeB3Strategie {
     }
 
     // Calculate cost of one codeword
-    private static long calculateCost(String codewordStr, List<Integer> alphabetCosts) {
+    private static long calculateCost(String codewordStr, List<Integer> costs) {
         long cost = 0;
-        int r = alphabetCosts.size();
+        int r = costs.size();
         for (int i = 0; i < codewordStr.length(); i++) {
             char digitChar = codewordStr.charAt(i);
             int digit = Character.getNumericValue(digitChar);
             if (digit >= 0 && digit < r) {
-                cost += alphabetCosts.get(digit);
+                cost += costs.get(digit);
             } else {
                 // Invalid
                 System.out.println(
@@ -372,6 +372,7 @@ public class TeilaufgabeB3Strategie {
 
     // ------------- Reconstruction of tree and Code Assignment
 
+    // Step 4
     // Trace back path from finalSig to S0 and simulate tree construction to find
     // leaf depths
     // Then simulates tree construction process (forward) along this optimal path to
@@ -383,7 +384,7 @@ public class TeilaufgabeB3Strategie {
         List<PredecessorInfo> path = new ArrayList<>();
         Signature currentSignature = finalSig;
 
-        // Backtrack from final state to S0 with pred map
+        // 4a. Backtrack from final state to S0 with pred map
         while (!currentSignature.equals(S0)) {
             PredecessorInfo info = pred.get(currentSignature);
             if (info == null) {
@@ -404,10 +405,10 @@ public class TeilaufgabeB3Strategie {
             return (S0.m == n) ? new HashMap<>() : null;
         }
 
-        // --- Simulate forward construction
+        // 4b. --- Simulate forward construction
         // Store final result
         Map<Integer, Long> leavesFinishedAtDepth = new HashMap<>();
-        // Track currently open end (potentiall elaves) and their depths during
+        // Track currently open end (potentiall leaves) and their depths during
         // simulation
         Map<Integer, Long> activeLeaves = new HashMap<>();
 
@@ -476,7 +477,8 @@ public class TeilaufgabeB3Strategie {
             long removedCount = 0;
             if (leavesToRemove > 0) {
                 List<Integer> sortedActiveDepths = new ArrayList<>(activeLeaves.keySet());
-                sortedActiveDepths.sort(Collections.reverseOrder()); // Deepest first
+                sortedActiveDepths.sort(Collections.reverseOrder()); // Deepest first, -> takes most of runtime when
+                                                                     // timecomplexity is viewed
                 for (int depth : sortedActiveDepths) {
                     // Removed enough
                     if (removedCount >= leavesToRemove)
@@ -517,7 +519,7 @@ public class TeilaufgabeB3Strategie {
         return leavesFinishedAtDepth;
     }
 
-    // Construct prefix free code
+    // 5. Construct prefix free code
     public static Map<Character, String> buildCodeFromDepths(
             List<Map.Entry<Character, Long>> symbolFreqs,
             Map<Integer, Long> depthsCounts,
@@ -555,11 +557,6 @@ public class TeilaufgabeB3Strategie {
                 break;
         }
 
-        // Verify that n targets were created
-        if (targets.size() != n) {
-            System.out.println("Error: Failed to create targets for all " + n + " symbols");
-            return null;
-        }
         // Sort by depth, then symbol index
         Collections.sort(targets);
 
@@ -590,8 +587,8 @@ public class TeilaufgabeB3Strategie {
 
         // Estimate max length needed plus 2 buffer
         int worstCaseLen = (maxTargetDepth > 0) ? (maxTargetDepth / minCost + 2) : 1;
-        // Estimate of max noded in full tree of that length and set cap
-        long MaxGeneratedNodes = (long) Math.min(10_000_000, Math.max(n * 10L, (long) Math.pow(r, worstCaseLen + 1)));
+        // Estimate of max nodes in full tree of that length and set cap
+        long MaxGeneratedNodes = (long) Math.min(10000000, Math.max(n * 10L, (long) Math.pow(r, worstCaseLen + 1)));
         long generatedCount = 0;
 
         // Iterate through targets and assing next available code
@@ -673,7 +670,7 @@ public class TeilaufgabeB3Strategie {
                             codeMap.put(targetSymbol, codeword);
                             assignedCodesList.add(codeword);
                             foundCodeForTarget = true;
-                            break; 
+                            break;
                         } else {
                             // Correct cost but not prefix free, maybe used later -> put in pool
                             candidatePool.computeIfAbsent((int) currentCost, k -> new ArrayDeque<>())
