@@ -2,7 +2,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Deque;
+import java.util.List;
 import java.util.Queue;
 
 public class BFS {
@@ -26,26 +29,25 @@ public class BFS {
 
         String input = null;
         try {
-            // Read input from file
-            //
-            //
-            // Input file path here: //
-            //
-            //
-            input = Files.readString(Path.of("labyrinthe/beispielaufgaben/labyrinthe3.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/labyrinthe0.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        // 1. Parse input and save in Mazes
         StateMazes mazes = parseInput(input);
         width = mazes.maze1.getMovableWidth();
         height = mazes.maze1.getMovableHeight();
-        // System.out.println(mazes.maze1);
-        // System.out.println(mazes.maze2);
-        State result = null;
+
+        //mazes.maze1.saveMazeAsSvg("maze1.svg", 100);
+        //mazes.maze2.saveMazeAsSvg("maze2.svg", 100);
+
+        State result;
         long start = System.currentTimeMillis();
 
-        result = breadthFirstSearchWithHoles(mazes.maze1, mazes.maze2);
+        // 2. Find shortest Path using BFS
+        result = bfs(mazes.maze1, mazes.maze2);
+        String shortestPath = reconstructPath(result);
         System.out
                 .println("Ausführungszeit in Sekunden für BFS: "
                         + (double) (System.currentTimeMillis() - start) / (long) 1000);
@@ -53,39 +55,59 @@ public class BFS {
             System.out.println("No solution");
         } else {
             System.out.println(
-                    "Anweisungsfolge der Länge " + result.steps + ": " + reconstructPath(result));
+                    "Anweisungsfolge der Länge " + result.steps + ": " + shortestPath);
         }
+
+        List<State> pathStates = reconstructPathStates(result); // Get the list of states
+
+        // Save SVG for Maze 1 with Player 1's path
+        mazes.maze1.saveMazeAsSvg("maze1_path.svg", 10, pathStates, 1);
+
+        // Save SVG for Maze 2 with Player 2's path
+        mazes.maze2.saveMazeAsSvg("maze2_path.svg", 10, pathStates, 2);
     }
 
-    public static State breadthFirstSearchWithHoles(Maze maze1, Maze maze2) {
-        int count = 0;
+    // 2. Use BFS to find shortest sequence of moves
+    public static State bfs(Maze maze1, Maze maze2) {
+        // 2a.
+        int count = 0; // Counter for visited states (for progress printing)
 
+        // FIFO queue for BFS states
         Queue<State> queue = new ArrayDeque<>();
+        // Create Bitsets
         initializeBitSets();
+        // 2b. Create Startstate and add starting state
         State startState = new State(0, 0, 0, 0, 0, null, ' ');
         queue.add(startState);
         setVisited(0, 0, 0, 0);
 
+        // 2c. Main BFS loop
         while (!queue.isEmpty()) {
             if (count % 1000000 == 0 && count != 0) {
                 System.out.println("States visited: " + count);
             }
+
+            // 2ci. Get the next state from front of the queue
             State currentState = queue.poll();
             count++;
 
-            // Goal check
+            // 2cii. Check if end state reached
             if (currentState.x1 == maze1.getGoalX() && currentState.x2 == maze2.getGoalX()
                     && currentState.y1 == maze1.getGoalY() && currentState.y2 == maze2.getGoalY()) {
                 System.out.println("States visited: " + count);
+                // Solution found
                 return currentState;
             }
+
+            // 2ciii. Explore neighbors (apply each move)
             for (int i = 0; i < 4; i++) {
+                // Calculate potential next coordinates
                 int nx1 = currentState.x1 + dx[i];
                 int ny1 = currentState.y1 + dy[i];
                 int nx2 = currentState.x2 + dx[i];
                 int ny2 = currentState.y2 + dy[i];
 
-                // Check walls
+                // Check walls if move is invalid, player stays
                 if (!maze1.isValidMove(currentState.x1, currentState.y1, nx1, ny1)) {
                     nx1 = currentState.x1;
                     ny1 = currentState.y1;
@@ -95,7 +117,7 @@ public class BFS {
                     ny2 = currentState.y2;
                 }
 
-                // Check for holes
+                // Check for holes if player lands on a hole, reset to start
                 boolean reset1 = maze1.isHole(nx1, ny1);
                 boolean reset2 = maze2.isHole(nx2, ny2);
                 if (reset1) {
@@ -107,8 +129,11 @@ public class BFS {
                     ny2 = 0;
                 }
 
+                // Check if neighbor State is already visited
                 if (!isVisited(nx1, ny1, nx2, ny2)) {
+                    // Mark as visited
                     setVisited(nx1, ny1, nx2, ny2);
+                    // Create the new state and add it to the queue
                     queue.add(new State(nx1, ny1, nx2, ny2, currentState.steps + 1, currentState,
                             moves[i].charAt(0)));
                 }
@@ -117,39 +142,50 @@ public class BFS {
         return null;
     }
 
+    // 2a. create enough bitsets for maze
     private static void initializeBitSets() {
-        // Ensure no overflow
+        // Ensure no overflow and calculate amount of bitsets and size
         long totalStates = (long) width * height * width * height;
         numBitSets = (int) ((totalStates / BITSET_SIZE) + 1);
         visited = new BitSet[numBitSets];
 
+        // Allocate each bitset segment
         for (int i = 0; i < numBitSets; i++) {
             visited[i] = new BitSet(BITSET_SIZE);
         }
     }
 
+    // 3. reconstruct path from final state
     public static String reconstructPath(State finalState) {
         StringBuilder path = new StringBuilder();
+        // Iterate over parent chain and put into stringbuilder
         while (finalState.parent != null) {
             path.append(finalState.move);
             finalState = finalState.parent;
         }
+        // Reverse the path to get final shortest path
         path.reverse();
         return path.toString();
     }
 
+    // Map a state to index in bitsets
     private static long encodeState(int x1, int y1, int x2, int y2) {
-        return ((long) x1 * height + y1) * width * height + ((long) x2 * height + y2);
+        long spacePerMaze = width * height;
+        return ((long) x1 * height + y1) * spacePerMaze + ((long) x2 * height + y2);
     }
 
+    // Set corresponding bit in Bitset to indicate if state already visited
     private static void setVisited(int x1, int y1, int x2, int y2) {
+        // Calculate which bitset and which bit
         long index = encodeState(x1, y1, x2, y2);
         int bitsetIndex = (int) (index / BITSET_SIZE);
         int bitIndex = (int) (index % BITSET_SIZE);
 
+        // Set corresponding bit
         visited[bitsetIndex].set(bitIndex);
     }
 
+    // Get value of corresponding bit from bitset to see if state already visited
     private static boolean isVisited(int x1, int y1, int x2, int y2) {
         long index = encodeState(x1, y1, x2, y2);
         int bitsetIndex = (int) (index / BITSET_SIZE);
@@ -158,6 +194,20 @@ public class BFS {
         return visited[bitsetIndex].get(bitIndex);
     }
 
+    public static List<State> reconstructPathStates(State finalState) {
+        if (finalState == null) {
+            return new ArrayList<>(); // Return empty list if no solution
+        }
+        Deque<State> pathDeque = new ArrayDeque<>();
+        State current = finalState;
+        while (current != null) { // Include the start state
+            pathDeque.addFirst(current);
+            current = current.parent;
+        }
+        return new ArrayList<>(pathDeque); // Convert Deque to List
+    }
+
+    // 1. Parse input
     public static StateMazes parseInput(String input) {
         // Save every line in Array of Strings
         String[] lines = input.split("\n");
@@ -191,9 +241,9 @@ public class BFS {
             }
             index++;
         }
-        maze1.setNumHoles(Integer.parseInt(lines[index++].trim()));
+        maze1.numHoles = Integer.parseInt(lines[index++].trim());
 
-        for (int i = 0; i < maze1.getNumHoles(); i++) {
+        for (int i = 0; i < maze1.numHoles; i++) {
             parts = lines[index++].trim().split(" ");
             maze1.setHole(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
         }
@@ -219,9 +269,9 @@ public class BFS {
             }
             index++;
         }
-        maze2.setNumHoles(Integer.parseInt(lines[index++].trim()));
+        maze2.numHoles = Integer.parseInt(lines[index++].trim());
 
-        for (int i = 0; i < maze2.getNumHoles(); i++) {
+        for (int i = 0; i < maze2.numHoles; i++) {
             parts = lines[index].trim().split(" ");
             maze2.setHole(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
         }
