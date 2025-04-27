@@ -1,5 +1,3 @@
-
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,13 +5,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-// Represent Signature state representing depth i ;; (m; l1, ..., lC)
+// Represent Signature state in algorithm. Signature holds important info about code tree construction at level i. 
 class Signature {
     final int m;
     final List<Integer> list; // Represent l1, l2, ..., lC
     // l1: amount of leaves on depth i + 1
     // l2: amount of leaves on depth i + 2 ...
-    private final int C; // For convenience
+    private final int C; // Maximum cost of any alphabet symbol
 
     public Signature(int m, List<Integer> ls) {
         // Represents amount of leaves (final codewords), that are on depth <= i
@@ -27,7 +25,6 @@ class Signature {
         return C;
     }
 
-    // 0-based index for lists (l1 is index 0)
     public int getL(int index) {
         return (index >= 0 && index < list.size()) ? list.get(index) : 0;
     }
@@ -86,7 +83,7 @@ class PredecessorInfo {
     }
 }
 
-// Used in PriorityQueue for Dijkstra
+// Used in PriorityQueue for Dijkstra like 
 // Wrapper to hold cost to get to a signature
 class StateCost implements Comparable<StateCost> {
     // Cost needed to get to signature
@@ -119,8 +116,10 @@ class StateCost implements Comparable<StateCost> {
     }
 }
 
-// Used for sorting targets in code assignment
+// Helper class for buildCodeFromDepths and represents a target
+// Symbol at symbolIndex needs codeword with the specified depth
 class TargetInfo implements Comparable<TargetInfo> {
+    // Required depth (cost) for codeword of the symbol
     final int depth;
     final int symbolIndex; // Original index in sorted symbol list
 
