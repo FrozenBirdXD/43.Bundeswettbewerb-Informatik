@@ -109,11 +109,11 @@ public class Maze {
         return height - 1;
     }
 
-    // Change the method signature and add path drawing logic
+    // This method is not important for the algorithms and the logic of it
+    // This is just to visualize the mazes and the calculates paths
+    // Change method signature and add path drawing logic
     public void saveMazeAsSvg(String filename, int cellSize, List<AStar.State> path, int playerIndex /* 1 or 2 */ ) {
-        // Or use AStar.State if calling from AStar
-        // Consider creating a common State interface or record if mixing isn't desired.
-
+        // Or use BFS.State if calling from BFS
         int svgWidth = getArrayWidth() * cellSize;
         int svgHeight = getArrayHeight() * cellSize;
 
@@ -121,46 +121,40 @@ public class Maze {
             // SVG Header
             out.println("<svg width=\"" + svgWidth + "\" height=\"" + svgHeight
                     + "\" xmlns=\"http://www.w3.org/2000/svg\" "
-                    + "xmlns:xlink=\"http://www.w3.org/1999/xlink\">"); // Added xlink namespace
+                    + "xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
 
-            // --- Draw Maze Background (Walls, Cells, Pits) ---
-            // Optional: Hintergrund
             out.println(
                     "  <rect x=\"0\" y=\"0\" width=\"" + svgWidth + "\" height=\"" + svgHeight + "\" fill=\"white\"/>");
 
-            // Zeichne die Labyrinthzellen als Rechtecke
             for (int y = 0; y < getArrayHeight(); y++) {
                 for (int x = 0; x < getArrayWidth(); x++) {
                     byte cell = get(x, y);
-                    String color = "magenta"; // Default für Fehler
-                    boolean drawRect = true; // Flag to control drawing
+                    String color = "magenta"; 
+                    boolean drawRect = true; 
 
                     switch (cell) {
-                        case 0: // Pfad/Zwischenraum
-                            if (x % 2 == 1 && y % 2 == 1) { // Logische Zelle
+                        case 0: 
+                            if (x % 2 == 1 && y % 2 == 1) { 
                                 if (x == getMovableWidth() * 2 - 1 && y == getMovableHeight() * 2 - 1) {
-                                    color = "lime"; // Ziel (hellgrün)
+                                    color = "lime"; 
                                 } else {
-                                    color = "#d3d3d3"; // Pfad-Zelle (hellgrau)
+                                    color = "#d3d3d3"; 
                                 }
                             } else {
-                                color = "white"; // Zwischenraum
-                                drawRect = false; // Don't draw white rects over white background
+                                color = "white"; 
+                                drawRect = false; 
                             }
                             break;
-                        case 1: // Wand
+                        case 1: 
                             color = "black";
                             break;
-                        // Don't draw agent start position directly here, we'll add markers later
-                        // case 8: // Agent (Startposition) color = "red"; break;
-                        case 2: // Loch
+                        case 2: 
                             color = "blue";
                             break;
-                        default: // Also handle agent start if marked differently (e.g., 8)
-                            if (cell == 8 && x == 1 && y == 1) { // If start point is marked
-                                color = "#d3d3d3"; // Draw start cell as normal path
+                        default: 
+                            if (cell == 8 && x == 1 && y == 1) { 
+                                color = "#d3d3d3"; 
                             } else {
-                                // Keep magenta for unexpected values or leave white
                                 color = "white";
                                 drawRect = false;
                             }
@@ -168,7 +162,6 @@ public class Maze {
 
                     }
 
-                    // Zeichne nur, wenn nicht weiß (oder explizit gewünscht)
                     if (drawRect) {
                         out.println("  <rect x=\"" + (x * cellSize) + "\" y=\"" + (y * cellSize) +
                                 "\" width=\"" + cellSize + "\" height=\"" + cellSize +
@@ -177,14 +170,11 @@ public class Maze {
                 }
             }
 
-            // --- Draw Special Markers (Start/Goal) ON TOP ---
-            // Draw Start Marker (e.g., a red circle)
-            double startCenterX = (1 * cellSize + cellSize / 2.0); // Start is always at logical (0,0) -> array (1,1)
+            double startCenterX = (1 * cellSize + cellSize / 2.0); 
             double startCenterY = (1 * cellSize + cellSize / 2.0);
             out.println("  <circle cx=\"" + startCenterX + "\" cy=\"" + startCenterY +
                     "\" r=\"" + (cellSize / 2.5) + "\" fill=\"red\" stroke=\"black\" stroke-width=\"1\"/>");
 
-            // Draw Goal Marker (e.g., a green square inside the lime cell)
             double goalX = (getMovableWidth() * 2 - 1);
             double goalY = (getMovableHeight() * 2 - 1);
             out.println("  <rect x=\"" + (goalX * cellSize + cellSize / 4.0) + "\" y=\""
@@ -192,60 +182,46 @@ public class Maze {
                     "\" width=\"" + (cellSize / 2.0) + "\" height=\"" + (cellSize / 2.0) +
                     "\" fill=\"darkgreen\"/>");
 
-            // --- Draw the Path ON TOP ---
             if (path != null && path.size() > 1) {
-                // Define path style
-                String pathStrokeColor = (playerIndex == 1) ? "orange" : "cyan"; // Different colors per player
-                double pathStrokeWidth = Math.max(1.0, cellSize / 5.0); // Adjust thickness
-                double pathOpacity = 0.75; // Make it slightly transparent
+                String pathStrokeColor = (playerIndex == 1) ? "orange" : "cyan"; 
+                double pathStrokeWidth = Math.max(1.0, cellSize / 5.0); 
+                double pathOpacity = 0.75;
 
                 out.println("  <g id=\"path-player" + playerIndex + "\" stroke=\"" + pathStrokeColor
                         + "\" stroke-width=\"" + pathStrokeWidth + "\" stroke-opacity=\"" + pathOpacity
                         + "\" stroke-linecap=\"round\" fill=\"none\">");
 
                 for (int i = 0; i < path.size() - 1; i++) {
-                    AStar.State s1 = path.get(i); // Or AStar.State
+                    AStar.State s1 = path.get(i); 
                     AStar.State s2 = path.get(i + 1);
 
-                    // Get logical coordinates for the correct player
                     int logX1 = (playerIndex == 1) ? s1.x1() : s1.x2();
                     int logY1 = (playerIndex == 1) ? s1.y1() : s1.y2();
                     int logX2 = (playerIndex == 1) ? s2.x1() : s2.x2();
                     int logY2 = (playerIndex == 1) ? s2.y1() : s2.y2();
 
-                    // Convert logical coordinates to array coordinates (center of cell)
                     double ax1 = (logX1 * 2 + 1);
                     double ay1 = (logY1 * 2 + 1);
                     double ax2 = (logX2 * 2 + 1);
                     double ay2 = (logY2 * 2 + 1);
 
-                    // Convert array coordinates to SVG center coordinates
                     double svgCX1 = ax1 * cellSize + cellSize / 2.0;
                     double svgCY1 = ay1 * cellSize + cellSize / 2.0;
                     double svgCX2 = ax2 * cellSize + cellSize / 2.0;
                     double svgCY2 = ay2 * cellSize + cellSize / 2.0;
 
-                    // Draw line segment
-                    // Avoid drawing line if player didn't move (hit wall/pit reset handled
-                    // implicitly)
                     if (logX1 != logX2 || logY1 != logY2) {
                         out.println("    <line x1=\"" + svgCX1 + "\" y1=\"" + svgCY1
                                 + "\" x2=\"" + svgCX2 + "\" y2=\"" + svgCY2 + "\"/>");
                     } else {
-                        // Optional: draw a small dot if the player didn't move?
-                        // out.println(" <circle cx=\"" + svgCX1 + "\" cy=\"" + svgCY1 + "\" r=\"" +
-                        // pathStrokeWidth/3.0 + "\" fill=\"" + pathStrokeColor + "\" stroke=\"none\"
-                        // />");
                     }
                 }
-                out.println("  </g>"); // End path group
+                out.println("  </g>");
             }
 
-            // SVG Footer
             out.println("</svg>");
 
         } catch (IOException e) {
-            System.err.println("Fehler beim Speichern der Labyrinth-SVG-Datei: " + e.getMessage());
         }
     }
 }
