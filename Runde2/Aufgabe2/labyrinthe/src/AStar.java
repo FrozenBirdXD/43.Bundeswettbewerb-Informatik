@@ -1,8 +1,12 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class AStar {
@@ -23,7 +27,7 @@ public class AStar {
 
         String input = null;
         try {
-            input = Files.readString(Path.of("beispielaufgaben/labyrinthe3.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/labyrinthe9.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,6 +59,12 @@ public class AStar {
             System.out.println(
                     "Anweisungsfolge der Länge " + result.steps + ": " + reconstructPath(result));
         }
+        List<State> pathStates = reconstructPathStates(result); // Get the list of states
+        // Save SVG for Maze 1 with Player 1 path
+        //mazes.maze1.saveMazeAsSvg("maze91.svg", 100, pathStates, 1);
+
+        // Save SVG for Maze 2 with Player 2 path
+        //mazes.maze2.saveMazeAsSvg("maze92.svg", 100, pathStates, 2);
     }
 
     // 2. Use A* to find shortest sequence of moves
@@ -241,5 +251,18 @@ public class AStar {
         }
 
         return new StateMazes(maze1, maze2);
+    }
+
+    public static List<State> reconstructPathStates(State finalState) {
+        if (finalState == null) {
+            return new ArrayList<>(); // Return empty list if no solution
+        }
+        Deque<State> pathDeque = new ArrayDeque<>();
+        State current = finalState;
+        while (current != null) { // Include the start state
+            pathDeque.addFirst(current);
+            current = current.parent;
+        }
+        return new ArrayList<>(pathDeque); // Convert Deque to List
     }
 }

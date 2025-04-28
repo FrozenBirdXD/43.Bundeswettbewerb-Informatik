@@ -110,7 +110,7 @@ public class Maze {
     }
 
     // Change the method signature and add path drawing logic
-    public void saveMazeAsSvg(String filename, int cellSize, List<BFS.State> path, int playerIndex /* 1 or 2 */ ) {
+    public void saveMazeAsSvg(String filename, int cellSize, List<AStar.State> path, int playerIndex /* 1 or 2 */ ) {
         // Or use AStar.State if calling from AStar
         // Consider creating a common State interface or record if mixing isn't desired.
 
@@ -204,8 +204,8 @@ public class Maze {
                         + "\" stroke-linecap=\"round\" fill=\"none\">");
 
                 for (int i = 0; i < path.size() - 1; i++) {
-                    BFS.State s1 = path.get(i); // Or AStar.State
-                    BFS.State s2 = path.get(i + 1);
+                    AStar.State s1 = path.get(i); // Or AStar.State
+                    AStar.State s2 = path.get(i + 1);
 
                     // Get logical coordinates for the correct player
                     int logX1 = (playerIndex == 1) ? s1.x1() : s1.x2();
@@ -243,7 +243,6 @@ public class Maze {
 
             // SVG Footer
             out.println("</svg>");
-            System.out.println("Labyrinth als SVG gespeichert in: " + filename);
 
         } catch (IOException e) {
             System.err.println("Fehler beim Speichern der Labyrinth-SVG-Datei: " + e.getMessage());

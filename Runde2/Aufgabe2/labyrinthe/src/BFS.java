@@ -29,7 +29,7 @@ public class BFS {
 
         String input = null;
         try {
-            input = Files.readString(Path.of("beispielaufgaben/labyrinthe0.txt"));
+            input = Files.readString(Path.of("beispielaufgaben/labyrinthe9.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,9 +38,6 @@ public class BFS {
         StateMazes mazes = parseInput(input);
         width = mazes.maze1.getMovableWidth();
         height = mazes.maze1.getMovableHeight();
-
-        //mazes.maze1.saveMazeAsSvg("maze1.svg", 100);
-        //mazes.maze2.saveMazeAsSvg("maze2.svg", 100);
 
         State result;
         long start = System.currentTimeMillis();
@@ -60,11 +57,11 @@ public class BFS {
 
         List<State> pathStates = reconstructPathStates(result); // Get the list of states
 
-        // Save SVG for Maze 1 with Player 1's path
-        mazes.maze1.saveMazeAsSvg("maze1_path.svg", 10, pathStates, 1);
+        // Save SVG for Maze 1 with Player 1 path
+        //mazes.maze1.saveMazeAsSvg("maze91.svg", 100, pathStates, 1);
 
-        // Save SVG for Maze 2 with Player 2's path
-        mazes.maze2.saveMazeAsSvg("maze2_path.svg", 10, pathStates, 2);
+        // Save SVG for Maze 2 with Player 2 path
+        //mazes.maze2.saveMazeAsSvg("maze92.svg", 100, pathStates, 2);
     }
 
     // 2. Use BFS to find shortest sequence of moves
@@ -83,9 +80,6 @@ public class BFS {
 
         // 2c. Main BFS loop
         while (!queue.isEmpty()) {
-            if (count % 1000000 == 0 && count != 0) {
-                System.out.println("States visited: " + count);
-            }
 
             // 2ci. Get the next state from front of the queue
             State currentState = queue.poll();

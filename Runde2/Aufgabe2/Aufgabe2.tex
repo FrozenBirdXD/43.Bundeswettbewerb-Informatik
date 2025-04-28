@@ -43,6 +43,7 @@
 \usepackage{subcaption}
 \usepackage{amssymb}
 
+\usepackage{float}
 \usepackage{graphicx}
 
 \usepackage{algpseudocode}
@@ -93,12 +94,12 @@ Die Grundidee dieser Aufgabe ist es, eine möglichst kurze Anweisungssequenz zu 
 Das Ziel dieser Modellierung ist, den kürzesten Pfad im Zustandsgraphen vom Startzustand $(0, 0, 0, 0)$ zum Zielzustand $(n-1, m-1, n-1, m-1)$ zu finden. Für diese Suche bietet sich die Breadth-First-Search Methode (BFS) an, da sie garantiert den kürzesten Weg in einem ungewichteten Graphen (alle Bewegungen kosten gleich viel) findet. Allerdings ist der A-Star Suchalgorithmus auch passend, der theoretisch das Ergebnis schneller finden sollte, da bei der Suche eine Heuristik verwendet wird. Im Folgenden werden beide dieser Algorithmen umgesetzt:
 
 \subsection{Breitensuche (BFS)}
-Die Breitensuche (BFS) ist ein Graphsuchalgorithmus, der systematisch den Graph erkundet. Hier also die möglichen Bewegungen in den Labyrinthen. Sie beginnt beim Startzustand und untersucht alle erreichbaren Nachbarzustände. Anschließend werden für jeden dieser Nachbarn deren unbesuchte Nachbarn untersucht, und so weiter. Dieses Vorgehen erfolgt "Schicht für Schicht", basierend auf der Anzahl der Schritte (Kanten) vom Startzustand. Eine FIFO-Warteschlange (Queue) verwaltet die Reihenfolge der zu besuchenden Zustände. Da BFS die Zustände in der Reihenfolge ihrer Entfernung vom Start bearbeitet, findet sie garantiert den Pfad mit der geringsten Anzahl an Schritten, wenn solch ein Pfad existieren sollte. Um Endlosschleifen (u.a. aufgrund der Gruben) und Zyklen bei der Suche im Graphen zu verhindern, muss gespeichert werden, welche Zustände bereits besucht wurden. Bevor ein neuer Zustand zur Queue hinzugefügt wird, wird geprüft, ob dieser spezifische Zustand bereits besucht wurde. Wenn dies der Fall ist, wird dieser Zustand ignoriert und nicht erneut zur Queue hinzugefügt. 
+Die Breitensuche (BFS) ist ein Graphsuchalgorithmus, der systematisch den Graph erkundet, hier also die möglichen Bewegungen in den Labyrinthen. Sie beginnt beim Startzustand und untersucht alle erreichbaren Nachbarzustände. Anschließend werden für jeden dieser Nachbarn deren unbesuchte Nachbarn untersucht, und so weiter. Dieses Vorgehen erfolgt "Schicht für Schicht", basierend auf der Anzahl der Schritte (Kanten) vom Startzustand. Eine FIFO-Warteschlange (Queue) verwaltet die Reihenfolge der zu besuchenden Zustände. Da BFS die Zustände in der Reihenfolge ihrer Entfernung vom Start bearbeitet, findet sie garantiert den Pfad mit der geringsten Anzahl an Schritten, wenn solch ein Pfad existieren sollte. Um Endlosschleifen (u.a. aufgrund der Gruben) und Zyklen bei der Suche im Graphen zu verhindern, muss gespeichert werden, welche Zustände bereits besucht wurden. Bevor ein neuer Zustand zur Queue hinzugefügt wird, wird geprüft, ob dieser spezifische Zustand bereits besucht wurde. Wenn dies der Fall ist, wird dieser Zustand ignoriert und nicht erneut zur Queue hinzugefügt. 
 \\\indent \indent Die Einführung von Gruben stellt auf den ersten Blick eine Herausforderung dar, da sie Zyklen im Pfad von einem Spieler erzeugen. Für BFS ist dies allerdings kein Problem, da sie den kombinierten Zustand $(x_1, y_1, x_2, y_2)$ betrachtet. Wenn ein Spieler in eine Grube fällt, ändert sich der kombinierte Zustand (z.B. zu $(0, 0, x_2, y_2)$). Sollte BFS durch weitere Züge (evtl. nach öfterem Fallen in Gruben) später wieder denselben Zustand erreichen, wäre dies kein Problem, da gespeichert wurde, dass dieser Zustand schon erreicht wurde. 
 \subsection{A*}
 Als Alternative zur Breitensuche kann auch der A* Algorithmus verwendet werden, um den kürzesten Pfad im Zustandsgraphen zu finden. A* ist ein informierter Suchalgorithmus, der zusätzlich zu den bereits zurückgelegen Kosten $(g(n))$, eine Schätzung der verbleibenden Kosten bis zum Ziel ($h(n)$, die Heuristik) berücksichtigt, um potenziell weniger Zustände durchsuchen zu müssen, um die Lösung zu finden.  
 \newline
-Es wird eine PriorityQueue verwendet, um zu entscheiden, welcher Zustand als nächste besucht wird. Sei 
+Es wird eine PriorityQueue verwendet, um zu entscheiden, welcher Zustand als nächstes besucht wird. Sei 
 \begin{itemize}
   \item $g(n)$ die tatsächlichen Kosten (Anzahl der Schritte/Kanten/Anweisungen) vom Startzustand bis zum Zustand $n$. 
   \item $h(n)$ eine heuristische Schätzung der minimalen Kosten (minimale Anzahl weiterer Schritte), um von Zustand $n$ zum Zielzustand zu gelangen. Diese Heuristik muss \textit{zulässig} (admissible) sein, d.h. um zu garantieren, dass die Lösung optimal ist, darf sie die tatsächlichen Kosten zum Ziel nie überschätzen.  
@@ -109,7 +110,7 @@ Dann ist die Priorität eines Zustand $n$ ist durch die Funktion
   \label{1}
 \end{equation}
 bestimmt. $f(n)$ sind die geschätzten Gesamtkosten des Pfades vom Start zum Ziel über den Zustand $n$. Mit Hilfe der PriorityQueue wählt A* immer den Zustand mit dem niedrigsten $f(n)$-Wert zur Expansion aus.  
-Für diese Aufgabe, wird eine Heuristik benötigt, die die Distanz beider Spieler berücksichtigt. Eine geeignete zulässige Heuristik ist das Maximum der Manhatten-Distanzen der beiden Spieler zu ihren Zielen:
+Für diese Aufgabe wird eine Heuristik benötigt, die die Distanz beider Spieler berücksichtigt. Eine geeignete zulässige Heuristik ist das Maximum der Manhatten-Distanzen der beiden Spieler zu ihren Zielen:
 \begin{equation}
   h(n) = max( |x_1 - \text{zielX}| + |y_1 - \text{zielY}|, |x_2 - \text{zielX}| + |y_2 - \text{zielY}| ) 
   \label{2}
@@ -156,9 +157,9 @@ Um diesen Algorithmus umzusetzen und somit die Aufgabe zu lösen, wird wie folgt
   \item \textbf{Implementierung der Breitensuche (BFS)}
   \begin{enumerate}
     \item \textbf{Kernkomponenten}\\
-    Zu Beginn wird eine FIFO-Warteschlange \textit{queue} (mit dem Java Datentyp \textit{ArrayDeque}) angelegt, in der die zu besuchende Zustände sind. Die Klasse \textit{State} stellt den Zustand der beiden Spieler zu einem Zeitpunkt dar und speichert zusätzlich zu den Koordinaten der Spieler, die Anzahl an benötigten Schritten vom Startknoten bis zu dem Zustand in \textit{steps}, der Vorgängerknoten \textit{parent} und die Anweisung, die zu diesem Zustand geführt hat in \textit{move}. Dies wird gemacht, da die Rückkonstruktion des Pfads dadurch stark vereinfacht wird. 
+    Zu Beginn wird eine FIFO-Warteschlange \textit{queue} (mit dem Java Datentyp \textit{ArrayDeque}) angelegt, in der die zu besuchende Zustände sind. Die Klasse \textit{State} stellt den Zustand der beiden Spieler zu einem Zeitpunkt dar und speichert zusätzlich zu den Koordinaten der Spieler, die Anzahl an benötigten Schritten vom Startknoten bis zu dem Zustand in \textit{steps}, den Vorgängerknoten \textit{parent} und die Anweisung, die zu diesem Zustand geführt hat in \textit{move}. Dies wird gemacht, da die Rückkonstruktion des Pfads dadurch stark vereinfacht wird. 
     \\\newline
-        In den Beispiellabyrinthen der BwInf-Webseite sind die größten Labyrinthe ca. (250×250) groß. Das bedeutet das im worst Case $250^{4}$ Zustände besucht werden müssen und somit auch für jeden Zustand gespeichert werden muss, ob dieser bereits erkundet wurde. Da kann bei ca. 4 Milliarden gespeicherten Zuständen zu einem großen Speicherproblem werden. Daher wird ein Array aus BitSets zur Verwaltung der besuchten Zustände verwendet. BitSets werden verwendet, da sie die intern ca. 1 Bit pro möglichen Zustand benötigen. Nun müssen die Zustände nur noch auf die Indizes der Bits im BitSets gemapped werden. Dann entspricht eine 1, dass dieser Zustand bereits besucht wurde, und eine 0, dass sie noch nicht erkundet wurde. Ob ein Zustand bereits erforscht wurde, kann somit in $\mathcal{O}(1)$ überprüft werden, was bei $250^{4}$ Zuständen einen großen Unterschied im Speicherplatzverbrauch und der Laufzeit macht. Ein einzelnes BitSet verwendet intern int-Werte zur Indizierung der Bits. Dies begrenzt die maximale Anzahl direkt adressierbarer Zustände auf ca. 2,1 Milliarden. Wie bereits erwähnt, kann die Anzahl der besuchbaren Zustände in userem Problem, diese Grenze überschreiten. Daher reicht ein einzelnen BitSet nicht und um dieses Problem zu umgehen, wird der gesamte Zustandsraum logisch in mehrere Segmente unterteilt. Jedes Segment wird von einem eigenen BitSet-Objekt verwaltet, die zusammen in einem Array ($BitSet[]$ $visited$) gespeichert werden. 
+        In den Beispiellabyrinthen der BwInf-Webseite sind die größten Labyrinthe ca. (250×250) groß. Das bedeutet, dass im worst Case $250^{4}$ Zustände besucht werden müssen und somit auch für jeden Zustand gespeichert werden muss, ob dieser bereits erkundet wurde. Das kann bei ca. 4 Milliarden gespeicherten Zuständen zu einem großen Speicherproblem werden. Daher wird ein Array aus BitSets zur Verwaltung der besuchten Zustände verwendet. BitSets werden verwendet, da sie intern ca. 1 Bit pro möglichen Zustand benötigen. Nun müssen die Zustände nur noch auf die Indizes der Bits im BitSet gemapped werden. Dann entspricht eine 1, dass dieser Zustand bereits besucht wurde, und eine 0, dass sie noch nicht erkundet wurde. Ob ein Zustand bereits erforscht wurde, kann somit in $\mathcal{O}(1)$ überprüft werden, was bei $250^{4}$ Zuständen einen großen Unterschied im Speicherplatzverbrauch und der Laufzeit macht. Ein einzelnes BitSet verwendet intern int-Werte zur Indizierung der Bits. Dies begrenzt die maximale Anzahl direkt adressierbarer Zustände auf ca. 2,1 Milliarden. Wie bereits erwähnt, kann die Anzahl der besuchbaren Zustände in userem Problem, diese Grenze überschreiten. Daher reicht ein einzelnen BitSet nicht und um dieses Problem zu umgehen, wird der gesamte Zustandsraum logisch in mehrere Segmente unterteilt. Jedes Segment wird von einem eigenen BitSet-Objekt verwaltet, das zusammen in einem Array ($BitSet[]$ $visited$) gespeichert wird. 
         \\
         Die Zuweisung von den möglichen Zuständen auf eine Zahl erfolgt nach folgender Formel:
         \begin{equation}
@@ -170,8 +171,8 @@ Um diesen Algorithmus umzusetzen und somit die Aufgabe zu lösen, wird wie folgt
           \text{arrayIndex} = \left\lfloor \frac{\text{index}}{\text{BITSET\_SIZE}} \right\rfloor
   \label{4}
         \end{equation}
-        wobei (\text{BITSET\_SIZE}) die maximale Größe eines einzelnen \textit{BitSet} angibt. 
-        Der konkrete Bit-Index innerhalb des ausgewählten \textit{BitSet} wird mit den Modulo-Operator berechnet: 
+        wobei (\text{BITSET\_SIZE}) die maximale Größe eines einzelnen \textit{BitSets} angibt. 
+        Der konkrete Bit-Index innerhalb des ausgewählten \textit{BitSets} wird mit den Modulo-Operator berechnet: 
         \begin{equation}
          \text{bitIndex} = \text{index} \bmod \text{BITSET\_SIZE}.
   \label{5}
@@ -181,8 +182,8 @@ Um diesen Algorithmus umzusetzen und somit die Aufgabe zu lösen, wird wie folgt
     \item \textbf{Hauptschleife der BFS}\\
     Die while-Schleife wird ausgeführt, solange die $queue$ noch Zustände zur Untersuchung enthält.
     \begin{enumerate}
-      \item \textbf{Zustand ennehmen}\\
-      In jeder Iteration wird der vorderste Zustand, \textit{currentState} aus der Warteschlange geholt. Dies ist der nächste unbesuchte Knoten auf der aktuellen Ebene 
+      \item \textbf{Zustand entnehmen}\\
+      In jeder Iteration wird der vorderste Zustand, \textit{currentState} aus der Warteschlange geholt. Dies ist der nächste unbesuchte Knoten auf der aktuellen Ebene.
       \item \textbf{Zielprüfung}\\
       Der Algorithmus prüft direkt danach, ob im \textit{currentState} beide Spieler ihre Zielkoordinaten $(width-1, height-1)$ erreicht haben. Wenn dies der Fall ist, wurde der kürzeste Pfad gefunden, und dieser $currentState$ wird zurückgegeben, womit die Suche endet. 
       \item \textbf{Nachfolgererkundung}\\
@@ -190,10 +191,10 @@ Um diesen Algorithmus umzusetzen und somit die Aufgabe zu lösen, wird wie folgt
       \begin{enumerate}
         \item Für jede Richtung werden zunächst die potenziellen neuen Koordinaten berechnet. 
         \item Anschließend wird für jeden Spieler einzeln geprüft, ob die Bewegung auf eine Wand treffen würde; falls ja, bleibt der Spieler stehen. 
-        \item     Danach wird für die resultierende Position jedes Spielers geprüft, ob sie eine Grube ist; falls ja, wird die Position dieses Spielers auf den Start $(0, 0)$ zurückgesetzt. 
+        \item Danach wird für die resultierende Position jedes Spielers geprüft, ob sie eine Grube ist; falls ja, wird die Position dieses Spielers auf den Start $(0, 0)$ zurückgesetzt. 
       \end{enumerate}
-      Der so ermittelte Nachfolgezustand $(nx_1, ny_1, nx_2, ny_2)$ wird dann betrachtet. Für diesen Nachfolgezustand wird geprüft, ob diese exakte Kombination von Spielerpositionen schon zuvor erreicht und im $visited$-BitSet markiert wurde. Wenn der Zustand neu ist, wird er als besucht markiert. Dann wird ein neues $State$-Objekt wird erstellt, das die neuen Koordinaten, die inkrementierte Schrittzahl, eine Referenz auf $currentState$ als Vorgängerknoten und die verwendete Anweisung ($move$) enthält. 
-      \\ Dieses neue $State$-Objekt wird mit am Ende der FIFO-Warteschlange eingefügt, um später untersucht zu werden. 
+      Der so ermittelte Nachfolgezustand $(nx_1, ny_1, nx_2, ny_2)$ wird dann betrachtet. Für diesen Nachfolgezustand wird geprüft, ob diese exakte Kombination von Spielerpositionen schon zuvor erreicht und im $visited$-BitSet markiert wurde. Wenn der Zustand neu ist, wird er als besucht markiert. Dann wird ein neues $State$-Objekt wird erstellt, das die neuen Koordinaten, die inkrementierte Schrittzahl, eine Referenz auf $currentState$ als Vorgänger\-knoten und die verwendete Anweisung ($move$) enthält. 
+      \\ Dieses neue $State$-Objekt wird am Ende der FIFO-Warteschlange eingefügt, um später untersucht zu werden. 
     \end{enumerate}
   \end{enumerate}
   \item \textbf{Pfadrekonstruktion}\\
@@ -202,7 +203,7 @@ Um diesen Algorithmus umzusetzen und somit die Aufgabe zu lösen, wird wie folgt
 \end{enumerate}
 
 \subsection{A*}
-Zur Umsetzung des A* Algorithmus werden die Methoden zum Einlesen und die Darstellung der Labyrinthe und Zustände, sowie die Methode zur Rekonstruktion des Pfads wiederverwendet. Daher muss nur die Speicherung der bereits besuchten Zustände und die Hauptmethode aus der BFS angepasst werden. Es wird wie folgt vorgegangen: 
+Zur Umsetzung des A* Algorithmus werden die Methoden zum Einlesen und die Darstellung der La\-byrinthe und Zustände, sowie die Methode zur Rekonstruktion des Pfads wiederverwendet. Daher muss nur die Speicherung der bereits besuchten Zustände und die Hauptmethode aus der BFS angepasst werden. Es wird wie folgt vorgegangen: 
 
 \begin{enumerate}
   \item [2.] \textbf{Kernkomponenten}\\
@@ -211,14 +212,75 @@ Zur Umsetzung des A* Algorithmus werden die Methoden zum Einlesen und die Darste
       Zur Speicherung dieser minimalen Kosten wird in dieser Implementierung ein Integer-Array $costArray$ verwendet. Die Größe dieses Arrays $(stateSpaceSize = width \cdot height \cdot width \cdot height)$ entspricht der Gesamtzahl möglicher kombinierter Zustände. Jeder Index im Array repräsentiert einen einzigartigen Zustand. Das Array wird zu Beginn mit Integer.MAX\_VALUE initialisiert, um anzuzeigen, dass noch kein Pfad zu diesen Zuständen gefunden wurde.\footnote{Anmerkung: Diese Implementierung mit einem einzelnen int[] costArray und int-Indizierung funktioniert nur korrekt, solange stateSpaceSize den Wert Integer.MAX\_VALUE (ca. 2,147 Mrd.) nicht überschreitet. Für größere Labyrinthe wäre eine Aufteilung in mehrere Arrays (int[][] costArrays) und die Verwendung von long-Indizes sinnvoll, analog zur BitSet-Implementierung bei BFS. Allerdings wird dann so viel Speicher verbraucht, dass dies nicht mehr rentabel ist und somit nicht mehr umgesetzt wurde.} 
     \\
     Die Formeln \ref{3}, \ref{4}, \ref{5} funktionieren analog für das int-Array wie für das BitSet Array aus der Breitensuche. \\
-    Zudem werden die Methoden $isBetterPath(x1, y1, x2, y2, newCost)$ und $updateCost(x_1, y_1, x_2, y_2)$ definiert. isBetterPath() prüft, ob der neu gefundene Pfad zu einem Zustand (mit Kosten $newCost$) besser ist als der bisher beste Pfad zu diesem Zustand. Sie tut dies, indem sie $newCost$ mit dem Wert vergleicht, der aktuell für diesen Zustand im $costArray$ gespeichert ist. UpdateCost() schreibt die Kosten ($cost$, also $g(n)$) für den gegebenen Zustand an den entsprechenden Index im costArray. \\
+    Zudem werden die Methoden $isBetterPath(x1, y1, x2, y2, newCost)$ und $updateCost(x_1, y_1, x_2, y_2)$ definiert. $isBetterPath()$ prüft, ob der neu gefundene Pfad zu einem Zustand (mit Kosten $newCost$) besser ist als der bisher beste Pfad zu diesem Zustand. Sie tut dies, indem sie $newCost$ mit dem Wert vergleicht, der aktuell für diesen Zustand im $costArray$ gespeichert ist. $UpdateCost()$ schreibt die Kosten ($cost$, also $g(n)$) für den gegebenen Zustand an den entsprechenden Index im costArray. \\
     Außerdem wird die Heuristik mit der Gleichung \ref{2} berechnet. 
   \item[3.] \textbf{Start der Suche}
-      Das $costArray$ wird vollständig mit Integer.MAX\_VALUE gefüllt. Der Startzustand $startState$ wird erstellt und zur PriorityQueue hinzugefügt. 
+      Das $costArray$ wird vollständig mit Integer.MAX\_VALUE gefüllt. Der Start\-zustand $startState$ wird erstellt und zur PriorityQueue hinzugefügt. 
   \item[4.] \textbf{Hauptschleife von A*}\\
   Analog zur Schleife von BFS.
 \end{enumerate}
 \section{Komplexitätsanalyse}
+Für die folgende Komplexitätsanalyse sei
+\begin{itemize}
+    \item $n$ die Breite des Labyrinths.
+    \item $m$ die Höhe des Labyrinths.
+    \item $V$ die Gesamtzahl der möglichen kombinierten Zustände $(x_1, y_1, x_2, y_2)$. $V = (n \cdot m)^2$. Dies entspricht der Anzahl der Knoten im Zustandsgraphen.
+    \item $E$ die Gesamtzahl der möglichen Kanten zwischen Zuständen im Graphen.
+    \item $P$ die Länge des gefundenen kürzesten Pfades (Anzahl der Anweisungen).
+\end{itemize}
+\vspace{0.2cm}
+\subsection{BFS}
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Schritt} & \textbf{Laufzeit} & \textbf{Speicherbedarf} \\
+\hline
+Einlesen der Datei & $\mathcal{O}(n\cdot m)$ & $\mathcal{O}(n\cdot m)$ \\
+BFS & $\mathcal{O}(V)$ & $\mathcal{O}(V)$ \\
+Rekonstruktion des Pfads & $\mathcal{O}(P)$ & $\mathcal{O}(P)$ \\
+\hline
+\textbf{Gesamt} & $\boldsymbol{\mathcal{O}((n\cdot m)^2)}$ & $\boldsymbol{\mathcal{O}((n\cdot m)^2)}$ \\
+\hline
+\end{tabular}
+\caption{Laufzeit- und Speicherkomplexität BFS}
+\end{table}
+
+\begin{itemize}
+    \item \textbf{Einlesen der Datei}: Für das Einlesen der Datei müssen die Dimensionen eingelesen werden, die Maze-Objekte (mit byte-Arrays der Größe $\mathcal{O}(n\cdot m)$) initialisiert werden und die Wand- und Grubeninformationen geparsed werden. Die Anzahl der Wand-/Grubeninformationen ist proportio\-nal zu $n\cdot m$. Somit liegt die Laufzeit bei $\mathcal{O}(n\cdot m)$.
+    \item \textbf{BFS}: Zur Initialisierung der $visited$-BitSets wird $\mathcal{O}(V)$ Zeit benötigt, da für jedes der $\mathcal{O}(\frac{V}{\text{BITSET\_SIZE}})$ BitSets jeweils $\mathcal{O}(1)$ Aufwand nötig ist. Allerdings ist der konstante Faktor durch BITSET\_SIZE sehr klein. \\
+    Die while-Schleife wird maximal $V$-mal durchgelaufen, da jeder Zustand höchstens einmal aus der $queue$ genommen wird. Das Entnehmen und Einfügen in die ArrayDeque benötigt amortisiert $\mathcal{O}(1)$. Der Zieltest ist in $\mathcal{O}(1)$ sowie auch die Generierung der Nachfolger (4 Richtungen), da die Wand-/Grubenprüfung in konstanter Zeit erfolgt und die Prüfung, ob ein Zustand bereits besucht wurde, wegen der Optimierung mit den BitSets im Durchschnitt $\mathcal{O}(1)$ benötigt. \\
+    Insgesamt braucht die Verarbeitung eines Zustands und seiner (maximal 4) Nachfolger konstante Zeit pro Kante. Da jeder Zustand und jede Kante im schlimmsten Fall einmal betrachtet wird, entspricht die Laufzeit der Standard-BFS-Komplexität $\mathcal{O}(V + E)$. Da in diesem Graphen $E$ direkt proportional zur Gesamtzahl der Knoten $V$ ist $(E \le 4 \cdot V)$, gilt: $E = \mathcal{O}(V)$. Daher vereinfacht sich die gesamte Laufzeit für BFS zu $\mathcal{O}(V)$ oder $\mathcal{O}((n\cdot m)^2)$.\\
+    Der Speicherbedarf wird durch das visited-Array und die maximale Größe der Queue dominiert. Das Array speichert den Besucht-Status für jeden der $V$ möglichen Zustände. Sie benötigt ca. 1 Bit pro Zustand, also insgesamt O(V) Bits. Die $queue$ kann im Extremfall bis zu $\mathcal{O}(V)$ Zustände halten, die jeweils konstanten Speicherplatz brauchen (für Koordinaten, Referenzen etc.).
+    \item \textbf{Rekonstruktion des Pfads}: Die Schleife läuft $P$ Mal und die Operationen in der Schleife sind $\mathcal{O}(1)$. Das Umdrehen des StringBuilders ist in $\mathcal{O}(P)$. 
+\end{itemize}
+
+\subsection{A*}
+
+\vspace{0.2cm}
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Schritt} & \textbf{Laufzeit} & \textbf{Speicherbedarf} \\
+\hline
+Einlesen der Datei & $\mathcal{O}(n\cdot m)$ & $\mathcal{O}(n\cdot m)$ \\
+A* & $\mathcal{O}(V \log V)$ & $\mathcal{O}(V \log V)$ \\
+Rekonstruktion des Pfads & $\mathcal{O}(P)$ & $\mathcal{O}(P)$ \\
+\hline
+\textbf{Gesamt} & $\boldsymbol{\mathcal{O}((n\cdot m)^2 \log (n \cdot m))}$ & $\boldsymbol{\mathcal{O}((n\cdot m)^2)}$ \\
+\hline
+\end{tabular}
+\caption{Laufzeit- und Speicherkomplexität A*}
+\end{table}
+Die Implementierung des A*-Algorithmus ist nur eine kleine Änderung der Breitensuche, weshalb viele Methoden wiederverwendet werden und somit die gleiche Laufzeit wie bei BFS haben. 
+Entscheidende Unterschiede sind:
+\begin{itemize}
+    \item A* verwendet eine PriorityQueue anstatt der ArrayDeque (Einfüge- und Entnehmoperationen in $\mathcal{O}(1))$. Diese priorisiert Zustände nach dem geschätzten Gesamtkostenwert $f = g + h$. Zustände mit einem niedrigeren f-Wert werden zuerst bearbeitet, was intern mit einem Min-Heap erreicht wird, der für $add$- und $poll$ Aufrufe $\mathcal{O}(\log Q)$ braucht, wobei $Q$ die Größe der Queue ist (bis zu $\mathcal{O}(V)$). Daher ist die Laufzeit im worst-Case $\mathcal{O}(V \log V)$. Die tatsächliche Anzahl an besuchten Zuständen hängt sehr stark von der gewählten Heuristik ab.
+    \item Da durch die Priorisierung ein Zustand evtl. über einen suboptimalen Pfad zuerst erreicht wird, reicht es nicht, nur zu speichern, ob ein Zustand besucht wurde (wie im BitSet der BFS). Sondern A* muss die minimalen Kosten speichern, mit denen jeder Zustand bisher erreicht wurde. Das wird in einem int-Array gemacht, der 32 Bits für jeden der $V$ Zustände braucht. Der Speicherbedarf ist somit trotzdem in $\mathcal{O}(V)$, braucht in der Praxis aber 32-mal soviel wie BFS.
+\end{itemize}
+    
+
 \section{Beispiele}
 Hier sind die Ausgaben der Programme mit den Beispiellabyrinthen von der BwInf-Webseite. Die gesamte Programmausgabe kann hier \\
 \textbf{EDIT}\\
@@ -227,38 +289,229 @@ gefunden werden. Die SVGs für die verwendeten Wege können in dem Folder \texti
 \begin{enumerate}
   \item \textbf{labyrinthe0.txt}\\
 \\\textbf{BFS}
-\textbf{A*}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze01.png} 
+        \caption{Labyrinth für Spieler 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze02.png}
+        \caption{Labyrinth für Spieler 2}
+    \end{subfigure}
+\end{figure}
   \begin{verbatim}
-
+States visited: 29
+Ausführungszeit in Sekunden für BFS: 0.035
+Anweisungsfolge der Länge 8: ↓↓→↑↑→↓↓
   \end{verbatim}
+\textbf{A*}
+\begin{verbatim}
+States visited: 23
+Ausführungszeit in Sekunden für A*: 0.019
+Anweisungsfolge der Länge 8: ↓↓→↑↑→↓↓
+\end{verbatim}
   \item \textbf{labyrinthe1.txt}\\
 \\\textbf{BFS}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze11.png} 
+        \caption{Labyrinth für Spieler 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze12.png}
+        \caption{Labyrinth für Spieler 2}
+    \end{subfigure}
+\end{figure}
+\begin{verbatim}
+States visited: 342
+Ausführungszeit in Sekunden für BFS: 0.031
+Anweisungsfolge der Länge 31: →→→→↓↓←↑←↓←↑←↓↓→↑→↓→↑↑←←↑→→→↓↓↓
+\end{verbatim}
 \textbf{A*}
+\begin{verbatim}
+States visited: 320
+Ausführungszeit in Sekunden für A*: 0.016
+Anweisungsfolge der Länge 31: →→→→↓↓←↑←↓←↑←↓↓→↑→↓→↑↑←←↑→→→↓↓↓
+\end{verbatim}
+\newpage
   \item \textbf{labyrinthe2.txt}\\
 \\\textbf{BFS}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze21.png} 
+        \caption{Labyrinth für Spieler 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze22.png}
+        \caption{Labyrinth für Spieler 2}
+    \end{subfigure}
+\end{figure}
+\begin{verbatim}
+States visited: 8,921
+Ausführungszeit in Sekunden für BFS: 0.043
+Anweisungsfolge der Länge 65: →→↓↓→↓→→↑↑→→→↓↓←↓→↓↓←↓←↑←←←←↑←←↓↓←↓→↓→→→→↓↓→→↑↑↑→↑↑
+→→→→→↓←↓←↓↓→→↓
+\end{verbatim}
 \textbf{A*}
+\begin{verbatim}
+States visited: 8,876
+Ausführungszeit in Sekunden für A*: 0.036
+Anweisungsfolge der Länge 65: →→↓↓↓→→→↑↑→→→↓←↓↓→↓↓←↓←↑←←←←↑←←↓↓←↓→↓→→→→↓↓→→↑↑↑→↑↑
+→→→→→↓←↓←↓↓→→↓
+\end{verbatim}
   \item \textbf{labyrinthe3.txt}\\
-\\\textbf{BFS}
+\begin{verbatim}
+States visited: 235,651
+Ausführungszeit in Sekunden für BFS: 0.101
+Anweisungsfolge der Länge 164: ↓↓↓↓→↓↓→↑→→→↓↓↓↓→→→→↓←↓←↓↓↓↓↓←←↓←↓←↓↓↓↓→→↓↓→→↓↓→←↓
+↓↓←↓→↓←←↓←↑←↓↓→→↓↓→→↓←↓↓→→→→↓↓→→↓→→↓→↓↓←←↓↓←↓←↓↓→↑→↓↓←↓←↓←↑←↑←↑←↓←↓→→↓↓↓→→↑→→↑→↑→
+↓↓←↓↓←←←↑→↑←↓↓↓↓←↓↓↓→↑→↓→↓→↓→→→→→
+\end{verbatim}
 \textbf{A*}
+\begin{verbatim}
+States visited: 243,733
+Ausführungszeit in Sekunden für A*: 0.104
+Anweisungsfolge der Länge 164: ↓↓↓↓→↓↓→↑→→→↓↓↓↓→→→→↓←↓↓↓←↓↓↓←←↓←↓←↓↓↓↓→→↓↓→→↓↓→←↓
+↓↓←↓→↓←←↓←↑←↓↓→→↓↓→→↓←↓↓→→→→↓↓→→↓→→↓→↓↓←←↓↓←↓←↓↓→↑→↓↓←↓←↓←↑←↑←↑←↓←↓→→↓↓↓→→↑→→↑→↑→
+↓↓↓←↓←←←↑↑←↓→↓↓↓←↓↓↓→↑→↓→↓→↓→→→→→
+\end{verbatim}
   \item \textbf{labyrinthe4.txt}\\
 \\\textbf{BFS}
+\begin{verbatim}
+States visited: 91,540,327
+Ausführungszeit in Sekunden für BFS: 7.641
+Anweisungsfolge der Länge 14384: →→→↓↓←↑←←↓→↓←↓→↓←↓→→↓→↑↑←↑↑→↓→↑→↓←↓←↓↓↓←←←↑←↓↓↓→↑
+→→→↓↓↓→↑↑→→↑←←↑→→→→→↑↑↑↑↑↑↓←←↑←↓←↓→↓←←↓→→→→↓←←←↑→→↑↑↑↑→↑←←↓←↑↑→→→→↓↓↓↓→↑→→→→→→→...
+\end{verbatim}
 \textbf{A*}
+\begin{verbatim}
+States visited: 98,109,451
+Ausführungszeit in Sekunden für A*: 26.092
+Anweisungsfolge der Länge 14384: →→→↓↓←↑←←↓→↓←↓→↓←↓→→↓→↑↑←↑↑→↓→↑→↓↓←←↓↓↓←←←↑←↓↓↓→↑
+→→→↓↓↓→↑↑→→↑←←↑→→→→→↑↑↑↑↑↓←↑↑←↓←←↓→↓←←↓→→→→↓←←←↑→↑↑↑↑→→↑←←↓←↑↑→→→→↓↓↓↓→↑→→→→→→→...
+\end{verbatim}
   \item \textbf{labyrinthe5.txt}\\
 \\\textbf{BFS}
+\begin{verbatim}
+States visited: 412,785,957
+Ausführungszeit in Sekunden für BFS: 42.501
+Anweisungsfolge der Länge 1302: →→↓↓→→↑→↑→→↓←←↓↓←←↑↓→↓→↓→→↓←↓←←←↓→↓←↓→↓↓←↓↓→→↓→↓→↑
+→↓↓↓←↓→→↓→→↓↓↓↓↓←←↓→→→↓→→→→↑→↓↓↓↓←←↓↓↓↓→↓↓←↓↓↓→↓→→↑↑→↑→↑↑→→↓→↑↑←↑→→↓→↑→→↑→↓→↑→→...
+\end{verbatim}
 \textbf{A*}
+\begin{verbatim}
+States visited: 441,430,843
+Ausführungszeit in Sekunden für A*: 183.765
+Anweisungsfolge der Länge 1302: →→↓↓→→↑→↑→→↓←←↓↓←←↓→↓→↓←↓←↑→→↓←←↓→↓←↓→↓↓←↓↓→→↓→↓→↑
+→↓↓↓←↓→→↓→→↓↓↓↓↓←←↓→→→↓→→→→↑→↓↓↓↓←←↓↓↓↓→↓↓←↓↓↓→↓→→↑↑→↑↑↑→→↑→→↓→↑→→↑→↓→↑→→↑↑→↓↓↓...
+\end{verbatim}
   \item \textbf{labyrinthe6.txt}\\
 \\\textbf{BFS}
+\begin{verbatim}
+States visited: 395,670,022
+Ausführungszeit in Sekunden für BFS: 41.325
+Anweisungsfolge der Länge 776: →→→↓↓↓↓↓↓↓↓→→↓→↓↓→→→↓→↓→→↑→→↓↓→→→↓↓↓↓←←↓←↓↓→↓↓↓↓↓→↓
+→↓↓←↓↓→→→↑↑→→→↓→→→→→→→↑→→↓→→↑→↑→→↓→→→→→→↓↓↓→→→→↓↓→→→→→→↓↓↓↓←↓←←↓←↓↓→→↓↓↓↓↓→→↓↓→...
+\end{verbatim}
 \textbf{A*}
+\begin{verbatim}
+Labyrinth zu groß für diese A* Implementierung, verwende BFS! (ist schneller)
+\end{verbatim}
   \item \textbf{labyrinthe7.txt}\\
 \\\textbf{BFS}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze71.png} 
+        \caption{Labyrinth für Spieler 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze72.png}
+        \caption{Labyrinth für Spieler 2}
+    \end{subfigure}
+\end{figure}
+\begin{verbatim}
+States visited: 83,438
+Ausführungszeit in Sekunden für BFS: 0.075
+Anweisungsfolge der Länge 115: →→→↓←←↓↓←↓↓↓→→↓→↑→↓→→↑→↑↑→→→→→→↓↓←↓←←↓↓→→→↓↓→↓→↑→↑→
+→↑→→↑→↑↑←↑↑←↑→→↓→↑→↓→↓←←↓→↓→→↑→→↑→→→↓↓→→↑↑→↓→→→↓→↓↓←←↓←←↓↓→↓→→→→
+\end{verbatim}
 \textbf{A*}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze71A.png} 
+        \caption{Labyrinth für Spieler 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maze72A.png}
+        \caption{Labyrinth für Spieler 2}
+    \end{subfigure}
+\end{figure}
+\begin{verbatim}
+States visited: 86,512
+Ausführungszeit in Sekunden für A*: 0.077
+Anweisungsfolge der Länge 115: →→→↓←←↓↓←↓↓↓→→↓→↑→↓→→↑→↑↑→→→→→→↓↓←↓←←↓↓→→→↓↓→↓→↑→↑→
+→↑→→↑→↑↑←↑↑←↑→↓→↓↑→↓→↓↓←←↑↓→→↑→↑→→↓↓→→↑↑→↓→→↓↓→↓→↓↓←←↓←←↓↓↓→↓→→→
+\end{verbatim}
   \item \textbf{labyrinthe8.txt}\\
 \\\textbf{BFS}
+\begin{verbatim}
+States visited: 371,718,411
+Ausführungszeit in Sekunden für BFS: 37.147
+Anweisungsfolge der Länge 472: ↓→→↓↓↓↓→↓↓→↓↓↓→↓↓→→→↓→→→↓→→↑→↓→↓←↓→→↓→↓↓↓→↓↓↓→→→↓↓↓
+→→→↑→→↑→↓→↓↓→↑→→→→→→↓↓→→→→→↓→↓→→↓→→→↓↓↓→→↓↓↓→→→↓↓←↓→↓←↓↓↓↓↓→→↓→↓↓→↓→→→↓→↓↓↓→→→↓...
+\end{verbatim}
 \textbf{A*}
+\begin{verbatim}
+States visited: 249,556,289
+Ausführungszeit in Sekunden für A*: 114.49
+Anweisungsfolge der Länge 472: ↓→↓↓↓→↓↓→↓↓↓→↓↓→↓→→→↓→→→↓→→↑↑→↓→↓←↓→↓→↓↓↓→↓↓↓→→↓↓↓→
+↓→↑→→→↑→↓→↓↓→↑→→→→→→↓↓→→→↓→↓→→→→↓→→↓↓↓→↓→↓↓→↓→→↓→↓←↓←↓↓→↓↓↓→→↓→↓↓→↓→↓→↓→→↓→→↓→↓...
+\end{verbatim}
   \item \textbf{labyrinthe9.txt}\\
 \\\textbf{BFS}
+\begin{verbatim}
+States visited: 760,293,232
+Ausführungszeit in Sekunden für BFS: 79.598
+Anweisungsfolge der Länge 1012: ↓→↓→→↓→→↑→→↓↓↓→↑→↑→→↓↓↓↓→→↑↑→→↓→↓→↓↓→↓←↓←↓←←↓↓→↓↓→
+↓→→→↑→↓↓↓↓↓↓←↓←↓→↓↓→↓→↑→→↑→→↑↑→↑→↑←↑→→↓↓→↓↓→→↑→→↓↓→→↓↓→→↓←↑↓←←←↓→↑→↓→↓←←←↓→→→↓←...
+\end{verbatim}
 \textbf{A*}
+\begin{verbatim}
+States visited: 644,735,858
+Ausführungszeit in Sekunden für A*: 299.032
+Anweisungsfolge der Länge 1012: ↓→↓→→↓→→↑→→↓↓↓→↑→↑→→↓↓↓↓→→↑↑→→↓→↓→↓↓→↓←↓←↓←←↓↓→↓↓→
+↓→→→↑→↓↓↓↓↓↓←↓←↓→↓↓→↓→↑→→↑→→↑↑→↑→↑↑→↓→↓↓→↓↓→↓→↑←→→↓↓↓↓→→↓←↓←←←↑↓→↑→↓→↓←←←↓→→→↓←...
+\end{verbatim}
 \end{enumerate}
+\section{Vergleich der Methoden}
+Obwohl sowohl die Breitensuche (BFS) und auch der A* Algorithmus implementiert wurden, um die kürsteste Anweisungssequenz für dieses Labyrinthproblem zu finden, unterscheiden sie sich in ihren praktischen Eigenschaften.\\
+Der grundlegende Unterschied ist die Suchstrategie. BFS ist eine Art "uninformierte" Suche, die den Zustandsraum systematisch Ebene für Ebene exploriert, was durch eine einfache FIFO-Warteschlange (ArrayDeque) effizient umgesetzt wird. Im Gegensatz dazu ist A* eine "informierte" Suche, die eine Heuristik (hier das Maximum der Manhattan-Distanzen) nutzt, um Zustände in der Suche zu priorisieren. Mit einer Prioritätswarteschlange (PriorityQueue) werden Zustände bevorzugt, die laut der Schätzung $f = g + h$ näher am Ziel liegen. \\
+Diese Priorisierung kann potenziell dazu führen, dass das Ziel mit der Exploration von weniger Zuständen als BFS gefunden wird. Dieser potenzielle Vorteil ist aber nicht garantiert. Die Verwaltung der PriorityQueue und die Berechnung der Heuristik für jeden Zustand führt zu einem höheren Rechenaufwand pro Schritt im Vergleich zu BFS. Die Effektivität von A* hängt außerdem stark von der Problemstruktur. Z.B. die Gruben können die Heuristik etwas irreführend machen: Ein Zustand nahe am Ziel kann durch eine Grube plötzlich zu einem Zustand mit einem sehr hohem Heuristikwert führen, was A* unter Umständen dazu verleitet, ungünstigere Pfade zu verfolgen. Außder Es ist deswegen durchaus möglich, dass A* in manchen Situationen nicht weniger oder sogar ähnlich viele oder mehr Zustände wie BFS untersuchen muss, um den optimalen Pfad zu finden.\\
+Noch ein großer Unterschied liegt im Speicherbedarf. Asymptotisch gesehen ist er gleich, allerdings reicht es für BFS zu wissen, ob ein Zustand bereits besucht wurde oder nicht. Dies wird sehr speichereffizient in $BitSet[] visited$ gespeichert (ca. 1 Bit pro Zustand). A* hingegen muss sich für jeden erreichten Zustand die bisher minimalen Kosten $(g)$ merken, um sicherzustellen, dass nur der beste Pfad weiterverfolgt wird. Diese Speicherung der Kosten im $int[] costArray$ braucht deutlich mehr Speicher (ca. 32 Bit pro Zustand). Bei sehr großen Labyrinthen wie das Beispiel $labyrinthe6.txt$ kann dies der entscheidende Unterschied sein, ob der Algorithmus verwendet werden kann oder nicht.\\
+Außerdem ist die Laufzeit im worst-Case $(\mathcal{O}(V \log V)$ vs. $\mathcal{O}(V)$), was wegen der aufwändigeren Operationen $(\mathcal{O}(\log V))$ der Prioritätswarteschlange von A* zustande kommt.\\
+Zusammenfassend ist die implementierte Verson von BFS oft der bessere/effizientere Ansatz für dieses Problem mit diesen Eingabebeispielen. Die Vorteile von BFS liegen in der Einfachheit, sie garantiert Optimalität und vor allem wird deutlich weniger Speicher benötigt. A* kann durch die Heuristik zwar potenziell weniger Zustände besuchen (siehe z.B. $labyrinthe8.txt$, oder $labyrinthe9.txt$), aber der Rechen-Overhead pro Zustand (Priority Queue) gleicht diesen Vorteil wieder aus. Da das Einfügen und Entnehmen in die Queue für beide Algorithmen einer der meist gebrauchten Operationen ist, macht der $\log$-Faktor in der Praxis einen großen Unterschied.
+
+
 \section{Quellcode}
 \subsection{BFS}
 Hier die wichtigsten Teile des Quellcodes:\\
@@ -591,6 +844,5 @@ private static int heuristic(State state, Maze maze1, Maze maze2) {
             Math.abs(state.x2 - maze2.getGoalX()) + Math.abs(state.y2 - maze2.getGoalY()));
 }
 \end{lstlisting}
-\section{Vergleich der Methoden}
 
 \end{document}
